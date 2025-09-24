@@ -1,6 +1,5 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
+import { Textarea } from "../components/ui/textarea";
 import { stateProperty } from ".";
 
 export function listToMultilineString(v) {
@@ -22,16 +21,13 @@ export function multilineStringToList(target) {
 
 export function StringList(component, name, props = {}) {
   return (
-    <Form.Group as={Col}>
-      <Form.Control
-        size="sm"
-        name={name}
-        value={listToMultilineString(stateProperty(component, name))}
-        onChange={(e) => component.handleChange(e, multilineStringToList)}
-        as="textarea"
-        rows="5"
-        {...props}
-      ></Form.Control>
-    </Form.Group>
+    <Textarea
+      name={name}
+      value={listToMultilineString(stateProperty(component, name))}
+      onChange={(e) => component.handleChange(e, multilineStringToList)}
+      rows={5}
+      className="min-h-[120px]"
+      {...props}
+    />
   );
 }

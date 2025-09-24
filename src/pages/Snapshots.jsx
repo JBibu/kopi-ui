@@ -4,12 +4,12 @@ import axios from "axios";
 import moment from "moment";
 import React, { Component } from "react";
 import Badge from "react-bootstrap/Badge";
-import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
 import Spinner from "react-bootstrap/Spinner";
 import { Link } from "react-router-dom";
+import { Button } from "../components/ui/button";
 import { handleChange } from "../forms";
 import KopiaTable from "../components/KopiaTable";
 import { compare, formatOwnerName, sizeDisplayName } from "../utils/formatutils";
@@ -143,19 +143,20 @@ export class Snapshots extends Component {
       case "IDLE":
       case "PAUSED":
         return (
-          <>
+          <div className="flex gap-2">
             <Button
               data-testid="edit-policy"
-              as={Link}
-              to={policyEditorURL(x.row.original.source)}
-              variant="primary"
+              asChild
+              variant="outline"
               size="sm"
             >
-              Policy
+              <Link to={policyEditorURL(x.row.original.source)}>
+                Policy
+              </Link>
             </Button>
             <Button
               data-testid="snapshot-now"
-              variant="success"
+              variant="default"
               size="sm"
               onClick={() => {
                 parent.startSnapshot(x.row.original.source);
@@ -163,7 +164,7 @@ export class Snapshots extends Component {
             >
               Snapshot Now
             </Button>
-          </>
+          </div>
         );
 
       case "PENDING":
@@ -405,17 +406,25 @@ export class Snapshots extends Component {
               </>
             )}
             <Col xs="auto">
-              <Button data-testid="new-snapshot" size="sm" variant="primary" href="/snapshots/new">
-                New Snapshot
+              <Button data-testid="new-snapshot" size="sm" asChild>
+                <Link to="/snapshots/new">
+                  New Snapshot
+                </Link>
               </Button>
             </Col>
             <Col></Col>
             <Col xs="auto">
-              <Button size="sm" title="Synchronize" variant="primary">
+              <Button
+                size="sm"
+                title="Synchronize"
+                variant="outline"
+                onClick={this.sync}
+                disabled={this.state.isRefreshing}
+              >
                 {this.state.isRefreshing ? (
                   <Spinner animation="border" variant="light" size="sm" />
                 ) : (
-                  <FontAwesomeIcon icon={faSync} onClick={this.sync} />
+                  <FontAwesomeIcon icon={faSync} />
                 )}
               </Button>
             </Col>

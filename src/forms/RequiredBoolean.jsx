@@ -1,6 +1,6 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
+import { Label } from "../components/ui/label";
+import { Checkbox } from "../components/ui/checkbox";
 import { stateProperty } from ".";
 
 function checkedToBool(t) {
@@ -13,17 +13,29 @@ function checkedToBool(t) {
 
 export function RequiredBoolean(component, label, name, helpText) {
   return (
-    <Form.Group as={Col}>
-      <Form.Check
-        label={label}
-        name={name}
-        className="required"
-        checked={stateProperty(component, name)}
-        onChange={(e) => component.handleChange(e, checkedToBool)}
-        data-testid={"control-" + name}
-        type="checkbox"
-      />
-      {helpText && <Form.Text className="text-muted">{helpText}</Form.Text>}
-    </Form.Group>
+    <div className="space-y-2">
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id={name}
+          name={name}
+          checked={stateProperty(component, name)}
+          onCheckedChange={(checked) => {
+            const event = {
+              target: {
+                name: name,
+                checked: checked
+              }
+            };
+            component.handleChange(event, checkedToBool);
+          }}
+          data-testid={"control-" + name}
+        />
+        <Label htmlFor={name} className="text-sm font-medium required">
+          {label}
+          <span className="text-red-500 ml-1">*</span>
+        </Label>
+      </div>
+      {helpText && <p className="text-sm text-muted-foreground">{helpText}</p>}
+    </div>
   );
 }

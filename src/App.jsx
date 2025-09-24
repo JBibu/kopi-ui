@@ -1,10 +1,12 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./css/Theme.css";
 import "./css/App.css";
+import "./css/globals.css";
 import axios from "axios";
 import { React, Component } from "react";
 import { BrowserRouter as Router, NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { Navbar, NavbarBrand, NavbarNav, NavbarLink } from "./components/ui/navbar";
+import { ThemeSelector } from "./components/ThemeSelector";
 import { Policy } from "./pages/Policy";
 import { Preferences } from "./pages/Preferences";
 import { Policies } from "./pages/Policies";
@@ -18,6 +20,7 @@ import { SnapshotHistory } from "./pages/SnapshotHistory";
 import { SnapshotRestore } from "./pages/SnapshotRestore";
 import { AppContext } from "./contexts/AppContext";
 import { UIPreferenceProvider } from "./contexts/UIPreferencesContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 export default class App extends Component {
   constructor() {
@@ -112,51 +115,55 @@ export default class App extends Component {
 
     return (
       <Router>
-        <AppContext.Provider value={this}>
-          <UIPreferenceProvider initalValue={uiPrefs}>
-            <Navbar>
-              <NavbarBrand to="/">
-                <img src="/kopia-flat.svg" className="h-8 w-8" alt="Kopia logo" />
-                <span className="text-lg font-semibold">Kopia</span>
-              </NavbarBrand>
-              <NavbarNav>
-                <NavbarLink
-                  testId="tab-snapshots"
-                  to="/snapshots"
-                  disabled={!isRepositoryConnected}
-                  title={!isRepositoryConnected ? "Repository is not connected" : ""}
-                >
-                  Snapshots
-                </NavbarLink>
-                <NavbarLink
-                  testId="tab-policies"
-                  to="/policies"
-                  disabled={!isRepositoryConnected}
-                  title={!isRepositoryConnected ? "Repository is not connected" : ""}
-                >
-                  Policies
-                </NavbarLink>
-                <NavbarLink
-                  testId="tab-tasks"
-                  to="/tasks"
-                  disabled={!isRepositoryConnected}
-                  title={!isRepositoryConnected ? "Repository is not connected" : ""}
-                >
-                  Tasks
-                  {runningTaskCount > 0 && (
-                    <span className="ml-1 px-2 py-1 text-xs bg-primary text-primary-foreground rounded-full">
-                      {runningTaskCount}
-                    </span>
-                  )}
-                </NavbarLink>
-                <NavbarLink testId="tab-repo" to="/repo">
-                  Repository
-                </NavbarLink>
-                <NavbarLink testId="tab-preferences" to="/preferences">
-                  Preferences
-                </NavbarLink>
-              </NavbarNav>
-            </Navbar>
+        <ThemeProvider>
+          <AppContext.Provider value={this}>
+            <UIPreferenceProvider initalValue={uiPrefs}>
+              <Navbar>
+                <NavbarBrand to="/">
+                  <img src="/kopia-flat.svg" className="h-8 w-8" alt="Kopia logo" />
+                  <span className="text-lg font-semibold">Kopia</span>
+                </NavbarBrand>
+                <NavbarNav>
+                  <NavbarLink
+                    testId="tab-snapshots"
+                    to="/snapshots"
+                    disabled={!isRepositoryConnected}
+                    title={!isRepositoryConnected ? "Repository is not connected" : ""}
+                  >
+                    Snapshots
+                  </NavbarLink>
+                  <NavbarLink
+                    testId="tab-policies"
+                    to="/policies"
+                    disabled={!isRepositoryConnected}
+                    title={!isRepositoryConnected ? "Repository is not connected" : ""}
+                  >
+                    Policies
+                  </NavbarLink>
+                  <NavbarLink
+                    testId="tab-tasks"
+                    to="/tasks"
+                    disabled={!isRepositoryConnected}
+                    title={!isRepositoryConnected ? "Repository is not connected" : ""}
+                  >
+                    Tasks
+                    {runningTaskCount > 0 && (
+                      <span className="ml-1 px-2 py-1 text-xs bg-primary text-primary-foreground rounded-full">
+                        {runningTaskCount}
+                      </span>
+                    )}
+                  </NavbarLink>
+                  <NavbarLink testId="tab-repo" to="/repo">
+                    Repository
+                  </NavbarLink>
+                  <NavbarLink testId="tab-preferences" to="/preferences">
+                    Preferences
+                  </NavbarLink>
+                  <div className="ml-auto">
+                    <ThemeSelector />
+                  </div>
+                </NavbarNav>
+              </Navbar>
 
             <main className="container mx-auto px-4 py-6">
               {this.state.repoDescription && (
@@ -184,6 +191,7 @@ export default class App extends Component {
             </main>
           </UIPreferenceProvider>
         </AppContext.Provider>
+        </ThemeProvider>
       </Router>
     );
   }

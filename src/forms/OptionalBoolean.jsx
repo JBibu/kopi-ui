@@ -1,7 +1,6 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
-
+import { Label } from "../components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { stateProperty } from ".";
 
 function optionalBooleanValue(target) {
@@ -16,20 +15,37 @@ function optionalBooleanValue(target) {
 }
 
 export function OptionalBoolean(component, label, name, defaultLabel) {
+  const value = stateProperty(component, name);
+  const displayValue = value === true ? "true" : value === false ? "false" : "";
+
   return (
-    <Form.Group as={Col}>
-      {label && <Form.Label>{label}</Form.Label>}
-      <Form.Control
-        size="sm"
-        name={name}
-        value={stateProperty(component, name)}
-        onChange={(e) => component.handleChange(e, optionalBooleanValue)}
-        as="select"
+    <div className="space-y-2">
+      {label && (
+        <Label htmlFor={name} className="text-sm font-medium">
+          {label}
+        </Label>
+      )}
+      <Select
+        value={displayValue}
+        onValueChange={(value) => {
+          const event = {
+            target: {
+              name: name,
+              value: value
+            }
+          };
+          component.handleChange(event, optionalBooleanValue);
+        }}
       >
-        <option value="">{defaultLabel}</option>
-        <option value="true">yes</option>
-        <option value="false">no</option>
-      </Form.Control>
-    </Form.Group>
+        <SelectTrigger>
+          <SelectValue placeholder={defaultLabel} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="">{defaultLabel}</SelectItem>
+          <SelectItem value="true">yes</SelectItem>
+          <SelectItem value="false">no</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
   );
 }

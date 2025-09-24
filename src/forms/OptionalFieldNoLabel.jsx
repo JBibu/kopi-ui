@@ -1,22 +1,22 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
-
+import { Input } from "../components/ui/input";
 import { stateProperty } from ".";
 
 export function OptionalFieldNoLabel(component, label, name, props = {}, helpText = null, invalidFeedback = null) {
+  const hasError = !!invalidFeedback;
+
   return (
-    <Form.Group as={Col}>
-      <Form.Control
-        size="sm"
+    <div className="space-y-2">
+      <Input
         name={name}
         value={stateProperty(component, name)}
         data-testid={"control-" + name}
         onChange={component.handleChange}
+        className={hasError ? "border-red-500 focus:border-red-500" : ""}
         {...props}
       />
-      {helpText && <Form.Text className="text-muted">{helpText}</Form.Text>}
-      {invalidFeedback && <Form.Control.Feedback type="invalid">{invalidFeedback}</Form.Control.Feedback>}
-    </Form.Group>
+      {helpText && <p className="text-sm text-muted-foreground">{helpText}</p>}
+      {invalidFeedback && <p className="text-sm text-red-500">{invalidFeedback}</p>}
+    </div>
   );
 }

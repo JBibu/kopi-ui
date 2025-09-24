@@ -1,23 +1,28 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
+import { Label } from "../components/ui/label";
+import { Input } from "../components/ui/input";
 import { stateProperty } from ".";
 
 export function RequiredField(component, label, name, props = {}, helpText = null) {
+  const isInvalid = stateProperty(component, name, null) === "";
+
   return (
-    <Form.Group as={Col}>
-      <Form.Label className="required">{label}</Form.Label>
-      <Form.Control
-        size="sm"
-        isInvalid={stateProperty(component, name, null) === ""}
+    <div className="space-y-2">
+      <Label htmlFor={name} className="text-sm font-medium required">
+        {label}
+        <span className="text-red-500 ml-1">*</span>
+      </Label>
+      <Input
+        id={name}
         name={name}
         value={stateProperty(component, name)}
         data-testid={"control-" + name}
         onChange={component.handleChange}
+        className={isInvalid ? "border-red-500 focus:border-red-500" : ""}
         {...props}
       />
-      {helpText && <Form.Text className="text-muted">{helpText}</Form.Text>}
-      <Form.Control.Feedback type="invalid">Required field</Form.Control.Feedback>
-    </Form.Group>
+      {helpText && <p className="text-sm text-muted-foreground">{helpText}</p>}
+      {isInvalid && <p className="text-sm text-red-500">Required field</p>}
+    </div>
   );
 }

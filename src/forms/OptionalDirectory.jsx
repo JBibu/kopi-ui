@@ -1,9 +1,8 @@
 import React from "react";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import { Col, FormGroup, FormControl, InputGroup } from "react-bootstrap";
-import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button } from "../components/ui/button";
+import { Label } from "../components/ui/label";
+import { Input } from "../components/ui/input";
+import { FolderOpen } from "lucide-react";
 import { stateProperty } from ".";
 import { setDeepStateProperty } from "../utils/deepstate";
 
@@ -32,28 +31,33 @@ export function OptionalDirectory(component, label, name, props = {}) {
   }
 
   return (
-    <FormGroup>
+    <div className="space-y-2">
       {label && (
-        <Form.Label htmlFor="directoryInput" className="required">
+        <Label htmlFor={name} className="text-sm font-medium">
           {label}
-        </Form.Label>
+        </Label>
       )}
-      <InputGroup as={Col}>
-        <FormControl
-          id="directoryInput"
-          size="sm"
+      <div className="flex gap-2">
+        <Input
+          id={name}
           name={name}
           value={stateProperty(component, name)}
           data-testid={"control-" + name}
           onChange={component.handleChange}
+          className="flex-1"
           {...props}
-        ></FormControl>
+        />
         {window.kopiaUI && (
-          <Button size="sm" onClick={() => window.kopiaUI.selectDirectory(onDirectorySelected)}>
-            <FontAwesomeIcon icon={faFolderOpen} />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => window.kopiaUI.selectDirectory(onDirectorySelected)}
+          >
+            <FolderOpen className="h-4 w-4" />
           </Button>
         )}
-      </InputGroup>
-    </FormGroup>
+      </div>
+    </div>
   );
 }

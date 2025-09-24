@@ -1,6 +1,5 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
-import FormGroup from "react-bootstrap/FormGroup";
+import { Textarea } from "../components/ui/textarea";
 import { stateProperty } from ".";
 
 export function TimesOfDayList(component, name, props = {}) {
@@ -58,18 +57,16 @@ export function TimesOfDayList(component, name, props = {}) {
     return result;
   }
 
+  // Note: This component would benefit from validation state management to show invalid feedback
   return (
-    <FormGroup>
-      <Form.Control
-        size="sm"
-        name={name}
-        value={toMultilineString(stateProperty(component, name))}
-        onChange={(e) => component.handleChange(e, fromMultilineString)}
-        as="textarea"
-        rows="5"
-        {...props}
-      ></Form.Control>
-      <Form.Control.Feedback type="invalid">Invalid Times of Day</Form.Control.Feedback>
-    </FormGroup>
+    <Textarea
+      name={name}
+      value={toMultilineString(stateProperty(component, name))}
+      onChange={(e) => component.handleChange(e, fromMultilineString)}
+      rows={5}
+      className="min-h-[120px]"
+      placeholder="Enter times in HH:MM format, one per line"
+      {...props}
+    />
   );
 }

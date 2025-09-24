@@ -1,22 +1,28 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
+import { Label } from "../components/ui/label";
+import { Input } from "../components/ui/input";
 import { stateProperty, isInvalidNumber, valueToNumber } from ".";
 
 export function RequiredNumberField(component, label, name, props = {}) {
+  const isInvalid = stateProperty(component, name, null) === "" || isInvalidNumber(stateProperty(component, name));
+
   return (
-    <Form.Group as={Col}>
-      <Form.Label>{label}</Form.Label>
-      <Form.Control
-        size="sm"
+    <div className="space-y-2">
+      <Label htmlFor={name} className="text-sm font-medium">
+        {label}
+        <span className="text-red-500 ml-1">*</span>
+      </Label>
+      <Input
+        id={name}
         name={name}
-        isInvalid={stateProperty(component, name, null) === "" || isInvalidNumber(stateProperty(component, name))}
+        type="number"
         value={stateProperty(component, name)}
         onChange={(e) => component.handleChange(e, valueToNumber)}
         data-testid={"control-" + name}
+        className={isInvalid ? "border-red-500 focus:border-red-500" : ""}
         {...props}
       />
-      <Form.Control.Feedback type="invalid">Must be a valid number or empty</Form.Control.Feedback>
-    </Form.Group>
+      {isInvalid && <p className="text-sm text-red-500">Must be a valid number or empty</p>}
+    </div>
   );
 }

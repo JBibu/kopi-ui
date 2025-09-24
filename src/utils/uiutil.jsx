@@ -1,5 +1,4 @@
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AlertTriangle } from "lucide-react";
 import React from "react";
 import { sizeDisplayName } from "./formatutils.js";
 
@@ -24,7 +23,7 @@ export function sizeWithFailures(size, summ, bytesStringBase2) {
   return (
     <span>
       {sizeDisplayName(size, bytesStringBase2)}&nbsp;
-      <FontAwesomeIcon color="red" icon={faExclamationTriangle} title={caption} />
+      <AlertTriangle className="h-4 w-4 inline text-red-500" title={caption} />
     </span>
   );
 }
@@ -39,19 +38,28 @@ export function redirect(e) {
   }
 }
 
-export function errorAlert(err, prefix) {
+// This function is used to display error alerts
+// For the modern alert system, use the AlertContext instead
+export function errorAlert(err, prefix, showAlert) {
   if (!prefix) {
     prefix = "Error";
   }
 
-  prefix += ": ";
-
+  let message = "";
   if (err.response && err.response.data && err.response.data.error) {
-    alert(prefix + err.response.data.error);
+    message = err.response.data.error;
   } else if (err instanceof Error) {
-    alert(err);
+    message = err.message || err.toString();
   } else {
-    alert(prefix + JSON.stringify(err));
+    message = JSON.stringify(err);
+  }
+
+  if (showAlert && typeof showAlert === 'function') {
+    // Use the modern alert dialog
+    showAlert(prefix, message, 'error');
+  } else {
+    // Fallback to native alert for compatibility
+    alert(prefix + ": " + message);
   }
 }
 

@@ -3,7 +3,29 @@ import React, { Component, useContext } from "react";
 import Badge from "react-bootstrap/Badge";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import Button from "react-bootstrap/Button";
+import { Button } from "../components/ui/button";
+import { Label } from "../components/ui/label";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Checkbox } from "../components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/ui/alert-dialog";
 import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -13,10 +35,8 @@ import { compare, objectLink, parseQuery, rfc3339TimestampForDisplay } from "../
 import { errorAlert, redirect, sizeWithFailures } from "../utils/uiutil";
 import { sourceQueryStringParams } from "../utils/policyutil";
 import { GoBackButton } from "../components/GoBackButton";
-import { faSync, faThumbtack } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Modal from "react-bootstrap/Modal";
-import { faFileAlt } from "@fortawesome/free-regular-svg-icons";
+import { RefreshCw, Pin } from "lucide-react";
+import { File } from "lucide-react";
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
 import PropTypes from "prop-types";
 
@@ -272,7 +292,7 @@ class SnapshotHistoryInternal extends Component {
         className={x.description ? "snapshot-description-set" : "snapshot-description"}
       >
         <b>
-          <FontAwesomeIcon icon={faFileAlt} />
+          <File className="h-4 w-4" />
         </b>
       </a>
     );
@@ -293,7 +313,7 @@ class SnapshotHistoryInternal extends Component {
         }}
         title="Add a pin to protect snapshot from deletion"
       >
-        <FontAwesomeIcon icon={faThumbtack} color="#ccc" />
+        <Pin className="h-4 w-4 text-gray-400" />
       </a>
     );
   }
@@ -429,7 +449,7 @@ class SnapshotHistoryInternal extends Component {
             {x.row.original.pins.map((l) => (
               <React.Fragment key={l}>
                 <Badge bg="snapshot-pin" onClick={() => this.editPin(x.row.original, l)}>
-                  <FontAwesomeIcon icon={faThumbtack} /> {l}
+                  <Pin className="h-3 w-3 inline mr-1" /> {l}
                 </Badge>{" "}
               </React.Fragment>
             ))}
@@ -497,7 +517,7 @@ class SnapshotHistoryInternal extends Component {
               {this.state.isRefreshing ? (
                 <Spinner animation="border" variant="light" size="sm" />
               ) : (
-                <FontAwesomeIcon icon={faSync} title="Fetch snapshots" onClick={this.fetchSnapshots} />
+                <RefreshCw className="h-4 w-4" title="Fetch snapshots" onClick={this.fetchSnapshots} />
               )}
             </Button>
           </Col>
@@ -542,124 +562,130 @@ class SnapshotHistoryInternal extends Component {
           command={`snapshot list "${this.state.userName}@${this.state.host}:${this.state.path}"${this.state.showHidden ? " --show-identical" : ""}`}
         />
 
-        <Modal show={this.state.showDeleteConfirmationDialog} onHide={this.cancelDelete}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Delete</Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <>
-              {selectedElements.length > 1 ? (
-                <p>
-                  Do you want to delete the selected <b>{selectedElements.length} snapshots</b>?
-                </p>
-              ) : (
-                <p>Do you want to delete the selected snapshot?</p>
-              )}
-              {selectedElements.length === snapshots.length && (
-                <Row>
-                  <Form.Group>
-                    <Form.Check
-                      label="Wipe all snapshots and the policy for this source."
-                      className="required"
+        <AlertDialog open={this.state.showDeleteConfirmationDialog} onOpenChange={this.cancelDelete}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
+              <AlertDialogDescription>
+                {selectedElements.length > 1 ? (
+                  <>
+                    Do you want to delete the selected <strong>{selectedElements.length} snapshots</strong>?
+                  </>
+                ) : (
+                  "Do you want to delete the selected snapshot?"
+                )}
+                {selectedElements.length === snapshots.length && (
+                  <div className="mt-4 flex items-center space-x-2">
+                    <Checkbox
+                      id="deleteSource"
                       checked={this.state.alsoDeleteSource}
-                      onChange={() =>
+                      onCheckedChange={(checked) =>
                         this.setState({
-                          alsoDeleteSource: !this.state.alsoDeleteSource,
+                          alsoDeleteSource: checked,
                         })
                       }
-                      type="checkbox"
                     />
-                  </Form.Group>
-                </Row>
+                    <Label htmlFor="deleteSource" className="text-sm">
+                      Wipe all snapshots and the policy for this source.
+                    </Label>
+                  </div>
+                )}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={this.cancelDelete}>Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="destructive" onClick={this.deleteSelectedSnapshots}>
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <Dialog open={!!this.state.editingDescriptionFor} onOpenChange={this.cancelSnapshotDescription}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Snapshot Description</DialogTitle>
+              <DialogDescription>
+                Enter a new description for this snapshot.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="description">Enter new description</Label>
+                <Textarea
+                  id="description"
+                  value={this.state.updatedSnapshotDescription}
+                  onChange={(e) => this.setState({ updatedSnapshotDescription: e.target.value })}
+                  className="min-h-[100px]"
+                />
+              </div>
+            </div>
+            <DialogFooter className="flex gap-2">
+              {this.state.savingSnapshot && (
+                <div className="mr-auto">
+                  <Spinner animation="border" size="sm" variant="primary" />
+                </div>
               )}
-            </>
-          </Modal.Body>
-
-          <Modal.Footer>
-            <Button size="sm" variant="primary" onClick={this.deleteSelectedSnapshots}>
-              Delete
-            </Button>
-            <Button size="sm" variant="warning" onClick={this.cancelDelete}>
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={!!this.state.editingDescriptionFor} onHide={this.cancelSnapshotDescription}>
-          <Modal.Header closeButton>
-            <Modal.Title>Snapshot Description</Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <Form.Group>
-              <Form.Label>Enter new description</Form.Label>
-              <Form.Control
-                as="textarea"
-                size="sm"
-                value={this.state.updatedSnapshotDescription}
-                onChange={(e) => this.setState({ updatedSnapshotDescription: e.target.value })}
-              />
-            </Form.Group>
-          </Modal.Body>
-
-          <Modal.Footer>
-            {this.state.savingSnapshot && <Spinner animation="border" size="sm" variant="primary" />}
-            <Button
-              size="sm"
-              variant="primary"
-              disabled={this.state.originalSnapshotDescription === this.state.updatedSnapshotDescription}
-              onClick={this.saveSnapshotDescription}
-            >
-              Update Description
-            </Button>
-            {this.state.originalSnapshotDescription && (
-              <Button size="sm" variant="secondary" onClick={this.removeSnapshotDescription}>
-                Remove Description
+              <Button variant="outline" onClick={this.cancelSnapshotDescription}>
+                Cancel
               </Button>
-            )}
-            <Button size="sm" variant="warning" onClick={this.cancelSnapshotDescription}>
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={!!this.state.editPinFor} onHide={this.cancelPin}>
-          <Modal.Header closeButton>
-            <Modal.Title>Pin Snapshot</Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <Form.Group>
-              <Form.Label>Name of the pin</Form.Label>
-              <Form.Control
-                size="sm"
-                value={this.state.newPinName}
-                onChange={(e) => this.setState({ newPinName: e.target.value })}
-              />
-            </Form.Group>
-          </Modal.Body>
-
-          <Modal.Footer>
-            {this.state.savingSnapshot && <Spinner animation="border" size="sm" variant="primary" />}
-            <Button
-              size="sm"
-              variant="primary"
-              onClick={this.savePin}
-              disabled={this.state.newPinName === this.state.originalPinName || !this.state.newPinName}
-            >
-              {this.state.originalPinName ? "Update Pin" : "Add Pin"}
-            </Button>
-            {this.state.originalPinName && (
-              <Button size="sm" variant="secondary" onClick={() => this.removePin(this.state.originalPinName)}>
-                Remove Pin
+              {this.state.originalSnapshotDescription && (
+                <Button variant="secondary" onClick={this.removeSnapshotDescription}>
+                  Remove Description
+                </Button>
+              )}
+              <Button
+                disabled={this.state.originalSnapshotDescription === this.state.updatedSnapshotDescription}
+                onClick={this.saveSnapshotDescription}
+              >
+                Update Description
               </Button>
-            )}
-            <Button size="sm" variant="warning" onClick={this.cancelPin}>
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </Modal>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={!!this.state.editPinFor} onOpenChange={this.cancelPin}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Pin Snapshot</DialogTitle>
+              <DialogDescription>
+                {this.state.originalPinName ? "Update the pin name for this snapshot." : "Add a pin name for this snapshot."}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="pinName">Name of the pin</Label>
+                <Input
+                  id="pinName"
+                  value={this.state.newPinName}
+                  onChange={(e) => this.setState({ newPinName: e.target.value })}
+                  placeholder="Enter pin name"
+                />
+              </div>
+            </div>
+            <DialogFooter className="flex gap-2">
+              {this.state.savingSnapshot && (
+                <div className="mr-auto">
+                  <Spinner animation="border" size="sm" variant="primary" />
+                </div>
+              )}
+              <Button variant="outline" onClick={this.cancelPin}>
+                Cancel
+              </Button>
+              {this.state.originalPinName && (
+                <Button variant="secondary" onClick={() => this.removePin(this.state.originalPinName)}>
+                  Remove Pin
+                </Button>
+              )}
+              <Button
+                onClick={this.savePin}
+                disabled={this.state.newPinName === this.state.originalPinName || !this.state.newPinName}
+              >
+                {this.state.originalPinName ? "Update Pin" : "Add Pin"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </>
     );
   }
