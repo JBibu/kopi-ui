@@ -1,7 +1,5 @@
 import React, { useContext, useState } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
-import Pagination from "react-bootstrap/Pagination";
-import Table from "react-bootstrap/Table";
+import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,31 +9,49 @@ import {
 } from "@tanstack/react-table";
 import { PAGE_SIZES, UIPreferencesContext } from "../contexts/UIPreferencesContext";
 import PropTypes from "prop-types";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { Button } from "./ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "./ui/pagination";
 
 function paginationItems(count, active, gotoPage) {
   let items = [];
 
   function pageWithNumber(number) {
     return (
-      <Pagination.Item key={number} active={number === active} onClick={() => gotoPage(number - 1)}>
-        {number}
-      </Pagination.Item>
+      <PaginationItem key={number}>
+        <PaginationLink
+          onClick={() => gotoPage(number - 1)}
+          isActive={number === active}
+        >
+          {number}
+        </PaginationLink>
+      </PaginationItem>
     );
   }
 
   function dotDotDot(key) {
-    return <Pagination.Ellipsis key={key} />;
+    return (
+      <PaginationItem key={key}>
+        <PaginationEllipsis />
+      </PaginationItem>
+    );
   }
 
-  let minPageNumber = active - 10;
+  let minPageNumber = active - 3;
   if (minPageNumber < 1) {
     minPageNumber = 1;
   }
 
-  let maxPageNumber = active + 9;
-  if (minPageNumber + 19 >= maxPageNumber) {
-    maxPageNumber = minPageNumber + 19;
-  }
+  let maxPageNumber = active + 3;
   if (maxPageNumber > count) {
     maxPageNumber = count;
   }
@@ -84,54 +100,87 @@ export default function KopiaTable({ columns, data }) {
   }
 
   const paginationUI = (
-    <>
-      <>
+    <div className="flex items-center justify-between space-x-2 py-4">
+      <div className="flex items-center space-x-2">
+        <p className="text-sm font-medium">Rows per page</p>
+        <Select
+          value={`${pageSize}`}
+          onValueChange={(value) => {
+            const newPageSize = Number(value);
+            table.setPageSize(newPageSize);
+            setPageSize(newPageSize);
+          }}
+        >
+          <SelectTrigger className="h-8 w-[70px]">
+            <SelectValue placeholder={pageSize} />
+          </SelectTrigger>
+          <SelectContent side="top">
+            {PAGE_SIZES.map((size) => (
+              <SelectItem key={size} value={`${size}`}>
+                {size}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="flex items-center space-x-6 lg:space-x-8">
+        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+          Page {pagination.pageIndex + 1} of {Math.max(table.getPageCount(), 1)}
+        </div>
         {table.getPageCount() > 1 && (
-          <Pagination size="sm" variant="dark">
-            <Pagination.First onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()} />
-            <Pagination.Prev onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} />
-            {paginationItems(table.getPageCount(), pagination.pageIndex + 1, table.setPageIndex)}
-            <Pagination.Next onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} />
-            <Pagination.Last
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            />
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.setPageIndex(0)}
+                  disabled={!table.getCanPreviousPage()}
+                >
+                  First
+                </Button>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => table.previousPage()}
+                  className={!table.getCanPreviousPage() ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+              {paginationItems(table.getPageCount(), pagination.pageIndex + 1, table.setPageIndex)}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => table.nextPage()}
+                  className={!table.getCanNextPage() ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                  disabled={!table.getCanNextPage()}
+                >
+                  Last
+                </Button>
+              </PaginationItem>
+            </PaginationContent>
           </Pagination>
         )}
-      </>
-      <>
-        <Dropdown style={{ marginBottom: "1em" }}>
-          <Dropdown.Toggle size="sm">Page Size: {pageSize}</Dropdown.Toggle>
-          <Dropdown.Menu>
-            {PAGE_SIZES.map((pageSize) => (
-              <Dropdown.Item
-                size="sm"
-                key={pageSize}
-                onClick={() => {
-                  table.setPageSize(pageSize);
-                  setPageSize(pageSize);
-                }}
-              >
-                Page Size {pageSize}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-      </>
-    </>
+      </div>
+    </div>
   );
 
   return (
-    <>
-      <div className="p-2">
-        <Table size="sm" striped bordered hover>
-          <thead className="table-dark">
+    <div className="w-full">
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
+                  <TableHead key={header.id} className="font-medium">
                     <div
-                      className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
+                      className={header.column.getCanSort() ? "flex items-center cursor-pointer select-none hover:bg-accent rounded-sm p-1 -m-1" : ""}
                       onClick={header.column.getToggleSortingHandler()}
                       title={
                         header.column.getCanSort()
@@ -144,29 +193,51 @@ export default function KopiaTable({ columns, data }) {
                       }
                     >
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      {{
-                        asc: " 🔼",
-                        desc: " 🔽",
-                      }[header.column.getIsSorted()] ?? null}
+                      {header.column.getCanSort() && (
+                        <span className="ml-2">
+                          {header.column.getIsSorted() === "asc" && (
+                            <ChevronUp className="h-4 w-4" />
+                          )}
+                          {header.column.getIsSorted() === "desc" && (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                          {!header.column.getIsSorted() && (
+                            <ChevronsUpDown className="h-4 w-4 opacity-50" />
+                          )}
+                        </span>
+                      )}
                     </div>
-                  </th>
+                  </TableHead>
                 ))}
-              </tr>
+              </TableRow>
             ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
         </Table>
-        {paginationUI}
       </div>
-    </>
+      {paginationUI}
+    </div>
   );
 }
 
