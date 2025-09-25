@@ -4,17 +4,17 @@
 
 @layer base {
   :root {
-    /* shadcn/ui color system - HSL values */
+    /* Default light theme - shadcn/ui color system */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 212 100% 47%;
+    --primary: 217 91% 60%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
+    --secondary: 142 76% 36%;
+    --secondary-foreground: 210 40% 98%;
     --muted: 210 40% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96%;
@@ -23,115 +23,31 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 212 100% 47%;
+    --ring: 217 91% 60%;
     --radius: 0.5rem;
-
-    /* Legacy Bootstrap/Kopia color system - HEX values for backward compatibility */
-    --background-color: #ffffff;
-    --color-primary: #0066ff;
-    --color-secondary: #6c757d;
-    --color-warning: #f59e0b;
-    --color-success: #10b981;
-    --color-submit: #0066ff;
-    --color-select: #f8f9fa;
-    --color-link: #0066ff;
-    --color-light: #6c757d;
-    --color-text: #ffffff;
-    --color-text-body: #111827;
-    --color-text-nav: #111827;
-    --color-text-form-help: #6c757d;
-    --color-error: #ef4444;
-    --color-danger: #ef4444;
-
-    /* Badge colors */
-    --color-badge-warning: #f59e0b;
-    --color-badge-primary: #0066ff;
-    --color-badge-secondary: #6c757d;
-    --color-badge-info: #06b6d4;
-    --color-badge-danger: #ef4444;
-    --color-badge-success: #10b981;
-
-    /* Kopia specific colors */
-    --kopia-blue: #0066ff;
-    --kopia-gray: #6c757d;
-    --kopia-green: #10b981;
-    --kopia-red: #ef4444;
-    --kopia-yellow: #f59e0b;
   }
 
+  /* Dark theme - high contrast */
   .dark {
-    /* shadcn/ui dark theme - HSL values */
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 212 100% 56%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212 100% 56%;
-
-    /* Legacy Bootstrap/Kopia dark theme - HEX values */
-    --background-color: #0a0a0a;
-    --color-primary: #3b82f6;
-    --color-secondary: #6b7280;
-    --color-warning: #f59e0b;
-    --color-success: #10b981;
-    --color-submit: #3b82f6;
-    --color-select: #1f2937;
-    --color-link: #60a5fa;
-    --color-light: #6b7280;
-    --color-text: #f3f4f6;
-    --color-text-body: #f3f4f6;
-    --color-text-nav: #f3f4f6;
-    --color-text-form-help: #9ca3af;
-    --color-error: #ef4444;
-    --color-danger: #ef4444;
-
-    /* Badge colors - dark theme */
-    --color-badge-warning: #f59e0b;
-    --color-badge-primary: #3b82f6;
-    --color-badge-secondary: #6b7280;
-    --color-badge-info: #06b6d4;
-    --color-badge-danger: #ef4444;
-    --color-badge-success: #10b981;
-
-    /* Kopia specific colors - dark theme */
-    --kopia-blue: #3b82f6;
-    --kopia-gray: #6b7280;
-    --kopia-green: #10b981;
-    --kopia-red: #ef4444;
-    --kopia-yellow: #f59e0b;
-  }
-
-  /* Ocean theme variant */
-  .ocean {
-    --primary: 221 83.2% 53.3%;
-    --color-primary: #0066ff;
-    --color-secondary: #0077b6;
-    --color-warning: #f59e0b;
-    --color-success: #0077b6;
-    --kopia-blue: #03045e;
-  }
-
-  /* Pastel theme variant */
-  .pastel {
-    --primary: 180 100% 85%;
-    --color-primary: #9bf6ff;
-    --color-secondary: #bdb2ff;
-    --color-warning: #ffd6a5;
-    --color-success: #caffbf;
-    --kopia-blue: #9bf6ff;
+    --background: 0 0% 8%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 217 91% 60%;
   }
 }
 
@@ -139,28 +55,32 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
-    background-color: var(--background-color);
-    color: var(--color-text-body);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    margin: 0;
+  }
+
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
   }
 
   /* Smooth transitions for theme changes */
   * {
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
+}
 
-  /* Custom Kopia-specific utility classes */
-  .kopia-text-primary {
-    color: var(--kopia-blue);
+/* Critical button text visibility fixes */
+@layer components {
+  .light .bg-primary,
+  .dark .bg-primary {
+    color: white !important;
   }
 
-  .kopia-bg-primary {
-    background-color: var(--kopia-blue);
-    color: var(--color-text);
-  }
-
-  .kopia-border-primary {
-    border-color: var(--kopia-blue);
+  .light .text-primary-foreground,
+  .dark .text-primary-foreground {
+    color: white !important;
   }
 }

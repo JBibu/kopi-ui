@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Sun, Moon, Waves, Heart } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,10 +25,6 @@ const ThemeIcon = ({ theme, size = 16 }) => {
       return <Sun {...iconProps} />;
     case 'dark':
       return <Moon {...iconProps} />;
-    case 'ocean':
-      return <Waves {...iconProps} />;
-    case 'pastel':
-      return <Heart {...iconProps} />;
     default:
       return <Sun {...iconProps} />;
   }

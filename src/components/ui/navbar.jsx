@@ -28,7 +28,7 @@ const NavbarBrand = ({ children, to = "/", className, ...props }) => (
 
 const NavbarNav = ({ children, className, ...props }) => (
   <div
-    className={cn("hidden md:flex items-center space-x-1", className)}
+    className={cn("flex items-center space-x-1", className)}
     {...props}
   >
     {children}

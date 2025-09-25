@@ -16,9 +16,10 @@ export const ThemeProvider = ({ children }) => {
 
   // Load theme from localStorage on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('kopia-theme') || 'light';
-    setTheme(savedTheme);
-    applyTheme(savedTheme);
+    const savedTheme = localStorage.getItem('kopia-theme');
+    const initialTheme = savedTheme && (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'light';
+    setTheme(initialTheme);
+    applyTheme(initialTheme);
   }, []);
 
   // Apply theme to document
@@ -26,15 +27,10 @@ export const ThemeProvider = ({ children }) => {
     const root = document.documentElement;
 
     // Remove all existing theme classes
-    root.classList.remove('light', 'dark', 'ocean', 'pastel');
+    root.classList.remove('light', 'dark');
 
     // Add new theme class
     root.classList.add(newTheme);
-
-    // For dark theme, also add the dark class for shadcn/ui components
-    if (newTheme === 'dark') {
-      root.classList.add('dark');
-    }
   };
 
   // Change theme
@@ -46,21 +42,14 @@ export const ThemeProvider = ({ children }) => {
 
   // Get available themes
   const themes = [
-    { value: 'light', label: 'Light', description: 'Clean and bright interface' },
-    { value: 'dark', label: 'Dark', description: 'Easy on the eyes' },
-    { value: 'ocean', label: 'Ocean', description: 'Deep blues and teals' },
-    { value: 'pastel', label: 'Pastel', description: 'Soft and colorful' }
+    { value: 'light', label: 'Light', description: 'Clean and modern interface' },
+    { value: 'dark', label: 'Dark', description: 'Dark theme with high contrast' }
   ];
-
-  // System theme detection
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
   const value = {
     theme,
     themes,
-    systemTheme,
-    changeTheme,
-    isDark: theme === 'dark'
+    changeTheme
   };
 
   return (

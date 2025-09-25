@@ -1,8 +1,7 @@
-import "./css/Theme.css";
-import "./css/App.css";
 import "./css/globals.css";
+import "./css/App.css";
 import axios from "axios";
-import { React, Component } from "react";
+import React, { Component } from "react";
 import { BrowserRouter as Router, NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { Navbar, NavbarBrand, NavbarNav, NavbarLink } from "./components/ui/navbar";
 import { ThemeSelector } from "./components/ThemeSelector";
