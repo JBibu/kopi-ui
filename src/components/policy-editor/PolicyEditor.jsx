@@ -15,7 +15,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
-import { Accordion } from "../ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { handleChange, stateProperty, valueToNumber } from "../../forms";
 import { StringList } from "../../forms/StringList";
 import { LogDetailSelector } from "../../forms/LogDetailSelector";
@@ -283,13 +283,13 @@ export class PolicyEditor extends Component {
     return (
       <>
         <form className="policy-editor" onSubmit={this.saveChanges}>
-          <Accordion defaultActiveKey="scheduling">
-            <Accordion.Item eventKey="retention">
-              <Accordion.Header>
+          <Accordion type="multiple" defaultValue={["scheduling"]}>
+            <AccordionItem value="retention">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faCalendarTimes} />
                 &nbsp;Snapshot Retention
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <SectionHeaderRow />
                 <div className="space-y-4">
                   <LabelColumn
@@ -373,14 +373,14 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "retention.ignoreIdenticalSnapshots")}
                 </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="files">
-              <Accordion.Header>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="files">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faFolderOpen} />
                 &nbsp;Files
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <SectionHeaderRow />
                 <div className="space-y-4">
                   <LabelColumn
@@ -459,14 +459,14 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveBooleanValue(this, "files.oneFileSystem")}
                 </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="errors">
-              <Accordion.Header>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="errors">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faExclamationTriangle} />
                 &nbsp;Error Handling
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <SectionHeaderRow />
                 <div className="space-y-4">
                   <LabelColumn name="Ignore Directory Errors" help="Treat directory read errors as non-fatal." />
@@ -492,14 +492,14 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveBooleanValue(this, "errorHandling.ignoreUnknownTypes")}
                 </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="compression">
-              <Accordion.Header>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="compression">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faFileArchive} />
                 &nbsp;Compression
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <SectionHeaderRow />
                 <div className="space-y-4">
                   <LabelColumn
@@ -567,14 +567,14 @@ export class PolicyEditor extends Component {
                   </WideValueColumn>
                   {EffectiveTextAreaValue(this, "compression.neverCompress")}
                 </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="scheduling">
-              <Accordion.Header>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="scheduling">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faClock} />
                 &nbsp;Scheduling
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <SectionHeaderRow />
                 <div className="space-y-4">
                   <LabelColumn
@@ -662,14 +662,14 @@ export class PolicyEditor extends Component {
                   <ValueColumn></ValueColumn>
                   <EffectiveValueColumn>{UpcomingSnapshotTimes(this.state?.resolved)}</EffectiveValueColumn>
                 </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="upload">
-              <Accordion.Header>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="upload">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faUpload} />
                 &nbsp;Upload
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <SectionHeaderRow />
                 <div className="space-y-4">
                   <LabelColumn
@@ -698,14 +698,14 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "upload.maxParallelFileReads")}
                 </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="snapshot-actions">
-              <Accordion.Header>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="snapshot-actions">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faCogs} />
                 &nbsp;Snapshot Actions
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <SectionHeaderRow />
                 {ActionRowScript(
                   this,
@@ -724,14 +724,14 @@ export class PolicyEditor extends Component {
                 )}
                 {ActionRowTimeout(this, "actions.afterSnapshotRoot.timeout")}
                 {ActionRowMode(this, "actions.afterSnapshotRoot.mode")}
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="folder-actions">
-              <Accordion.Header>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="folder-actions">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faCog} />
                 &nbsp;Folder Actions
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <SectionHeaderRow />
                 {ActionRowScript(this, "actions.beforeFolder.script", "Before Folder", "Script to run before folder")}
                 {ActionRowTimeout(this, "actions.beforeFolder.timeout")}
@@ -740,14 +740,14 @@ export class PolicyEditor extends Component {
                 {ActionRowScript(this, "actions.afterFolder.script", "After Folder", "Script to run after folder")}
                 {ActionRowTimeout(this, "actions.afterFolder.timeout")}
                 {ActionRowMode(this, "actions.afterFolder.mode")}
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="logging">
-              <Accordion.Header>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="logging">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faFileAlt} />
                 &nbsp;Logging
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <SectionHeaderRow />
                 <div className="space-y-4">
                   <LabelColumn name="Directory Snapshotted" help="Log verbosity when a directory is snapshotted" />
@@ -788,14 +788,14 @@ export class PolicyEditor extends Component {
                   <WideValueColumn>{LogDetailSelector(this, "policy.logging.entries.cacheMiss")}</WideValueColumn>
                   {EffectiveValue(this, "logging.entries.cacheMiss")}
                 </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="other">
-              <Accordion.Header>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="other">
+              <AccordionTrigger>
                 <FontAwesomeIcon icon={faMagic} />
                 &nbsp;Other
-              </Accordion.Header>
-              <Accordion.Body>
+              </AccordionTrigger>
+              <AccordionContent>
                 <div className="space-y-4">
                   <LabelColumn
                     name="Disable Parent Policy Evaluation"
@@ -809,8 +809,8 @@ export class PolicyEditor extends Component {
                     <pre className="debug-json">{JSON.stringify(this.state.policy, null, 4)}</pre>
                   </WideValueColumn>
                 </div>
-              </Accordion.Body>
-            </Accordion.Item>
+              </AccordionContent>
+            </AccordionItem>
           </Accordion>
 
           {!this.props.embedded && (

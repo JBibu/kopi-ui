@@ -16,7 +16,7 @@ function optionalBooleanValue(target) {
 
 export function OptionalBoolean(component, label, name, defaultLabel) {
   const value = stateProperty(component, name);
-  const displayValue = value === true ? "true" : value === false ? "false" : "";
+  const displayValue = value === true ? "true" : value === false ? "false" : "default";
 
   return (
     <div className="space-y-2">
@@ -31,7 +31,7 @@ export function OptionalBoolean(component, label, name, defaultLabel) {
           const event = {
             target: {
               name: name,
-              value: value
+              value: value === "default" ? "" : value
             }
           };
           component.handleChange(event, optionalBooleanValue);
@@ -41,7 +41,7 @@ export function OptionalBoolean(component, label, name, defaultLabel) {
           <SelectValue placeholder={defaultLabel} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">{defaultLabel}</SelectItem>
+          <SelectItem value="default">{defaultLabel}</SelectItem>
           <SelectItem value="true">yes</SelectItem>
           <SelectItem value="false">no</SelectItem>
         </SelectContent>
