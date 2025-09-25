@@ -13,6 +13,7 @@ export default defineConfig(() => {
     test: {
       globals: true,
       environment: "jsdom",
+      testTimeout: 10000,
       coverage: {
         exclude: ["**/build/**", "src/setupProxy.js", ...coverageConfigDefaults.exclude],
       },
