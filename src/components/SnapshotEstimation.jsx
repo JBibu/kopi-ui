@@ -1,7 +1,8 @@
 import { faChevronCircleDown, faChevronCircleUp, faStopCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import React, { Component, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback, useMemo } from "react";
+import PropTypes from "prop-types";
 import { Button } from "./ui/button";
 import { Spinner } from "./ui/spinner";
 import { Logs } from "./Logs";
@@ -9,145 +10,196 @@ import { sizeDisplayName } from "../utils/formatutils";
 import { redirect } from "../utils/uiutil";
 import { cancelTask } from "../utils/taskutil";
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-export class SnapshotEstimationInternal extends Component {
-  constructor() {
-    super();
-    this.state = {
-      isLoading: true,
-      error: null,
-      showLog: false,
+// Modern functional component with hooks and performance optimizations
+export function SnapshotEstimation(props) {
+  const params = useParams();
+  const { bytesStringBase2 } = useContext(UIPreferencesContext);
+
+  const [task, setTask] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showLog, setShowLog] = useState(false);
+
+  // Memoized task ID calculation
+  const taskID = useMemo(() => {
+    return props.taskID || params.tid;
+  }, [props.taskID, params.tid]);
+
+  // Memoized fetch function to prevent unnecessary re-creations
+  const fetchTask = useCallback(async () => {
+    try {
+      const result = await axios.get(`/api/v1/tasks/${taskID}`);
+      setTask(result.data);
+      setIsLoading(false);
+
+      // Return whether task is still running for interval management
+      return !result.data.endTime;
+    } catch (error) {
+      redirect(error);
+      setError(error);
+      setIsLoading(false);
+      return false;
+    }
+  }, [taskID]);
+
+  // Effect for initial fetch and polling
+  useEffect(() => {
+    if (!taskID) return;
+
+    let intervalId;
+
+    const startPolling = async () => {
+      const stillRunning = await fetchTask();
+
+      if (stillRunning) {
+        // Only continue polling if task is still running
+        intervalId = setInterval(async () => {
+          const isRunning = await fetchTask();
+          if (!isRunning && intervalId) {
+            clearInterval(intervalId);
+          }
+        }, 2000);
+      }
     };
 
-    this.taskID = this.taskID.bind(this);
-    this.fetchTask = this.fetchTask.bind(this);
+    startPolling();
 
-    // poll frequently, we will stop as soon as the task ends.
-    this.interval = window.setInterval(() => this.fetchTask(this.props), 2000); // Reduced from 500ms to 2s for performance
-  }
+    // Cleanup interval on unmount or taskID change
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [taskID, fetchTask]);
 
-  componentDidMount() {
-    this.setState({
-      isLoading: true,
-    });
+  // Memoized task status description
+  const taskStatusDescription = useMemo(() => {
+    if (!task) return null;
 
-    this.fetchTask(this.props);
-  }
-
-  componentWillUnmount() {
-    if (this.interval) {
-      window.clearInterval(this.interval);
-    }
-  }
-
-  taskID(props) {
-    return props.taskID || props.params.tid;
-  }
-
-  fetchTask(props) {
-    axios
-      .get("/api/v1/tasks/" + this.taskID(props))
-      .then((result) => {
-        this.setState({
-          task: result.data,
-          isLoading: false,
-        });
-
-        if (result.data.endTime) {
-          window.clearInterval(this.interval);
-          this.interval = null;
-        }
-      })
-      .catch((error) => {
-        redirect(error);
-        this.setState({
-          error,
-          isLoading: false,
-        });
-      });
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      this.fetchTask(this.props);
-    }
-  }
-
-  taskStatusDescription(task) {
     if (task.status === "RUNNING") {
-      return (
-        <>
-          <Spinner size="sm" />
-        </>
-      );
+      return <Spinner size="sm" />;
     }
-
     if (task.status === "SUCCESS") {
       return "Total";
     }
-
     if (task.status === "CANCELED") {
       return "(Canceled)";
     }
-
     return task.status;
-  }
+  }, [task?.status]);
 
-  render() {
-    const { task, isLoading, error } = this.state;
-    const { bytesStringBase2 } = this.context;
-    if (error) {
-      return <p>{error.message}</p>;
+  // Memoized cancel handler
+  const handleCancel = useCallback(() => {
+    if (task?.id) {
+      cancelTask(task.id);
     }
+  }, [task?.id]);
 
-    if (isLoading) {
-      return <p>Loading ...</p>;
-    }
+  // Memoized log toggle handlers
+  const handleShowLog = useCallback(() => setShowLog(true), []);
+  const handleHideLog = useCallback(() => setShowLog(false), []);
 
+  // Error state
+  if (error) {
     return (
-      <>
-        {task.counters && (
-          <p className="estimateResults text-sm text-muted-foreground">
-            {this.taskStatusDescription(task)} Bytes:{" "}
-            <b>{sizeDisplayName(task.counters["Bytes"]?.value, bytesStringBase2)}</b> (
-            <b>{sizeDisplayName(task.counters["Excluded Bytes"]?.value, bytesStringBase2)}</b> excluded) Files:{" "}
-            <b>{task.counters["Files"]?.value}</b> (<b>{task.counters["Excluded Files"]?.value}</b> excluded)
-            Directories: <b>{task.counters["Directories"]?.value}</b> (
-            <b>{task.counters["Excluded Directories"]?.value}</b> excluded) Errors:{" "}
-            <b>{task.counters["Errors"]?.value}</b> (<b>{task.counters["Ignored Errors"]?.value}</b> ignored)
-          </p>
-        )}
-        {task.status === "RUNNING" && (
-          <>
-            &nbsp;
-            <Button size="sm" variant="outline" onClick={() => cancelTask(task.id)}>
-              <FontAwesomeIcon icon={faStopCircle} color="red" /> Cancel
-            </Button>
-          </>
-        )}
-        {this.state.showLog ? (
-          <>
-            <Button size="sm" variant="outline" onClick={() => this.setState({ showLog: false })}>
-              <FontAwesomeIcon icon={faChevronCircleUp} /> Hide Log
-            </Button>
-            <Logs taskID={this.taskID(this.props)} />
-          </>
-        ) : (
-          <Button size="sm" variant="outline" onClick={() => this.setState({ showLog: true })}>
-            <FontAwesomeIcon icon={faChevronCircleDown} /> Show Log
-          </Button>
-        )}
-      </>
+      <div className="text-red-600 text-sm" role="alert">
+        Error: {error.message}
+      </div>
     );
   }
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Spinner size="sm" />
+        Loading task details...
+      </div>
+    );
+  }
+
+  // No task data
+  if (!task) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Task Results */}
+      {task.counters && (
+        <div className="text-sm text-muted-foreground" role="status" aria-live="polite">
+          <span className="font-medium">{taskStatusDescription}</span>{" "}
+          <span>
+            Bytes: <strong>{sizeDisplayName(task.counters["Bytes"]?.value, bytesStringBase2)}</strong>{" "}
+            (<strong>{sizeDisplayName(task.counters["Excluded Bytes"]?.value, bytesStringBase2)}</strong> excluded)
+          </span>{" "}
+          <span>
+            Files: <strong>{task.counters["Files"]?.value}</strong>{" "}
+            (<strong>{task.counters["Excluded Files"]?.value}</strong> excluded)
+          </span>{" "}
+          <span>
+            Directories: <strong>{task.counters["Directories"]?.value}</strong>{" "}
+            (<strong>{task.counters["Excluded Directories"]?.value}</strong> excluded)
+          </span>{" "}
+          <span>
+            Errors: <strong>{task.counters["Errors"]?.value}</strong>{" "}
+            (<strong>{task.counters["Ignored Errors"]?.value}</strong> ignored)
+          </span>
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex items-center gap-2">
+        {task.status === "RUNNING" && (
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={handleCancel}
+            aria-label="Cancel task"
+          >
+            <FontAwesomeIcon icon={faStopCircle} className="mr-1" />
+            Cancel
+          </Button>
+        )}
+
+        {/* Log Toggle */}
+        {showLog ? (
+          <>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleHideLog}
+              aria-label="Hide task log"
+              aria-expanded="true"
+              aria-controls="task-logs"
+            >
+              <FontAwesomeIcon icon={faChevronCircleUp} className="mr-1" />
+              Hide Log
+            </Button>
+            <div id="task-logs">
+              <Logs taskID={taskID} />
+            </div>
+          </>
+        ) : (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleShowLog}
+            aria-label="Show task log"
+            aria-expanded="false"
+            aria-controls="task-logs"
+          >
+            <FontAwesomeIcon icon={faChevronCircleDown} className="mr-1" />
+            Show Log
+          </Button>
+        )}
+      </div>
+    </div>
+  );
 }
 
-export function SnapshotEstimation(props) {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = useParams();
-  useContext(UIPreferencesContext);
-
-  return <SnapshotEstimationInternal navigate={navigate} location={location} params={params} {...props} />;
-}
+SnapshotEstimation.propTypes = {
+  taskID: PropTypes.string,
+};

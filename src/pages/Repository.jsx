@@ -1,11 +1,10 @@
 import axios from "axios";
-import React, { Component } from "react";
+import React, { useState, useEffect, useCallback, useContext, useRef } from "react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Spinner } from "../components/ui/spinner";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { handleChange } from "../forms";
 import { SetupRepository } from "../components/SetupRepository";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { cancelTask } from "../utils/taskutil";
@@ -14,275 +13,321 @@ import { faCheck, faChevronCircleDown, faChevronCircleUp, faWindowClose } from "
 import { Logs } from "../components/Logs";
 import { AppContext } from "../contexts/AppContext";
 
-export class Repository extends Component {
-  constructor() {
-    super();
+export function Repository() {
+  const appContext = useContext(AppContext);
+  const isMounted = useRef(true);
 
-    this.state = {
-      status: {},
-      isLoading: true,
-      error: null,
-      provider: "",
-      description: "",
+  const [status, setStatus] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showLog, setShowLog] = useState(false);
+
+  // Setup mounted ref for cleanup
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
     };
+  }, []);
 
-    this.mounted = false;
-    this.disconnect = this.disconnect.bind(this);
-    this.updateDescription = this.updateDescription.bind(this);
-    this.handleChange = handleChange.bind(this);
-    this.fetchStatus = this.fetchStatus.bind(this);
-    this.fetchStatusWithoutSpinner = this.fetchStatusWithoutSpinner.bind(this);
-  }
-
-  componentDidMount() {
-    this.mounted = true;
-    this.fetchStatus(this.props);
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
-
-  fetchStatus() {
-    if (this.mounted) {
-      this.setState({
-        isLoading: true,
-      });
-    }
-
-    this.fetchStatusWithoutSpinner();
-  }
-
-  fetchStatusWithoutSpinner() {
-    axios
-      .get("/api/v1/repo/status")
-      .then((result) => {
-        if (this.mounted) {
-          this.setState({
-            status: result.data,
-            isLoading: false,
-          });
-
-          // Update the app context to reflect the successfully-loaded description.
-          this.context.repositoryDescriptionUpdated(result.data.description);
-
-          if (result.data.initTaskID) {
-            window.setTimeout(() => {
-              this.fetchStatusWithoutSpinner();
-            }, 1000);
-          }
-        }
-      })
-      .catch((error) => {
-        if (this.mounted) {
-          this.setState({
-            error,
-            isLoading: false,
-          });
-        }
-      });
-  }
-
-  disconnect() {
-    this.setState({ isLoading: true });
-    axios
-      .post("/api/v1/repo/disconnect", {})
-      .then((_result) => {
-        this.context.repositoryUpdated(false);
-      })
-      .catch((error) =>
-        this.setState({
-          error,
-          isLoading: false,
-        }),
-      );
-  }
-
-  selectProvider(provider) {
-    this.setState({ provider });
-  }
-
-  updateDescription() {
-    this.setState({
-      isLoading: true,
+  // Memoized fetch functions
+  const fetchStatusWithoutSpinner = useCallback(async () => {
+    const result = await axios.get("/api/v1/repo/status").catch((error) => {
+      if (isMounted.current) {
+        setError(error);
+        setIsLoading(false);
+      }
+      return null;
     });
 
-    axios
-      .post("/api/v1/repo/description", {
-        description: this.state.status.description,
-      })
-      .then((result) => {
-        // Update the app context to reflect the successfully-saved description.
-        this.context.repositoryDescriptionUpdated(result.data.description);
+    if (result?.data && isMounted.current) {
+      setStatus(result.data);
+      setIsLoading(false);
 
-        this.setState({
-          isLoading: false,
-        });
+      // Update the app context to reflect the successfully-loaded description
+      appContext.repositoryDescriptionUpdated(result.data.description);
+
+      if (result.data.initTaskID) {
+        setTimeout(() => {
+          fetchStatusWithoutSpinner();
+        }, 1000);
+      }
+    }
+  }, [appContext]);
+
+  const fetchStatus = useCallback(() => {
+    if (isMounted.current) {
+      setIsLoading(true);
+    }
+    fetchStatusWithoutSpinner();
+  }, [fetchStatusWithoutSpinner]);
+
+  // Memoized action handlers
+  const disconnect = useCallback(async () => {
+    setIsLoading(true);
+    const result = await axios.post("/api/v1/repo/disconnect", {}).catch((error) => {
+      setError(error);
+      setIsLoading(false);
+      return null;
+    });
+
+    if (result) {
+      appContext.repositoryUpdated(false);
+    }
+  }, [appContext]);
+
+
+  const updateDescription = useCallback(async () => {
+    setIsLoading(true);
+
+    const result = await axios
+      .post("/api/v1/repo/description", {
+        description: status.description,
       })
-      .catch((_error) => {
-        this.setState({
-          isLoading: false,
-        });
+      .catch(() => {
+        setIsLoading(false);
+        return null;
       });
+
+    if (result) {
+      // Update the app context to reflect the successfully-saved description
+      appContext.repositoryDescriptionUpdated(result.data.description);
+    }
+    setIsLoading(false);
+  }, [status.description, appContext]);
+
+  // Setup effect on mount
+  useEffect(() => {
+    fetchStatus();
+  }, [fetchStatus]);
+
+  // Handle description input changes
+  const handleDescriptionChange = useCallback((e) => {
+    setStatus((prev) => ({
+      ...prev,
+      description: e.target.value,
+    }));
+  }, []);
+
+  // Error state
+  if (error) {
+    return (
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="text-red-600 text-sm" role="alert">
+          Error: {error.message}
+        </div>
+      </div>
+    );
   }
 
-  render() {
-    let { isLoading, error } = this.state;
-    if (error) {
-      return <p>{error.message}</p>;
-    }
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6 max-w-6xl flex items-center justify-center">
+        <Spinner size="default" />
+      </div>
+    );
+  }
 
-    if (isLoading) {
-      return <Spinner size="default" />;
-    }
-
-    if (this.state.status.initTaskID) {
-      return (
-        <>
-          <h4 className="flex items-center gap-2">
+  // Repository initialization state
+  if (status.initTaskID) {
+    return (
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="space-y-4">
+          <h4 className="flex items-center gap-2 text-xl font-medium">
             <Spinner size="sm" />
             Initializing Repository...
           </h4>
-          {this.state.showLog ? (
-            <>
-              <Button size="sm" variant="outline" onClick={() => this.setState({ showLog: false })}>
-                <FontAwesomeIcon icon={faChevronCircleUp} /> Hide Log
-              </Button>
-              <Logs taskID={this.state.status.initTaskID} />
-            </>
-          ) : (
-            <Button size="sm" variant="outline" onClick={() => this.setState({ showLog: true })}>
-              <FontAwesomeIcon icon={faChevronCircleDown} /> Show Log
-            </Button>
-          )}
-          <hr />
-          <Button
-            size="sm"
-            variant="destructive"
-            title="Cancel"
-            onClick={() => cancelTask(this.state.status.initTaskID)}
-          >
-            <FontAwesomeIcon icon={faWindowClose} /> Cancel Connection
-          </Button>
-        </>
-      );
-    }
 
-    if (this.state.status.connected) {
-      return (
-        <div className="container mx-auto p-6 max-w-6xl">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold mb-2">Repository Status</h1>
-            <div className="flex items-center gap-2 text-green-600">
-              <FontAwesomeIcon icon={faCheck} />
-              <span>Connected To Repository</span>
-            </div>
-          </div>
-          <div className="bg-card border rounded-lg p-6 mb-6">
-            <h2 className="text-lg font-semibold mb-4">Repository Description</h2>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex gap-2">
-                  <Input
-                    autoFocus={true}
-                    className={!this.state.status.description ? 'border-red-500' : ''}
-                    name="status.description"
-                    value={this.state.status.description}
-                    onChange={this.handleChange}
-                    size="sm"
-                  />
-                  <Button data-testid="update-description" size="sm" onClick={this.updateDescription} type="button">
-                    Update Description
-                  </Button>
-                </div>
-                {!this.state.status.description && (
-                  <p className="text-red-500 text-sm">Description Is Required</p>
-                )}
-              </div>
-              {this.state.status.readonly && (
-                <div>
-                  <Badge className="bg-yellow-500 text-yellow-50">
-                    Repository is read-only
-                  </Badge>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="bg-card border rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold">Repository Configuration</h2>
-            {this.state.status.apiServerURL ? (
-              <div className="space-y-2">
-                <Label className="required">Server URL</Label>
-                <Input readOnly defaultValue={this.state.status.apiServerURL} />
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="required">Config File</Label>
-                  <Input readOnly defaultValue={this.state.status.configFile} />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <Label className="required">Provider</Label>
-                    <Input readOnly defaultValue={this.state.status.storage} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="required">Encryption Algorithm</Label>
-                    <Input readOnly defaultValue={this.state.status.encryption} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="required">Hash Algorithm</Label>
-                    <Input readOnly defaultValue={this.state.status.hash} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="required">Splitter Algorithm</Label>
-                    <Input readOnly defaultValue={this.state.status.splitter} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <Label className="required">Repository Format</Label>
-                    <Input readOnly defaultValue={this.state.status.formatVersion} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="required">Error Correction Overhead</Label>
-                    <Input
-                      readOnly
-                      defaultValue={
-                        this.state.status.eccOverheadPercent > 0
-                          ? this.state.status.eccOverheadPercent + "%"
-                          : "Disabled"
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="required">Error Correction Algorithm</Label>
-                    <Input readOnly defaultValue={this.state.status.ecc || "-"} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="required">Internal Compression</Label>
-                    <Input readOnly defaultValue={this.state.status.supportsContentCompression ? "yes" : "no"} />
-                  </div>
-                </div>
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label className="required">Connected as:</Label>
-              <Input readOnly defaultValue={this.state.status.username + "@" + this.state.status.hostname} />
-            </div>
-            <div className="pt-4 flex items-center justify-between">
-              <Button data-testid="disconnect" size="sm" variant="destructive" onClick={this.disconnect}>
-                Disconnect
+          <div className="flex gap-2">
+            {showLog ? (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowLog(false)}
+                aria-expanded="true"
+                aria-controls="init-logs"
+              >
+                <FontAwesomeIcon icon={faChevronCircleUp} className="mr-2" />
+                Hide Log
               </Button>
-              <CLIEquivalent command="repository status" />
+            ) : (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowLog(true)}
+                aria-expanded="false"
+                aria-controls="init-logs"
+              >
+                <FontAwesomeIcon icon={faChevronCircleDown} className="mr-2" />
+                Show Log
+              </Button>
+            )}
+
+            <Button
+              size="sm"
+              variant="destructive"
+              title="Cancel initialization"
+              onClick={() => cancelTask(status.initTaskID)}
+              aria-label="Cancel repository initialization"
+            >
+              <FontAwesomeIcon icon={faWindowClose} className="mr-2" />
+              Cancel Connection
+            </Button>
+          </div>
+
+          {showLog && (
+            <div id="init-logs">
+              <Logs taskID={status.initTaskID} />
             </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Connected repository view
+  if (status.connected) {
+    return (
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Repository Status</h1>
+          <div className="flex items-center gap-2 text-green-600">
+            <FontAwesomeIcon icon={faCheck} />
+            <span>Connected To Repository</span>
           </div>
         </div>
-      );
-    }
 
-    return <SetupRepository />;
+        <div className="bg-card border rounded-lg p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4">Repository Description</h2>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <Input
+                  autoFocus={true}
+                  className={!status.description ? 'border-red-500 focus:border-red-500' : ''}
+                  value={status.description || ''}
+                  onChange={handleDescriptionChange}
+                  size="sm"
+                  placeholder="Enter repository description"
+                  aria-label="Repository description"
+                  aria-invalid={!status.description}
+                  aria-describedby={!status.description ? 'description-error' : undefined}
+                />
+                <Button
+                  data-testid="update-description"
+                  size="sm"
+                  onClick={updateDescription}
+                  type="button"
+                  disabled={!status.description}
+                  aria-label="Update repository description"
+                >
+                  Update Description
+                </Button>
+              </div>
+              {!status.description && (
+                <p className="text-red-500 text-sm" id="description-error" role="alert">
+                  Description Is Required
+                </p>
+              )}
+            </div>
+            {status.readonly && (
+              <div>
+                <Badge className="bg-yellow-500 text-yellow-50" role="status">
+                  Repository is read-only
+                </Badge>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="bg-card border rounded-lg p-6 space-y-4">
+          <h2 className="text-lg font-semibold">Repository Configuration</h2>
+          {status.apiServerURL ? (
+            <div className="space-y-2">
+              <Label className="required">Server URL</Label>
+              <Input readOnly value={status.apiServerURL} aria-label="Server URL" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="required">Config File</Label>
+                <Input readOnly value={status.configFile || ''} aria-label="Configuration file path" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label className="required">Provider</Label>
+                  <Input readOnly value={status.storage || ''} aria-label="Storage provider" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="required">Encryption Algorithm</Label>
+                  <Input readOnly value={status.encryption || ''} aria-label="Encryption algorithm" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="required">Hash Algorithm</Label>
+                  <Input readOnly value={status.hash || ''} aria-label="Hash algorithm" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="required">Splitter Algorithm</Label>
+                  <Input readOnly value={status.splitter || ''} aria-label="Splitter algorithm" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label className="required">Repository Format</Label>
+                  <Input readOnly value={status.formatVersion || ''} aria-label="Repository format version" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="required">Error Correction Overhead</Label>
+                  <Input
+                    readOnly
+                    value={
+                      status.eccOverheadPercent > 0
+                        ? status.eccOverheadPercent + "%"
+                        : "Disabled"
+                    }
+                    aria-label="Error correction overhead"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="required">Error Correction Algorithm</Label>
+                  <Input readOnly value={status.ecc || "-"} aria-label="Error correction algorithm" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="required">Internal Compression</Label>
+                  <Input
+                    readOnly
+                    value={status.supportsContentCompression ? "yes" : "no"}
+                    aria-label="Internal compression support"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="space-y-2">
+            <Label className="required">Connected as:</Label>
+            <Input
+              readOnly
+              value={status.username + "@" + status.hostname}
+              aria-label="Connected user and hostname"
+            />
+          </div>
+          <div className="pt-4 flex items-center justify-between">
+            <Button
+              data-testid="disconnect"
+              size="sm"
+              variant="destructive"
+              onClick={disconnect}
+              aria-label="Disconnect from repository"
+            >
+              Disconnect
+            </Button>
+            <CLIEquivalent command="repository status" />
+          </div>
+        </div>
+      </div>
+    );
   }
-}
 
-Repository.contextType = AppContext;
+  // Default case: show repository setup
+  return <SetupRepository />;
+}

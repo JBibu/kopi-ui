@@ -1,7 +1,7 @@
 import "./css/globals.css";
 import "./css/App.css";
 import axios from "axios";
-import React, { Component } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { BrowserRouter as Router, NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { Navbar, NavbarBrand, NavbarLink } from "./components/ui/navbar";
 import { ThemeSelector } from "./components/ThemeSelector";
@@ -20,169 +20,167 @@ import { AppContext } from "./contexts/AppContext";
 import { UIPreferenceProvider } from "./contexts/UIPreferencesContext";
 import { ThemeProvider } from "./components/theme-provider";
 
-export default class App extends Component {
-  constructor() {
-    super();
+export default function App() {
+  const [runningTaskCount, setRunningTaskCount] = useState(0);
+  const [isFetching, setIsFetching] = useState(false);
+  const [repoDescription, setRepoDescription] = useState("");
+  const [isRepositoryConnected, setIsRepositoryConnected] = useState(false);
 
-    this.state = {
-      runningTaskCount: 0,
-      isFetching: false,
-      repoDescription: "",
-      isRepositoryConnected: false,
-    };
-
-    this.fetchTaskSummary = this.fetchTaskSummary.bind(this);
-    this.repositoryUpdated = this.repositoryUpdated.bind(this);
-    this.repositoryDescriptionUpdated = this.repositoryDescriptionUpdated.bind(this);
-    this.fetchInitialRepositoryDescription = this.fetchInitialRepositoryDescription.bind(this);
-
+  // Set up CSRF token on mount
+  useEffect(() => {
     const tok = document.head.querySelector('meta[name="kopia-csrf-token"]');
     if (tok && tok.content) {
       axios.defaults.headers.common["X-Kopia-Csrf-Token"] = tok.content;
     } else {
       axios.defaults.headers.common["X-Kopia-Csrf-Token"] = "-";
     }
-  }
+  }, []);
 
-  componentDidMount() {
+  // Memoized fetch functions to prevent unnecessary re-creations
+  const fetchInitialRepositoryDescription = useCallback(async () => {
+    const result = await axios.get("/api/v1/repo/status").catch(() => null);
+    if (result?.data?.description) {
+      setRepoDescription(result.data.description);
+      setIsRepositoryConnected(result.data.connected);
+    }
+  }, []);
+
+  const fetchTaskSummary = useCallback(async () => {
+    if (isFetching) return;
+
+    setIsFetching(true);
+    const result = await axios.get("/api/v1/tasks-summary").catch(() => null);
+
+    if (result?.data) {
+      setRunningTaskCount(result.data["RUNNING"] || 0);
+    } else {
+      setRunningTaskCount(-1);
+    }
+
+    setIsFetching(false);
+  }, [isFetching]);
+
+  // Setup effects on mount
+  useEffect(() => {
     const av = document.getElementById("appVersion");
     if (av) {
-      // show app version after mounting the component to avoid flashing of unstyled content.
+      // Show app version after mounting the component to avoid flashing of unstyled content
       av.style.display = "block";
     }
 
-    this.fetchInitialRepositoryDescription();
-    this.taskSummaryInterval = window.setInterval(this.fetchTaskSummary, 5000);
-  }
+    fetchInitialRepositoryDescription();
+    const taskSummaryInterval = setInterval(fetchTaskSummary, 5000);
 
-  fetchInitialRepositoryDescription() {
-    axios
-      .get("/api/v1/repo/status")
-      .then((result) => {
-        if (result.data.description) {
-          this.setState({
-            repoDescription: result.data.description,
-            isRepositoryConnected: result.data.connected,
-          });
-        }
-      })
-      .catch((_) => {
-        /* ignore */
-      });
-  }
+    return () => {
+      clearInterval(taskSummaryInterval);
+    };
+  }, [fetchInitialRepositoryDescription, fetchTaskSummary]);
 
-  fetchTaskSummary() {
-    if (!this.state.isFetching) {
-      this.setState({ isFetching: true });
-      axios
-        .get("/api/v1/tasks-summary")
-        .then((result) => {
-          this.setState({
-            isFetching: false,
-            runningTaskCount: result.data["RUNNING"] || 0,
-          });
-        })
-        .catch((_) => {
-          this.setState({ isFetching: false, runningTaskCount: -1 });
-        });
-    }
-  }
-
-  componentWillUnmount() {
-    window.clearInterval(this.taskSummaryInterval);
-  }
-
-  // this is invoked via AppContext whenever repository is connected, disconnected, etc.
-  repositoryUpdated(isConnected) {
-    this.setState({ isRepositoryConnected: isConnected });
+  // Context methods - these are called via AppContext
+  const repositoryUpdated = useCallback((isConnected) => {
+    setIsRepositoryConnected(isConnected);
     if (isConnected) {
       window.location.replace("/snapshots");
     } else {
       window.location.replace("/repo");
     }
-  }
+  }, []);
 
-  repositoryDescriptionUpdated(desc) {
-    this.setState({
-      repoDescription: desc,
-    });
-  }
+  const repositoryDescriptionUpdated = useCallback((desc) => {
+    setRepoDescription(desc);
+  }, []);
 
-  render() {
-    const { uiPrefs, runningTaskCount, isRepositoryConnected } = this.state;
+  // Create context value with memoized object
+  const contextValue = {
+    runningTaskCount,
+    isFetching,
+    repoDescription,
+    isRepositoryConnected,
+    fetchTaskSummary,
+    repositoryUpdated,
+    repositoryDescriptionUpdated,
+    fetchInitialRepositoryDescription,
+  };
 
-    return (
-      <Router>
-        <ThemeProvider>
-          <AppContext.Provider value={this}>
-            <UIPreferenceProvider initalValue={uiPrefs}>
-              <Navbar>
-                <NavbarBrand to="/">
-                  <img src="/kopia-flat.svg" className="h-8 w-8" alt="Kopia logo" />
-                  <span className="text-lg font-semibold">Kopia</span>
-                </NavbarBrand>
+  return (
+    <Router>
+      <ThemeProvider>
+        <AppContext.Provider value={contextValue}>
+          <UIPreferenceProvider>
+            <Navbar>
+              <NavbarBrand to="/">
+                <img src="/kopia-flat.svg" className="h-8 w-8" alt="Kopia logo" />
+                <span className="text-lg font-semibold">Kopia</span>
+              </NavbarBrand>
 
-                {/* Left-aligned Navigation Links */}
-                <div className="flex items-center space-x-1 ml-8">
-                  <NavbarLink
-                    testId="tab-snapshots"
-                    to="/snapshots"
-                    disabled={!isRepositoryConnected}
-                    title={!isRepositoryConnected ? "Repository is not connected" : ""}
-                    className="font-bold"
-                  >
-                    Snapshots
-                  </NavbarLink>
-                  <NavbarLink
-                    testId="tab-policies"
-                    to="/policies"
-                    disabled={!isRepositoryConnected}
-                    title={!isRepositoryConnected ? "Repository is not connected" : ""}
-                    className="font-bold"
-                  >
-                    Policies
-                  </NavbarLink>
-                  <NavbarLink
-                    testId="tab-tasks"
-                    to="/tasks"
-                    disabled={!isRepositoryConnected}
-                    title={!isRepositoryConnected ? "Repository is not connected" : ""}
-                    className="font-bold"
-                  >
-                    Tasks
-                    {runningTaskCount > 0 && (
-                      <span className="ml-1 px-2 py-1 text-xs bg-primary text-primary-foreground rounded-full">
-                        {runningTaskCount}
-                      </span>
-                    )}
-                  </NavbarLink>
-                  <NavbarLink testId="tab-repo" to="/repo" className="font-bold">
-                    Repository
-                  </NavbarLink>
-                  <NavbarLink testId="tab-preferences" to="/preferences" className="font-bold">
-                    Preferences
-                  </NavbarLink>
-                </div>
-
-                {/* Spacer to push right section to the right */}
-                <div className="flex-1"></div>
-
-                {/* Right Section: Repository Status + Theme Selector */}
-                <div className="flex items-center gap-3">
-                  {this.state.repoDescription && (
-                    <NavLink
-                      to="/repo"
-                      className="inline-flex items-center gap-2 px-2 py-1 rounded-md bg-background/50 border border-border/50 text-inherit no-underline hover:border-primary/50 hover:bg-accent/50"
-                    >
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0"></div>
-                      <span className="text-xs font-bold text-foreground">
-                        {this.state.repoDescription}
-                      </span>
-                    </NavLink>
+              {/* Left-aligned Navigation Links */}
+              <div className="flex items-center space-x-1 ml-8">
+                <NavbarLink
+                  testId="tab-snapshots"
+                  to="/snapshots"
+                  disabled={!isRepositoryConnected}
+                  title={!isRepositoryConnected ? "Repository is not connected" : ""}
+                  className="font-bold"
+                  aria-label="Snapshots page"
+                >
+                  Snapshots
+                </NavbarLink>
+                <NavbarLink
+                  testId="tab-policies"
+                  to="/policies"
+                  disabled={!isRepositoryConnected}
+                  title={!isRepositoryConnected ? "Repository is not connected" : ""}
+                  className="font-bold"
+                  aria-label="Policies page"
+                >
+                  Policies
+                </NavbarLink>
+                <NavbarLink
+                  testId="tab-tasks"
+                  to="/tasks"
+                  disabled={!isRepositoryConnected}
+                  title={!isRepositoryConnected ? "Repository is not connected" : ""}
+                  className="font-bold"
+                  aria-label={`Tasks page${runningTaskCount > 0 ? ` (${runningTaskCount} running)` : ''}`}
+                >
+                  Tasks
+                  {runningTaskCount > 0 && (
+                    <span className="ml-1 px-2 py-1 text-xs bg-primary text-primary-foreground rounded-full" aria-hidden="true">
+                      {runningTaskCount}
+                    </span>
                   )}
-                  <ThemeSelector />
-                </div>
-              </Navbar>
+                </NavbarLink>
+                <NavbarLink testId="tab-repo" to="/repo" className="font-bold" aria-label="Repository page">
+                  Repository
+                </NavbarLink>
+                <NavbarLink testId="tab-preferences" to="/preferences" className="font-bold" aria-label="Preferences page">
+                  Preferences
+                </NavbarLink>
+              </div>
+
+              {/* Spacer to push right section to the right */}
+              <div className="flex-1"></div>
+
+              {/* Right Section: Repository Status + Theme Selector */}
+              <div className="flex items-center gap-3">
+                {repoDescription && (
+                  <NavLink
+                    to="/repo"
+                    className="inline-flex items-center gap-2 px-2 py-1 rounded-md bg-background/50 border border-border/50 text-inherit no-underline hover:border-primary/50 hover:bg-accent/50"
+                    aria-label={`Repository status: ${repoDescription}`}
+                  >
+                    <div
+                      className="w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0"
+                      aria-hidden="true"
+                    ></div>
+                    <span className="text-xs font-bold text-foreground">
+                      {repoDescription}
+                    </span>
+                  </NavLink>
+                )}
+                <ThemeSelector />
+              </div>
+            </Navbar>
 
             <main className="container mx-auto px-4 py-6">
               <Routes>
@@ -202,8 +200,7 @@ export default class App extends Component {
             </main>
           </UIPreferenceProvider>
         </AppContext.Provider>
-        </ThemeProvider>
-      </Router>
-    );
-  }
+      </ThemeProvider>
+    </Router>
+  );
 }

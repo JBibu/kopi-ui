@@ -1,69 +1,79 @@
-import React, { Component } from "react";
-import { handleChange, validateRequiredFields } from "../../forms";
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
+import { validateRequiredFields } from "../../forms";
 import { RequiredField } from "../../forms/RequiredField";
 import { RequiredNumberField } from "../../forms/RequiredNumberField";
 import { OptionalField } from "../../forms/OptionalField";
 import { NotificationFormatSelector } from "./NotificationFormatSelector";
 import PropTypes from "prop-types";
 
-export class EmailNotificationMethod extends Component {
-  constructor(props) {
-    super();
+export const EmailNotificationMethod = forwardRef(function EmailNotificationMethod(props, ref) {
+  const [state, setState] = useState({
+    smtpPort: 587,
+    format: "txt",
+    ...props.initial,
+  });
 
-    this.state = {
-      smtpPort: 587,
-      format: "txt",
-      ...props.initial,
-    };
-    this.handleChange = handleChange.bind(this);
-  }
+  // Create a component-like object for forms compatibility
+  const componentRef = useRef({
+    state: state,
+    setState: setState,
+  });
 
-  validate() {
-    if (!validateRequiredFields(this, ["smtpServer", "smtpPort", "from", "to"])) {
+  // Update componentRef when state changes
+  useEffect(() => {
+    componentRef.current.state = state;
+    componentRef.current.setState = setState;
+  }, [state]);
+
+  const validate = () => {
+    if (!validateRequiredFields(componentRef.current, ["smtpServer", "smtpPort", "from", "to"])) {
       return false;
     }
-
     return true;
-  }
+  };
 
-  render() {
-    return (
-      <>
+  // Expose methods to parent via ref
+  useImperativeHandle(ref, () => ({
+    validate,
+    state
+  }));
+
+  return (
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {RequiredField(componentRef.current, "SMTP Server", "smtpServer", {
+          autoFocus: true,
+          placeholder: "SMTP server DNS name, e.g. smtp.gmail.com",
+        })}
+        {RequiredNumberField(componentRef.current, "SMTP Port", "smtpPort", {})}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {OptionalField(componentRef.current, "SMTP Username", "smtpUsername", {
+          placeholder: "SMTP server username, typically the email address",
+        })}
+        {OptionalField(componentRef.current, "SMTP Password", "smtpPassword", {
+          placeholder: "SMTP server password",
+          type: "password",
+        })}
+        {OptionalField(componentRef.current, "SMTP Identity (Optional)", "smtpIdentity", {
+          placeholder: "SMTP server identity (often empty)",
+        })}
+      </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {RequiredField(this, "SMTP Server", "smtpServer", {
-            autoFocus: true,
-            placeholder: "SMTP server DNS name, e.g. smtp.gmail.com",
-          })}
-          {RequiredNumberField(this, "SMTP Port", "smtpPort", {})}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {OptionalField(this, "SMTP Username", "smtpUsername", {
-            placeholder: "SMTP server username, typically the email address",
-          })}
-          {OptionalField(this, "SMTP Password", "smtpPassword", {
-            placeholder: "SMTP server password",
-            type: "password",
-          })}
-          {OptionalField(this, "SMTP Identity (Optional)", "smtpIdentity", {
-            placeholder: "SMTP server identity (often empty)",
-          })}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {RequiredField(this, "Mail From", "from", {
+          {RequiredField(componentRef.current, "Mail From", "from", {
             placeholder: "sender email address",
           })}
-          {RequiredField(this, "Mail To", "to", {
+          {RequiredField(componentRef.current, "Mail To", "to", {
             placeholder: "reipient email addresses, comma-separated",
           })}
-          {OptionalField(this, "CC", "cc", {
+          {OptionalField(componentRef.current, "CC", "cc", {
             placeholder: "CC addresses (comma-separated)",
           })}
-          {NotificationFormatSelector(this, "format")}
+          {NotificationFormatSelector(componentRef.current, "format")}
         </div>
       </>
     );
-  }
-}
+});
 
 EmailNotificationMethod.propTypes = {
   initial: PropTypes.object,

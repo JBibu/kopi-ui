@@ -2,7 +2,7 @@ import { faSync, faUserFriends } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import moment from "moment";
-import React, { Component } from "react";
+import React, { useState, useEffect, useContext, useCallback, useMemo, useRef } from "react";
 import { Badge } from "../components/ui/badge";
 import { Spinner } from "../components/ui/spinner";
 import {
@@ -14,7 +14,6 @@ import {
 } from "../components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { handleChange } from "../forms";
 import KopiaTable from "../components/KopiaTable";
 import { compare, formatOwnerName, sizeDisplayName } from "../utils/formatutils";
 import { errorAlert, redirect, sizeWithFailures } from "../utils/uiutil";
@@ -25,105 +24,94 @@ import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
 const localSnapshots = "Local Snapshots";
 const allSnapshots = "All Snapshots";
 
-export class Snapshots extends Component {
-  constructor() {
-    super();
-    this.state = {
-      sources: [],
-      isLoading: false,
-      isFetching: false,
-      isRefreshing: false,
-      error: null,
+export function Snapshots() {
+  const { defaultSnapshotViewAll, setDefaultSnapshotViewAll, bytesStringBase2 } = useContext(UIPreferencesContext);
 
-      localSourceName: "",
-      multiUser: false,
-      selectedOwner: null,
-      selectedDirectory: "",
-    };
+  const [sources, setSources] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState(null);
+  const [localSourceName, setLocalSourceName] = useState("");
+  const [multiUser, setMultiUser] = useState(false);
+  const [selectedOwner, setSelectedOwner] = useState(null);
 
-    this.sync = this.sync.bind(this);
-    this.fetchSourcesWithoutSpinner = this.fetchSourcesWithoutSpinner.bind(this);
-    this.handleChange = handleChange.bind(this);
+  const isFetchingRef = useRef(false);
 
-    this.cancelSnapshot = this.cancelSnapshot.bind(this);
-    this.startSnapshot = this.startSnapshot.bind(this);
-  }
+  // Memoized fetch function
+  const fetchSourcesWithoutSpinner = useCallback(async () => {
+    if (isFetchingRef.current) return;
 
-  componentDidMount() {
-    const { defaultSnapshotViewAll } = this.context;
-    this.setState({
-      isLoading: true,
-      selectedOwner: defaultSnapshotViewAll ? allSnapshots : localSnapshots,
+    isFetchingRef.current = true;
+    const result = await axios.get("/api/v1/sources").catch((error) => {
+      redirect(error);
+      setError(error);
+      setIsRefreshing(false);
+      isFetchingRef.current = false;
+      setIsLoading(false);
+      return null;
     });
-    this.fetchSourcesWithoutSpinner();
-    this.interval = window.setInterval(this.fetchSourcesWithoutSpinner, 3000);
-  }
 
-  componentWillUnmount() {
-    window.clearInterval(this.interval);
-  }
-
-  fetchSourcesWithoutSpinner() {
-    if (!this.state.isFetching) {
-      this.setState({
-        isFetching: true,
-      });
-      axios
-        .get("/api/v1/sources")
-        .then((result) => {
-          this.setState({
-            localSourceName: result.data.localUsername + "@" + result.data.localHost,
-            multiUser: result.data.multiUser,
-            sources: result.data.sources,
-            isLoading: false,
-            isFetching: false,
-            isRefreshing: false,
-          });
-        })
-        .catch((error) => {
-          redirect(error);
-          this.setState({
-            error,
-            isRefreshing: false,
-            isFetching: false,
-            isLoading: false,
-          });
-        });
+    if (result?.data) {
+      setLocalSourceName(result.data.localUsername + "@" + result.data.localHost);
+      setMultiUser(result.data.multiUser);
+      setSources(result.data.sources);
+      setIsLoading(false);
+      isFetchingRef.current = false;
+      setIsRefreshing(false);
     }
-  }
+  }, []);
 
-  selectOwner(owner) {
-    const { setDefaultSnapshotViewAll } = this.context;
-    this.setState({ selectedOwner: owner });
+  // Setup effect on mount
+  useEffect(() => {
+    setIsLoading(true);
+    setSelectedOwner(defaultSnapshotViewAll ? allSnapshots : localSnapshots);
+    fetchSourcesWithoutSpinner();
+
+    const interval = setInterval(fetchSourcesWithoutSpinner, 3000);
+    return () => clearInterval(interval);
+  }, [defaultSnapshotViewAll, fetchSourcesWithoutSpinner]);
+
+  // Memoized owner selection handler
+  const selectOwner = useCallback((owner) => {
+    setSelectedOwner(owner);
     if (owner === localSnapshots) {
       setDefaultSnapshotViewAll(false);
     } else if (owner === allSnapshots) {
       setDefaultSnapshotViewAll(true);
     }
-  }
+  }, [setDefaultSnapshotViewAll]);
 
-  sync() {
-    this.setState({ isRefreshing: true });
-    axios
-      .post("/api/v1/repo/sync", {})
-      .then((_result) => {
-        this.fetchSourcesWithoutSpinner();
-      })
+  // Memoized sync handler
+  const sync = useCallback(async () => {
+    setIsRefreshing(true);
+    const result = await axios.post("/api/v1/repo/sync", {}).catch((error) => {
+      errorAlert(error);
+      setError(error);
+      setIsRefreshing(false);
+      return null;
+    });
+
+    if (result) {
+      fetchSourcesWithoutSpinner();
+    }
+  }, [fetchSourcesWithoutSpinner]);
+
+  // Memoized snapshot actions
+  const startSnapshot = useCallback(async (source) => {
+    const result = await axios
+      .post("/api/v1/sources/upload?" + sourceQueryStringParams(source), {})
       .catch((error) => {
         errorAlert(error);
-        this.setState({
-          error,
-          isRefreshing: false,
-        });
+        return null;
       });
-  }
 
-  /**
-   * Sets the header of an cell dynamically based on it's status
-   * @param x - the cell which status is interpreted
-   * @returns - the header of the cell
-   */
-  setHeader(x) {
+    if (result) {
+      fetchSourcesWithoutSpinner();
+    }
+  }, [fetchSourcesWithoutSpinner]);
+
+  // Memoized helper functions
+  const setHeader = useCallback((x) => {
     switch (x.cell.getValue()) {
       case "IDLE":
       case "PAUSED":
@@ -134,15 +122,10 @@ export class Snapshots extends Component {
       default:
         return (x.cell.column.Header = "");
     }
-  }
+  }, []);
 
-  /**
-   * Sets the content an cell dynamically based on it's status
-   * @param x - the cell which content is changed
-   * @returns - the content of the cell
-   */
-  statusCell(x, parent, bytesStringBase2) {
-    this.setHeader(x);
+  const statusCell = useCallback((x) => {
+    setHeader(x);
     switch (x.cell.getValue()) {
       case "IDLE":
       case "PAUSED":
@@ -153,6 +136,7 @@ export class Snapshots extends Component {
               asChild
               variant="outline"
               size="sm"
+              aria-label={`Edit policy for ${x.row.original.source.path}`}
             >
               <Link to={policyEditorURL(x.row.original.source)}>
                 Policy
@@ -162,9 +146,8 @@ export class Snapshots extends Component {
               data-testid="snapshot-now"
               variant="default"
               size="sm"
-              onClick={() => {
-                parent.startSnapshot(x.row.original.source);
-              }}
+              onClick={() => startSnapshot(x.row.original.source)}
+              aria-label={`Create snapshot now for ${x.row.original.source.path}`}
             >
               Snapshot Now
             </Button>
@@ -173,16 +156,15 @@ export class Snapshots extends Component {
 
       case "PENDING":
         return (
-          <>
+          <div className="flex items-center" role="status" aria-live="polite">
             <Spinner
               data-testid="snapshot-pending"
-              animation="border"
-              variant="secondary"
               size="sm"
               title="Snapshot will start after the previous snapshot completes"
+              className="mr-2"
             />
-            &nbsp;Pending
-          </>
+            Pending
+          </div>
         );
 
       case "UPLOADING": {
@@ -191,75 +173,53 @@ export class Snapshots extends Component {
         let totals = "";
         if (u) {
           title =
-            " hashed " +
-            u.hashedFiles +
-            " files (" +
-            sizeDisplayName(u.hashedBytes, bytesStringBase2) +
-            ")\n" +
-            " cached " +
-            u.cachedFiles +
-            " files (" +
-            sizeDisplayName(u.cachedBytes, bytesStringBase2) +
-            ")\n" +
-            " dir " +
-            u.directory;
+            ` hashed ${u.hashedFiles} files (${sizeDisplayName(u.hashedBytes, bytesStringBase2)})\n` +
+            ` cached ${u.cachedFiles} files (${sizeDisplayName(u.cachedBytes, bytesStringBase2)})\n` +
+            ` dir ${u.directory}`;
 
           const totalBytes = u.hashedBytes + u.cachedBytes;
-
           totals = sizeDisplayName(totalBytes, bytesStringBase2);
+
           if (u.estimatedBytes) {
             totals += "/" + sizeDisplayName(u.estimatedBytes, bytesStringBase2);
-
             const percent = Math.round((totalBytes * 1000.0) / u.estimatedBytes) / 10.0;
             if (percent <= 100) {
-              totals += " " + percent + "%";
+              totals += ` ${percent}%`;
             }
           }
         }
 
         return (
-          <>
-            <Spinner data-testid="snapshot-uploading" animation="border" variant="primary" size="sm" title={title} />
-            &nbsp;{totals}
-            &nbsp;
-            {x.row.original.currentTask && <Link to={"/tasks/" + x.row.original.currentTask}>Details</Link>}
-          </>
+          <div className="flex items-center gap-2" role="status" aria-live="polite">
+            <Spinner
+              data-testid="snapshot-uploading"
+              size="sm"
+              title={title}
+            />
+            <span>{totals}</span>
+            {x.row.original.currentTask && (
+              <Link
+                to={"/tasks/" + x.row.original.currentTask}
+                className="text-primary hover:underline"
+                aria-label="View task details"
+              >
+                Details
+              </Link>
+            )}
+          </div>
         );
       }
 
       default:
         return "";
     }
-  }
+  }, [bytesStringBase2, setHeader, startSnapshot]);
 
-  cancelSnapshot(source) {
-    axios
-      .post("/api/v1/sources/cancel?" + sourceQueryStringParams(source), {})
-      .then((_result) => {
-        this.fetchSourcesWithoutSpinner();
-      })
-      .catch((error) => {
-        errorAlert(error);
-      });
-  }
-
-  startSnapshot(source) {
-    axios
-      .post("/api/v1/sources/upload?" + sourceQueryStringParams(source), {})
-      .then((_result) => {
-        this.fetchSourcesWithoutSpinner();
-      })
-      .catch((error) => {
-        errorAlert(error);
-      });
-  }
-
-  nextSnapshotTimeCell(x) {
+  const nextSnapshotTimeCell = useCallback((x) => {
     if (!x.cell.getValue()) {
       if (x.row.original.status === "PAUSED") {
-        return "paused";
+        return <span className="text-muted-foreground">paused</span>;
       }
-
       return "";
     }
 
@@ -267,149 +227,173 @@ export class Snapshots extends Component {
       return "";
     }
 
+    const time = moment(x.cell.getValue());
+    const isOverdue = time.isBefore(moment());
+
     return (
-      <p title={moment(x.cell.getValue()).toLocaleString()}>
-        {moment(x.cell.getValue()).fromNow()}
-        {moment(x.cell.getValue()).isBefore(moment()) && (
+      <div title={time.toLocaleString()}>
+        <span>{time.fromNow()}</span>
+        {isOverdue && (
           <>
-            &nbsp;
-            <Badge bg="secondary">overdue</Badge>
+            {" "}
+            <Badge variant="secondary">overdue</Badge>
           </>
         )}
-      </p>
+      </div>
     );
-  }
+  }, []);
 
-  render() {
-    let { sources, isLoading, error } = this.state;
-    const { bytesStringBase2 } = this.context;
-    if (error) {
-      return <p>{error.message}</p>;
-    }
-    if (isLoading) {
-      return <Spinner animation="border" variant="primary" />;
-    }
-    let uniqueOwners = sources.reduce((a, d) => {
+  // Memoized calculations
+  const uniqueOwners = useMemo(() => {
+    const owners = sources.reduce((a, d) => {
       const owner = formatOwnerName(d.source);
-
       if (!a.includes(owner)) {
         a.push(owner);
       }
       return a;
     }, []);
+    return owners.sort();
+  }, [sources]);
 
-    uniqueOwners.sort();
-
-    switch (this.state.selectedOwner) {
+  const filteredSources = useMemo(() => {
+    switch (selectedOwner) {
       case allSnapshots:
-        // do nothing;
-        break;
-
+        return sources;
       case localSnapshots:
-        sources = sources.filter((x) => formatOwnerName(x.source) === this.state.localSourceName);
-        break;
-
+        return sources.filter((x) => formatOwnerName(x.source) === localSourceName);
       default:
-        sources = sources.filter((x) => formatOwnerName(x.source) === this.state.selectedOwner);
-        break;
+        return sources.filter((x) => formatOwnerName(x.source) === selectedOwner);
     }
+  }, [sources, selectedOwner, localSourceName]);
 
-    const columns = [
-      {
-        id: "path",
-        header: "Path",
-        accessorFn: (x) => x.source,
-        sortType: (a, b) => {
-          const v = compare(a.original.source.path, b.original.source.path);
-          if (v !== 0) {
-            return v;
-          }
-
-          return compare(formatOwnerName(a.original.source), formatOwnerName(b.original.source));
-        },
-        width: "",
-        cell: (x) => (
-          <Link to={"/snapshots/single-source?" + sourceQueryStringParams(x.cell.getValue())}>
-            {x.cell.getValue().path}
-          </Link>
+  const columns = useMemo(() => [
+    {
+      id: "path",
+      header: "Path",
+      accessorFn: (x) => x.source,
+      sortType: (a, b) => {
+        const v = compare(a.original.source.path, b.original.source.path);
+        if (v !== 0) {
+          return v;
+        }
+        return compare(formatOwnerName(a.original.source), formatOwnerName(b.original.source));
+      },
+      width: "",
+      cell: (x) => (
+        <Link
+          to={"/snapshots/single-source?" + sourceQueryStringParams(x.cell.getValue())}
+          className="text-primary hover:underline"
+          aria-label={`View snapshots for ${x.cell.getValue().path}`}
+        >
+          {x.cell.getValue().path}
+        </Link>
+      ),
+    },
+    {
+      id: "owner",
+      header: "Owner",
+      accessorFn: (x) => x.source.userName + "@" + x.source.host,
+      width: 250,
+    },
+    {
+      id: "lastSnapshotSize",
+      header: "Size",
+      width: 120,
+      accessorFn: (x) => (x.lastSnapshot ? x.lastSnapshot.stats.totalSize : 0),
+      cell: (x) =>
+        sizeWithFailures(
+          x.cell.getValue(),
+          x.row.original.lastSnapshot && x.row.original.lastSnapshot.rootEntry
+            ? x.row.original.lastSnapshot.rootEntry.summ
+            : null,
+          bytesStringBase2,
         ),
-      },
-      {
-        id: "owner",
-        header: "Owner",
-        accessorFn: (x) => x.source.userName + "@" + x.source.host,
-        width: 250,
-      },
-      {
-        id: "lastSnapshotSize",
-        header: "Size",
-        width: 120,
-        accessorFn: (x) => (x.lastSnapshot ? x.lastSnapshot.stats.totalSize : 0),
-        cell: (x) =>
-          sizeWithFailures(
-            x.cell.getValue(),
-            x.row.original.lastSnapshot && x.row.original.lastSnapshot.rootEntry
-              ? x.row.original.lastSnapshot.rootEntry.summ
-              : null,
-            bytesStringBase2,
-          ),
-      },
-      {
-        id: "lastSnapshotTime",
-        header: "Last Snapshot",
-        width: 160,
-        accessorFn: (x) => (x.lastSnapshot ? x.lastSnapshot.startTime : null),
-        cell: (x) =>
-          x.cell.getValue() ? (
-            <p title={moment(x.cell.getValue()).toLocaleString()}>{moment(x.cell.getValue()).fromNow()}</p>
-          ) : (
-            ""
-          ),
-      },
-      {
-        id: "nextSnapshotTime",
-        header: "Next Snapshot",
-        width: 160,
-        accessorFn: (x) => x.nextSnapshotTime,
-        cell: (x) => this.nextSnapshotTimeCell(x),
-      },
-      {
-        id: "status",
-        header: "",
-        width: 300,
-        accessorFn: (x) => x.status,
-        cell: (x) => this.statusCell(x, this, bytesStringBase2),
-      },
-    ];
+    },
+    {
+      id: "lastSnapshotTime",
+      header: "Last Snapshot",
+      width: 160,
+      accessorFn: (x) => (x.lastSnapshot ? x.lastSnapshot.startTime : null),
+      cell: (x) =>
+        x.cell.getValue() ? (
+          <div title={moment(x.cell.getValue()).toLocaleString()}>
+            {moment(x.cell.getValue()).fromNow()}
+          </div>
+        ) : (
+          <span className="text-muted-foreground">None</span>
+        ),
+    },
+    {
+      id: "nextSnapshotTime",
+      header: "Next Snapshot",
+      width: 160,
+      accessorFn: (x) => x.nextSnapshotTime,
+      cell: nextSnapshotTimeCell,
+    },
+    {
+      id: "status",
+      header: "",
+      width: 300,
+      accessorFn: (x) => x.status,
+      cell: statusCell,
+    },
+  ], [bytesStringBase2, nextSnapshotTimeCell, statusCell]);
 
+  // Error state
+  if (error) {
     return (
       <div className="container mx-auto p-6 max-w-6xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold">Snapshots</h1>
-          <p className="text-muted-foreground">View and manage your snapshots</p>
+        <div className="text-red-600 text-sm" role="alert">
+          Error: {error.message}
         </div>
+      </div>
+    );
+  }
 
-        <div className="bg-card border rounded-lg p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6 max-w-6xl flex items-center justify-center">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Spinner size="sm" />
+          Loading snapshots...
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto p-6 max-w-6xl">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Snapshots</h1>
+        <p className="text-muted-foreground">View and manage your snapshots</p>
+      </div>
+
+      <div className="bg-card border rounded-lg p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            {this.state.multiUser && (
+            {multiUser && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="sm" variant="outline">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    aria-label="Select snapshot owner"
+                  >
                     <FontAwesomeIcon icon={faUserFriends} className="mr-2" />
-                    {this.state.selectedOwner}
+                    {selectedOwner}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => this.selectOwner(localSnapshots)}>
+                  <DropdownMenuItem onClick={() => selectOwner(localSnapshots)}>
                     {localSnapshots}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => this.selectOwner(allSnapshots)}>
+                  <DropdownMenuItem onClick={() => selectOwner(allSnapshots)}>
                     {allSnapshots}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   {uniqueOwners.map((v) => (
-                    <DropdownMenuItem key={v} onClick={() => this.selectOwner(v)}>
+                    <DropdownMenuItem key={v} onClick={() => selectOwner(v)}>
                       {v}
                     </DropdownMenuItem>
                   ))}
@@ -417,19 +401,20 @@ export class Snapshots extends Component {
               </DropdownMenu>
             )}
             <Button data-testid="new-snapshot" size="sm" asChild>
-              <Link to="/snapshots/new">
+              <Link to="/snapshots/new" aria-label="Create new snapshot">
                 New Snapshot
               </Link>
             </Button>
           </div>
           <Button
             size="sm"
-            title="Synchronize"
+            title="Synchronize repository"
             variant="outline"
-            onClick={this.sync}
-            disabled={this.state.isRefreshing}
+            onClick={sync}
+            disabled={isRefreshing}
+            aria-label="Synchronize repository"
           >
-            {this.state.isRefreshing ? (
+            {isRefreshing ? (
               <Spinner size="sm" />
             ) : (
               <FontAwesomeIcon icon={faSync} />
@@ -437,12 +422,10 @@ export class Snapshots extends Component {
           </Button>
         </div>
 
-          <KopiaTable data={sources} columns={columns} />
-        </div>
-
-        <CLIEquivalent command={`snapshot list`} />
+        <KopiaTable data={filteredSources} columns={columns} />
       </div>
-    );
-  }
+
+      <CLIEquivalent command="snapshot list" />
+    </div>
+  );
 }
-Snapshots.contextType = UIPreferencesContext;

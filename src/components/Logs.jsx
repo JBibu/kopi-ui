@@ -1,140 +1,108 @@
 import axios from "axios";
-import React, { Component } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Table, TableBody, TableCell, TableRow } from "./ui/table";
-import { handleChange } from "../forms";
 import { redirect } from "../utils/uiutil";
 import PropTypes from "prop-types";
 
-export class Logs extends Component {
-  constructor() {
-    super();
-    this.state = {
-      items: [],
-      isLoading: false,
-      error: null,
-    };
+export function Logs({ taskID }) {
+  const [logs, setLogs] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    this.handleChange = handleChange.bind(this);
-    this.fetchLog = this.fetchLog.bind(this);
-    this.interval = window.setInterval(this.fetchLog, 3000);
-    this.messagesEndRef = React.createRef();
-    this.scrollToBottom = this.scrollToBottom.bind(this);
-  }
+  const messagesEndRef = useRef();
 
-  componentDidMount() {
-    this.setState({
-      isLoading: true,
+  // Memoized scroll to bottom function
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+
+  // Memoized fetch log function
+  const fetchLog = useCallback(async () => {
+    if (!taskID) return;
+
+    const result = await axios.get(`/api/v1/tasks/${taskID}/logs`).catch((error) => {
+      redirect(error);
+      setError(error);
+      setIsLoading(false);
+      return null;
     });
 
-    this.fetchLog();
-    this.scrollToBottom();
-  }
+    if (result?.data?.logs) {
+      const oldLogs = logs;
+      setLogs(result.data.logs);
+      setIsLoading(false);
 
-  componentWillUnmount() {
-    window.clearInterval(this.interval);
-  }
-
-  lastMessage(l) {
-    if (!l || !l.length) {
-      return "";
+      // Scroll to bottom if new logs were added
+      if (!oldLogs || oldLogs.length !== result.data.logs.length) {
+        setTimeout(scrollToBottom, 100);
+      }
     }
+  }, [taskID, logs, scrollToBottom]);
 
-    return l[l.length - 1].msg;
-  }
+  // Setup effect on mount and cleanup
+  useEffect(() => {
+    setIsLoading(true);
+    fetchLog();
 
-  fetchLog() {
-    axios
-      .get("/api/v1/tasks/" + this.props.taskID + "/logs")
-      .then((result) => {
-        let oldLogs = this.state.logs;
-        this.setState({
-          logs: result.data.logs,
-          isLoading: false,
-        });
+    const interval = setInterval(fetchLog, 3000);
+    return () => clearInterval(interval);
+  }, [fetchLog]);
 
-        if (this.lastMessage(oldLogs) !== this.lastMessage(result.data.logs)) {
-          this.scrollToBottom();
-        }
-      })
-      .catch((error) => {
-        redirect(error);
-        this.setState({
-          error,
-          isLoading: false,
-        });
-      });
-  }
+  const fullLogTime = useCallback((timestamp) => {
+    return new Date(timestamp * 1000).toLocaleString();
+  }, []);
 
-  fullLogTime(x) {
-    return new Date(x * 1000).toLocaleString();
-  }
+  const formatLogTime = useCallback((timestamp) => {
+    const d = new Date(timestamp * 1000);
+    const hours = ("0" + d.getHours()).substr(-2);
+    const minutes = ("0" + d.getMinutes()).substr(-2);
+    const seconds = ("0" + d.getSeconds()).substr(-2);
+    const milliseconds = ("00" + d.getMilliseconds()).substr(-3);
 
-  formatLogTime(x) {
-    const d = new Date(x * 1000);
-    let result = "";
+    return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+  }, []);
 
-    result += ("0" + d.getHours()).substr(-2);
-    result += ":";
-    result += ("0" + d.getMinutes()).substr(-2);
-    result += ":";
-    result += ("0" + d.getSeconds()).substr(-2);
-    result += ".";
-    result += ("00" + d.getMilliseconds()).substr(-3);
-
-    return result;
-  }
-
-  formatLogParams(entry) {
-    // if there are any properties other than `msg, ts, level, mod` output them as JSON.
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let { msg, ts, level, mod, ...parametersOnly } = entry;
+  const formatLogParams = useCallback((entry) => {
+    // If there are any properties other than `msg, ts, level, mod` output them as JSON
+    const { msg: _msg, ts: _ts, level: _level, mod: _mod, ...parametersOnly } = entry;
 
     const p = JSON.stringify(parametersOnly);
     if (p !== "{}") {
-      return <code>{p}</code>;
-    }
-
-    return "";
-  }
-
-  scrollToBottom() {
-    const c = this.messagesEndRef.current;
-    if (c) {
-      c.scrollIntoView({ behavior: "smooth" });
-    }
-  }
-
-  render() {
-    const { logs, isLoading, error } = this.state;
-    if (error) {
-      return <p>{error.message}</p>;
-    }
-    if (isLoading) {
-      return <p>Loading ...</p>;
-    }
-
-    if (logs) {
-      return (
-        <div className="logs-table">
-          <Table className="text-sm border">
-            <TableBody>
-              {logs.map((v, ndx) => (
-                <TableRow key={ndx + "-" + v.ts} className={"loglevel-" + v.level}>
-                  <TableCell className="elide" title={this.fullLogTime(v.ts)}>
-                    {this.formatLogTime(v.ts)} {v.msg} {this.formatLogParams(v)}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div ref={this.messagesEndRef} />
-        </div>
-      );
+      return <code className="text-xs bg-muted px-1 rounded">{p}</code>;
     }
 
     return null;
+  }, []);
+
+  if (error) {
+    return <p>{error.message}</p>;
   }
+  if (isLoading) {
+    return <p>Loading ...</p>;
+  }
+
+  if (logs) {
+    return (
+      <div className="logs-table">
+        <Table className="text-sm border">
+          <TableBody>
+            {logs.map((v, ndx) => (
+              <TableRow key={ndx + "-" + v.ts} className={"loglevel-" + v.level}>
+                <TableCell className="elide" title={fullLogTime(v.ts)}>
+                  {formatLogTime(v.ts)} {v.msg} {formatLogParams(v)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <div ref={messagesEndRef} />
+      </div>
+    );
+  }
+
+  return null;
 }
 
 Logs.propTypes = {
