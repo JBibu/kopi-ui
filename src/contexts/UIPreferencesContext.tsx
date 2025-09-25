@@ -10,13 +10,13 @@ const DEFAULT_PREFERENCES = {
   defaultSnapshotViewAll: false,
   theme: getDefaultTheme(),
   preferWebDav: false,
-  fontSize: "fs-6",
+  fontSize: "text-base",
 } as SerializedUIPreferences;
 const PREFERENCES_URL = "/api/v1/ui-preferences";
 
 export type Theme = "light" | "dark" | "pastel" | "ocean";
 export type PageSize = 10 | 20 | 30 | 40 | 50 | 100;
-export type FontSize = "fs-6" | "fs-5" | "fs-4";
+export type FontSize = "text-sm" | "text-base" | "text-lg";
 
 export interface UIPreferences {
   get pageSize(): PageSize;
@@ -119,6 +119,15 @@ export function UIPreferenceProvider(props: UIPreferenceProviderProps) {
         if (!storedPreferences.fontSize || (storedPreferences.fontSize as string) === "") {
           storedPreferences.fontSize = DEFAULT_PREFERENCES.fontSize;
         }
+        // Migrate legacy Bootstrap font sizes to Tailwind
+        const legacyFontSize = storedPreferences.fontSize as string;
+        if (legacyFontSize === "fs-6") {
+          storedPreferences.fontSize = "text-sm";
+        } else if (legacyFontSize === "fs-5") {
+          storedPreferences.fontSize = "text-base";
+        } else if (legacyFontSize === "fs-4") {
+          storedPreferences.fontSize = "text-lg";
+        }
         if (!storedPreferences.pageSize || storedPreferences.pageSize === 0) {
           storedPreferences.pageSize = DEFAULT_PREFERENCES.pageSize;
         } else {
@@ -143,8 +152,7 @@ export function UIPreferenceProvider(props: UIPreferenceProviderProps) {
 
   /**
    * Synchronizes the theme as well as the font size with the class.
-   * To prevent any situations, where the theme or the font size is not in sync with the class,
-   * we first remove every element and set them again.
+   * Only removes and adds theme and font-related classes.
    *
    * @param theme
    * The theme to be set
@@ -152,9 +160,27 @@ export function UIPreferenceProvider(props: UIPreferenceProviderProps) {
    * The font size to be set
    */
   const syncTheme = (theme: Theme, fontSize: FontSize) => {
-    const doc = document.querySelector("html")!;
-    doc.classList.remove(...doc.classList);
-    doc.classList.add(theme, fontSize);
+    const doc = document.documentElement;
+
+    // Remove old theme classes
+    doc.classList.remove("light", "dark", "pastel", "ocean");
+
+    // Remove old font size classes
+    doc.classList.remove("text-sm", "text-base", "text-lg");
+
+    // Remove legacy Bootstrap font size classes if they exist
+    doc.classList.remove("fs-6", "fs-5", "fs-4");
+
+    // Add new theme class
+    doc.classList.add(theme);
+
+    // Add new font size class
+    doc.classList.add(fontSize);
+
+    // Apply font size to body for global effect
+    const body = document.body;
+    body.classList.remove("text-sm", "text-base", "text-lg");
+    body.classList.add(fontSize);
   };
 
   const providedValue = {

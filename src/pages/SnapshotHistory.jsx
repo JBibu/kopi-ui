@@ -481,11 +481,11 @@ class SnapshotHistoryInternal extends Component {
             <GoBackButton />
             {snapshots.length > 0 &&
               (selectedElements.length < snapshots.length ? (
-                <Button size="sm" onClick={this.selectAll}>
+                <Button size="sm" variant="outline" onClick={this.selectAll}>
                   Select All
                 </Button>
               ) : (
-                <Button size="sm" onClick={this.deselectAll}>
+                <Button size="sm" variant="outline" onClick={this.deselectAll}>
                   Deselect All
                 </Button>
               ))}
@@ -500,11 +500,11 @@ class SnapshotHistoryInternal extends Component {
               </Button>
             )}
           </div>
-          <Button size="sm">
+          <Button size="sm" variant="outline" onClick={this.fetchSnapshots} disabled={this.state.isRefreshing}>
             {this.state.isRefreshing ? (
               <Spinner size="sm" />
             ) : (
-              <RefreshCw className="h-4 w-4" title="Fetch snapshots" onClick={this.fetchSnapshots} />
+              <RefreshCw className="h-4 w-4" />
             )}
           </Button>
         </div>
@@ -612,7 +612,7 @@ class SnapshotHistoryInternal extends Component {
                 Cancel
               </Button>
               {this.state.originalSnapshotDescription && (
-                <Button variant="secondary" onClick={this.removeSnapshotDescription}>
+                <Button variant="destructive" onClick={this.removeSnapshotDescription}>
                   Remove Description
                 </Button>
               )}
@@ -655,7 +655,7 @@ class SnapshotHistoryInternal extends Component {
                 Cancel
               </Button>
               {this.state.originalPinName && (
-                <Button variant="secondary" onClick={() => this.removePin(this.state.originalPinName)}>
+                <Button variant="destructive" onClick={() => this.removePin(this.state.originalPinName)}>
                   Remove Pin
                 </Button>
               )}

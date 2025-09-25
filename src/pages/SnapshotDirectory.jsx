@@ -160,7 +160,7 @@ class SnapshotDirectoryInternal extends Component {
                   className="border border-input bg-background px-3 py-1 text-sm rounded-md flex-1 min-w-0"
                   value={this.state.mountInfo.path}
                 />
-                <Button size="sm" onClick={this.copyPath} data-testid="copy-path-button">
+                <Button size="sm" variant="outline" onClick={this.copyPath} data-testid="copy-path-button">
                   <FontAwesomeIcon icon={faCopy} />
                 </Button>
               </>
@@ -171,8 +171,10 @@ class SnapshotDirectoryInternal extends Component {
                 </Button>
               </>
             )}
-            <Button size="sm" href={"/snapshots/dir/" + this.props.params.oid + "/restore"}>
-              Restore Files & Directories
+            <Button size="sm" variant="default" asChild>
+              <a href={"/snapshots/dir/" + this.props.params.oid + "/restore"}>
+                Restore Files & Directories
+              </a>
             </Button>
           </div>
           <div className="text-sm text-muted-foreground">

@@ -1,6 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Palette, Sun, Moon, Waves, Heart } from 'lucide-react';
+import { Sun, Moon, Waves, Heart } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -24,7 +30,7 @@ const ThemeIcon = ({ theme, size = 16 }) => {
     case 'pastel':
       return <Heart {...iconProps} />;
     default:
-      return <Palette {...iconProps} />;
+      return <Sun {...iconProps} />;
   }
 };
 
@@ -33,58 +39,80 @@ ThemeIcon.propTypes = {
   size: PropTypes.number,
 };
 
-export const ThemeSelector = ({ variant = 'select' }) => {
+export const ThemeSelector = ({ variant = 'dropdown' }) => {
   const { theme, themes, changeTheme } = useTheme();
 
-  if (variant === 'buttons') {
+  // Clean dropdown for navbar - icon only button with dropdown
+  if (variant === 'dropdown') {
     return (
-      <div className="flex gap-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <ThemeIcon theme={theme} size={18} />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {themes.map((themeOption) => (
+            <DropdownMenuItem
+              key={themeOption.value}
+              onClick={() => changeTheme(themeOption.value)}
+              className="cursor-pointer"
+            >
+              <ThemeIcon theme={themeOption.value} />
+              <span className="ml-2">{themeOption.label}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
+  // Radio button group for preferences page
+  if (variant === 'radio') {
+    return (
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {themes.map((themeOption) => (
           <Button
             key={themeOption.value}
             variant={theme === themeOption.value ? 'default' : 'outline'}
-            size="sm"
+            size="lg"
             onClick={() => changeTheme(themeOption.value)}
-            className="flex items-center gap-2"
+            className="flex flex-col items-center gap-2 h-auto py-4"
           >
-            <ThemeIcon theme={themeOption.value} />
-            {themeOption.label}
+            <ThemeIcon theme={themeOption.value} size={24} />
+            <span className="text-sm font-medium">{themeOption.label}</span>
           </Button>
         ))}
       </div>
     );
   }
 
+  // Select for preferences page (fallback)
   return (
-    <div className="flex items-center gap-2">
-      <Palette className="h-4 w-4" />
-      <Select value={theme} onValueChange={changeTheme}>
-        <SelectTrigger className="w-[140px]">
-          <SelectValue>
+    <Select value={theme} onValueChange={changeTheme}>
+      <SelectTrigger className="w-full">
+        <SelectValue>
+          <div className="flex items-center gap-2">
+            <ThemeIcon theme={theme} />
+            {themes.find(t => t.value === theme)?.label}
+          </div>
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {themes.map((themeOption) => (
+          <SelectItem key={themeOption.value} value={themeOption.value}>
             <div className="flex items-center gap-2">
-              <ThemeIcon theme={theme} />
-              {themes.find(t => t.value === theme)?.label}
+              <ThemeIcon theme={themeOption.value} />
+              <span>{themeOption.label}</span>
             </div>
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {themes.map((themeOption) => (
-            <SelectItem key={themeOption.value} value={themeOption.value}>
-              <div className="flex items-center gap-2">
-                <ThemeIcon theme={themeOption.value} />
-                <div>
-                  <div className="font-medium">{themeOption.label}</div>
-                  <div className="text-xs text-muted-foreground">{themeOption.description}</div>
-                </div>
-              </div>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 };
 
 ThemeSelector.propTypes = {
-  variant: PropTypes.oneOf(['select', 'buttons']),
+  variant: PropTypes.oneOf(['dropdown', 'radio', 'select']),
 };

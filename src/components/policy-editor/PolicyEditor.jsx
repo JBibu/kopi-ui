@@ -816,7 +816,7 @@ export class PolicyEditor extends Component {
           {!this.props.embedded && (
             <Button
               size="sm"
-              
+              variant="default"
               onClick={this.saveChanges}
               data-testid="button-save"
               disabled={this.state.saving}
@@ -829,7 +829,7 @@ export class PolicyEditor extends Component {
               &nbsp;
               <Button
                 size="sm"
-                
+                variant="destructive"
                 disabled={this.isGlobal() || this.state.saving}
                 onClick={this.deletePolicy}
               >
