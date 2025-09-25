@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
+import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle } from "react";
 import { validateRequiredFields } from "../../forms";
 import { RequiredField } from "../../forms/RequiredField";
 import { RequiredNumberField } from "../../forms/RequiredNumberField";
@@ -13,17 +13,24 @@ export const EmailNotificationMethod = forwardRef(function EmailNotificationMeth
     ...props.initial,
   });
 
+  // Create handleChange function that works with the form system
+  const handleChange = useCallback((event, valueGetter = (x) => x.value) => {
+    const fieldName = event.target.name;
+    const fieldValue = valueGetter(event.target);
+    setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));
+  }, []);
+
   // Create a component-like object for forms compatibility
   const componentRef = useRef({
     state: state,
     setState: setState,
+    handleChange: handleChange,
   });
 
-  // Update componentRef when state changes
-  useEffect(() => {
-    componentRef.current.state = state;
-    componentRef.current.setState = setState;
-  }, [state]);
+  // Keep componentRef in sync with current state
+  componentRef.current.state = state;
+  componentRef.current.setState = setState;
+  componentRef.current.handleChange = handleChange;
 
   const validate = () => {
     if (!validateRequiredFields(componentRef.current, ["smtpServer", "smtpPort", "from", "to"])) {
@@ -64,7 +71,7 @@ export const EmailNotificationMethod = forwardRef(function EmailNotificationMeth
             placeholder: "sender email address",
           })}
           {RequiredField(componentRef.current, "Mail To", "to", {
-            placeholder: "reipient email addresses, comma-separated",
+            placeholder: "recipient email addresses, comma-separated",
           })}
           {OptionalField(componentRef.current, "CC", "cc", {
             placeholder: "CC addresses (comma-separated)",

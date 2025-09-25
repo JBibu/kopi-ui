@@ -24,17 +24,24 @@ function SnapshotCreateInternal({ navigate, location: _location }) {
 
   const policyEditorRef = useRef();
 
+  // Create handleChange function that works with the form system
+  const handleChange = useCallback((event, valueGetter = (x) => x.value) => {
+    const fieldName = event.target.name;
+    const fieldValue = valueGetter(event.target);
+    setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));
+  }, []);
+
   // Create a component-like object for forms compatibility
   const componentRef = useRef({
     state: state,
     setState: setState,
+    handleChange: handleChange,
   });
 
-  // Update componentRef when state changes
-  useEffect(() => {
-    componentRef.current.state = state;
-    componentRef.current.setState = setState;
-  }, [state]);
+  // Keep componentRef in sync with current state
+  componentRef.current.state = state;
+  componentRef.current.setState = setState;
+  componentRef.current.handleChange = handleChange;
 
   // Setup effect on mount
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
+import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle } from "react";
 import { validateRequiredFields } from "../forms";
 import { OptionalField } from "../forms/OptionalField";
 import { RequiredField } from "../forms/RequiredField";
@@ -9,17 +9,24 @@ export const SetupRepositoryGCS = forwardRef(function SetupRepositoryGCS(props, 
     ...props.initial,
   });
 
+  // Create handleChange function that works with the form system
+  const handleChange = useCallback((event, valueGetter = (x) => x.value) => {
+    const fieldName = event.target.name;
+    const fieldValue = valueGetter(event.target);
+    setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));
+  }, []);
+
   // Create a component-like object for forms compatibility
   const componentRef = useRef({
     state: state,
     setState: setState,
+    handleChange: handleChange,
   });
 
-  // Update componentRef when state changes
-  useEffect(() => {
-    componentRef.current.state = state;
-    componentRef.current.setState = setState;
-  }, [state]);
+  // Keep componentRef in sync with current state
+  componentRef.current.state = state;
+  componentRef.current.setState = setState;
+  componentRef.current.handleChange = handleChange;
 
   const validate = () => {
     return validateRequiredFields(componentRef.current, ["bucket"]);
