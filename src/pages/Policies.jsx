@@ -290,9 +290,14 @@ export class PoliciesInternal extends Component {
     ];
 
     return (
-      <>
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Policies</h1>
+          <p className="text-muted-foreground">Manage snapshot policies for your repositories</p>
+        </div>
+
         {!this.state.editorTarget && (
-          <div className="list-actions">
+          <div className="bg-card border rounded-lg p-6 mb-6">
             <form onSubmit={this.editPolicyForPath}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                 <div>
@@ -352,20 +357,23 @@ export class PoliciesInternal extends Component {
           </div>
         )}
 
-        {policies.length > 0 ? (
-          <div>
-            <p>Found {policies.length} policies matching criteria.</p>
-            <KopiaTable data={policies} columns={columns} />
-          </div>
-        ) : this.state.selectedOwner === localPolicies && this.state.policyPath ? (
-          <p>
-            No policy found for directory <code>{this.state.policyPath}</code>. Click <b>Set Policy</b> to define it.
-          </p>
-        ) : (
-          <p>No policies found.</p>
-        )}
+        <div className="bg-card border rounded-lg p-6 mb-6">
+          {policies.length > 0 ? (
+            <div>
+              <p className="mb-4">Found {policies.length} policies matching criteria.</p>
+              <KopiaTable data={policies} columns={columns} />
+            </div>
+          ) : this.state.selectedOwner === localPolicies && this.state.policyPath ? (
+            <p>
+              No policy found for directory <code>{this.state.policyPath}</code>. Click <b>Set Policy</b> to define it.
+            </p>
+          ) : (
+            <p>No policies found.</p>
+          )}
+        </div>
+
         <CLIEquivalent command="policy list" />
-      </>
+      </div>
     );
   }
 }

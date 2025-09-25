@@ -170,40 +170,46 @@ export class Repository extends Component {
 
     if (this.state.status.connected) {
       return (
-        <>
-          <p className="text-success mb-1">
-            <FontAwesomeIcon icon={faCheck} style={{ marginRight: 4 }} />
-            <span>Connected To Repository</span>
-          </p>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex gap-2">
-                <Input
-                  autoFocus={true}
-                  className={!this.state.status.description ? 'border-red-500' : ''}
-                  name="status.description"
-                  value={this.state.status.description}
-                  onChange={this.handleChange}
-                  size="sm"
-                />
-                <Button data-testid="update-description" size="sm" onClick={this.updateDescription} type="button">
-                  Update Description
-                </Button>
+        <div className="container mx-auto p-6 max-w-6xl">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold mb-2">Repository Status</h1>
+            <div className="flex items-center gap-2 text-green-600">
+              <FontAwesomeIcon icon={faCheck} />
+              <span>Connected To Repository</span>
+            </div>
+          </div>
+          <div className="bg-card border rounded-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold mb-4">Repository Description</h2>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Input
+                    autoFocus={true}
+                    className={!this.state.status.description ? 'border-red-500' : ''}
+                    name="status.description"
+                    value={this.state.status.description}
+                    onChange={this.handleChange}
+                    size="sm"
+                  />
+                  <Button data-testid="update-description" size="sm" onClick={this.updateDescription} type="button">
+                    Update Description
+                  </Button>
+                </div>
+                {!this.state.status.description && (
+                  <p className="text-red-500 text-sm">Description Is Required</p>
+                )}
               </div>
-              {!this.state.status.description && (
-                <p className="text-red-500 text-sm">Description Is Required</p>
+              {this.state.status.readonly && (
+                <div>
+                  <Badge className="bg-yellow-500 text-yellow-50">
+                    Repository is read-only
+                  </Badge>
+                </div>
               )}
             </div>
-            {this.state.status.readonly && (
-              <div>
-                <Badge className="bg-yellow-500 text-yellow-50">
-                  Repository is read-only
-                </Badge>
-              </div>
-            )}
           </div>
-          <hr />
-          <div className="space-y-4">
+          <div className="bg-card border rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold">Repository Configuration</h2>
             {this.state.status.apiServerURL ? (
               <div className="space-y-2">
                 <Label className="required">Server URL</Label>
@@ -264,16 +270,14 @@ export class Repository extends Component {
               <Label className="required">Connected as:</Label>
               <Input readOnly defaultValue={this.state.status.username + "@" + this.state.status.hostname} />
             </div>
-            <div className="pt-4">
+            <div className="pt-4 flex items-center justify-between">
               <Button data-testid="disconnect" size="sm" variant="destructive" onClick={this.disconnect}>
                 Disconnect
               </Button>
-            </div>
-            <div className="pt-4">
               <CLIEquivalent command="repository status" />
             </div>
           </div>
-        </>
+        </div>
       );
     }
 

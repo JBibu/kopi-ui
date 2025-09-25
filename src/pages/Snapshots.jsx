@@ -383,8 +383,14 @@ export class Snapshots extends Component {
     ];
 
     return (
-      <>
-        <div className="flex items-center justify-between mb-4">
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Snapshots</h1>
+          <p className="text-muted-foreground">View and manage your snapshots</p>
+        </div>
+
+        <div className="bg-card border rounded-lg p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             {this.state.multiUser && (
               <DropdownMenu>
@@ -431,9 +437,11 @@ export class Snapshots extends Component {
           </Button>
         </div>
 
-        <KopiaTable data={sources} columns={columns} />
+          <KopiaTable data={sources} columns={columns} />
+        </div>
+
         <CLIEquivalent command={`snapshot list`} />
-      </>
+      </div>
     );
   }
 }

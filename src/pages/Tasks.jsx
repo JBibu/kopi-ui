@@ -136,10 +136,15 @@ export class Tasks extends Component {
     const filteredItems = this.filterItems(items);
 
     return (
-      <>
-        <div className="space-y-4">
-          <div className="list-actions">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Tasks</h1>
+          <p className="text-muted-foreground">Monitor running and completed tasks</p>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-card border rounded-lg p-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
               <div className="col-span-1">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -185,19 +190,19 @@ export class Tasks extends Component {
                 />
               </div>
             </div>
-          </div>
-          <div className="w-full">
-            {!items.length ? (
-              <Alert>
-                <FontAwesomeIcon size="sm" icon={faInfoCircle} className="mr-2" /> A list of tasks will appear here when you create
-                snapshots, restore, run maintenance, etc.
-              </Alert>
-            ) : (
-              <KopiaTable data={filteredItems} columns={columns} />
-            )}
+            <div className="w-full">
+              {!items.length ? (
+                <Alert>
+                  <FontAwesomeIcon size="sm" icon={faInfoCircle} className="mr-2" /> A list of tasks will appear here when you create
+                  snapshots, restore, run maintenance, etc.
+                </Alert>
+              ) : (
+                <KopiaTable data={filteredItems} columns={columns} />
+              )}
+            </div>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }
