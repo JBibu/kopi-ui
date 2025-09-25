@@ -2,12 +2,11 @@ import { faAngleDoubleDown, faAngleDoubleUp } from "@fortawesome/free-solid-svg-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { Component } from "react";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Collapse from "react-bootstrap/Collapse";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Spinner from "react-bootstrap/Spinner";
+import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Collapse } from "./ui/collapse";
 import { AppContext } from "../contexts/AppContext";
 import { handleChange, validateRequiredFields } from "../forms";
 import { RequiredBoolean } from "../forms/RequiredBoolean";
@@ -267,7 +266,7 @@ export class SetupRepository extends Component {
       <>
         <h3>Select Storage Type</h3>
         <p>To connect to a repository or create one, select the preferred storage type:</p>
-        <Row>
+        <div className="space-y-4">
           {supportedProviders.map((x) => (
             <Button
               key={x.provider}
@@ -279,7 +278,7 @@ export class SetupRepository extends Component {
               {x.description}
             </Button>
           ))}
-        </Row>
+        </div>
       </>
     );
   }
@@ -355,7 +354,7 @@ export class SetupRepository extends Component {
     }
 
     return (
-      <Form onSubmit={this.verifyStorage}>
+      <form onSubmit={this.verifyStorage}>
         {!this.state.provider.startsWith("_") && <h3>Storage Configuration</h3>}
         {this.state.provider === "_token" && <h3>Enter Repository Token</h3>}
         {this.state.provider === "_server" && <h3>Kopia Server Parameters</h3>}
@@ -364,7 +363,7 @@ export class SetupRepository extends Component {
         <hr />
         <Button
           data-testid="back-button"
-          variant="warning"
+          
           onClick={() =>
             this.setState({
               provider: null,
@@ -376,11 +375,11 @@ export class SetupRepository extends Component {
           Back
         </Button>
         &nbsp;
-        <Button variant="primary" type="submit" data-testid="submit-button">
+        <Button  type="submit" data-testid="submit-button">
           Next
         </Button>
         {this.loadingSpinner()}
-      </Form>
+      </form>
     );
   }
 
@@ -393,7 +392,7 @@ export class SetupRepository extends Component {
       <Button
         data-testid="advanced-options"
         onClick={this.toggleAdvanced}
-        variant="primary"
+        
         aria-controls="advanced-options-div"
         aria-expanded={this.state.showAdvanced}
         size="sm"
@@ -406,10 +405,10 @@ export class SetupRepository extends Component {
 
   renderConfirmCreate() {
     return (
-      <Form onSubmit={this.createRepository}>
+      <form onSubmit={this.createRepository}>
         <h3>Create New Repository</h3>
         <p>Enter a strong password to create Kopia repository in the provided storage.</p>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(
             this,
             "Repository Password",
@@ -425,53 +424,53 @@ export class SetupRepository extends Component {
             type: "password",
             placeholder: "enter repository password again",
           })}
-        </Row>
+        </div>
         <div style={{ marginTop: "1rem" }}>{this.toggleAdvancedButton()}</div>
         <Collapse in={this.state.showAdvanced}>
           <div id="advanced-options-div" style={{ marginTop: "1rem" }}>
-            <Row>
-              <Form.Group as={Col}>
-                <Form.Label className="required">Encryption</Form.Label>
-                <Form.Control
-                  as="select"
+            <div className="space-y-4">
+              <div >
+                <Label className="required">Encryption</Label>
+                <select
                   name="encryption"
                   onChange={this.handleChange}
                   data-testid="control-encryption"
                   value={this.state.encryption}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {this.state.algorithms.encryption.map((x) => toAlgorithmOption(x, this.state.defaultEncryption))}
-                </Form.Control>
-              </Form.Group>
-              <Form.Group as={Col}>
-                <Form.Label className="required">Hash Algorithm</Form.Label>
-                <Form.Control
-                  as="select"
+                </select>
+              </div>
+              <div >
+                <Label className="required">Hash Algorithm</Label>
+                <select
                   name="hash"
                   onChange={this.handleChange}
                   data-testid="control-hash"
                   value={this.state.hash}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {this.state.algorithms.hash.map((x) => toAlgorithmOption(x, this.state.defaultHash))}
-                </Form.Control>
-              </Form.Group>
-              <Form.Group as={Col}>
-                <Form.Label className="required">Splitter</Form.Label>
-                <Form.Control
-                  as="select"
+                </select>
+              </div>
+              <div >
+                <Label className="required">Splitter</Label>
+                <select
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   name="splitter"
                   onChange={this.handleChange}
                   data-testid="control-splitter"
                   value={this.state.splitter}
                 >
                   {this.state.algorithms.splitter.map((x) => toAlgorithmOption(x, this.state.defaultSplitter))}
-                </Form.Control>
-              </Form.Group>
-            </Row>
-            <Row>
-              <Form.Group as={Col}>
-                <Form.Label className="required">Repository Format</Form.Label>
-                <Form.Control
-                  as="select"
+                </select>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div >
+                <Label className="required">Repository Format</Label>
+                <select
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   name="formatVersion"
                   onChange={this.handleChange}
                   data-testid="control-formatVersion"
@@ -479,12 +478,12 @@ export class SetupRepository extends Component {
                 >
                   <option value="2">Latest format</option>
                   <option value="1">Legacy format compatible with v0.8</option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group as={Col}>
-                <Form.Label className="required">Error Correction Overhead</Form.Label>
-                <Form.Control
-                  as="select"
+                </select>
+              </div>
+              <div >
+                <Label className="required">Error Correction Overhead</Label>
+                <select
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   name="eccOverheadPercent"
                   onChange={this.handleChange}
                   data-testid="control-eccOverheadPercent"
@@ -495,12 +494,12 @@ export class SetupRepository extends Component {
                   <option value="2">2%</option>
                   <option value="5">5%</option>
                   <option value="10">10%</option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group as={Col} controlId="errorCorrectionAlgorithm">
-                <Form.Label className="required">Error Correction Algorithm</Form.Label>
-                <Form.Control
-                  as="select"
+                </select>
+              </div>
+              <div  >
+                <Label className="required">Error Correction Algorithm</Label>
+                <select
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   name="ecc"
                   onChange={this.handleChange}
                   data-testid="control-ecc"
@@ -514,48 +513,48 @@ export class SetupRepository extends Component {
                         </option>,
                       ]
                     : this.state.algorithms.ecc.map((x) => toAlgorithmOption(x, this.state.defaultEcc))}
-                </Form.Control>
-              </Form.Group>
-            </Row>
-            <Row>
-              <Col></Col>
-              <Col sm={8} className="text-muted">
+                </select>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div></div>
+              <div className="text-muted">
                 [EXPERIMENTAL] Error correction can help protect from certain kinds of data corruption due to
                 spontaneous bit flips in the storage media.{" "}
                 <a href="https://kopia.io/docs/advanced/ecc/" target="_blank" rel="noreferrer">
                   Click here to learn more.
                 </a>
-              </Col>
-            </Row>
+              </div>
+            </div>
             {this.overrideUsernameHostnameRow()}
-            <Row style={{ marginTop: "1rem" }}>
-              <Form.Group as={Col}>
-                <Form.Text>Additional parameters can be set when creating repository using command line.</Form.Text>
-              </Form.Group>
-            </Row>
+            <div style={{ marginTop: "1rem" }}>
+              <div >
+                <p>Additional parameters can be set when creating repository using command line.</p>
+              </div>
+            </div>
           </div>
         </Collapse>
         {this.connectionErrorInfo()}
         <hr />
         <Button
           data-testid="back-button"
-          variant="warning"
+          
           onClick={() => this.setState({ providerSettings: {}, storageVerified: false })}
         >
           Back
         </Button>
         &nbsp;
-        <Button variant="primary" type="submit" data-testid="submit-button">
+        <Button  type="submit" data-testid="submit-button">
           Create Repository
         </Button>
         {this.loadingSpinner()}
-      </Form>
+      </form>
     );
   }
 
   overrideUsernameHostnameRow() {
     return (
-      <Row>
+      <div className="space-y-4">
         {RequiredField(
           this,
           "Username",
@@ -570,34 +569,34 @@ export class SetupRepository extends Component {
           {},
           "Override this when restoring a snapshot taken on another machine",
         )}
-      </Row>
+      </div>
     );
   }
 
   connectionErrorInfo() {
     return (
       this.state.connectError && (
-        <Row>
-          <Form.Group as={Col}>
-            <Form.Text className="error">Connect Error: {this.state.connectError}</Form.Text>
-          </Form.Group>
-        </Row>
+        <div className="space-y-4">
+          <div >
+            <p className="error">Connect Error: {this.state.connectError}</p>
+          </div>
+        </div>
       )
     );
   }
 
   renderConfirmConnect() {
     return (
-      <Form onSubmit={this.connectToRepository}>
+      <form onSubmit={this.connectToRepository}>
         <h3>Connect To Repository</h3>
-        <Row>
-          <Form.Group as={Col}>
-            <Form.Label className="required">Connect As</Form.Label>
-            <Form.Control value={this.state.username + "@" + this.state.hostname} readOnly={true} size="sm" />
-            <Form.Text className="text-muted">To override, click &apos;Show Advanced Options&apos;</Form.Text>
-          </Form.Group>
-        </Row>
-        <Row>
+        <div className="space-y-4">
+          <div >
+            <Label className="required">Connect As</Label>
+            <Input value={this.state.username + "@" + this.state.hostname} readOnly={true} size="sm" />
+            <p className="text-muted">To override, click &apos;Show Advanced Options&apos;</p>
+          </div>
+        </div>
+        <div className="space-y-4">
           {this.state.provider !== "_token" &&
             this.state.provider !== "_server" &&
             RequiredField(
@@ -617,8 +616,8 @@ export class SetupRepository extends Component {
               type: "password",
               placeholder: "enter password to connect to server",
             })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {RequiredField(
             this,
             "Repository Description",
@@ -629,18 +628,18 @@ export class SetupRepository extends Component {
             },
             "Helps to distinguish between multiple connected repositories",
           )}
-        </Row>
+        </div>
         {this.toggleAdvancedButton()}
         <Collapse in={this.state.showAdvanced}>
           <div id="advanced-options-div" className="advancedOptions">
-            <Row>
+            <div className="space-y-4">
               {RequiredBoolean(
                 this,
                 "Connect in read-only mode",
                 "readonly",
                 "Read-only mode prevents any changes to the repository.",
               )}
-            </Row>
+            </div>
             {this.overrideUsernameHostnameRow()}
           </div>
         </Collapse>
@@ -648,17 +647,17 @@ export class SetupRepository extends Component {
         <hr />
         <Button
           data-testid="back-button"
-          variant="warning"
+          
           onClick={() => this.setState({ providerSettings: {}, storageVerified: false })}
         >
           Back
         </Button>
         &nbsp;
-        <Button variant="primary" type="submit" data-testid="submit-button">
+        <Button  type="submit" data-testid="submit-button">
           Connect To Repository
         </Button>
         {this.loadingSpinner()}
-      </Form>
+      </form>
     );
   }
 
@@ -679,7 +678,7 @@ export class SetupRepository extends Component {
   }
 
   loadingSpinner() {
-    return this.state.isLoading && <Spinner animation="border" variant="primary" />;
+    return this.state.isLoading && <Spinner   />;
   }
 
   render() {

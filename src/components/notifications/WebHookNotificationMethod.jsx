@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import Form from "react-bootstrap/Form";
+import { Label } from "../ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { handleChange, validateRequiredFields, stateProperty } from "../../forms";
 import { RequiredField } from "../../forms/RequiredField";
 import { OptionalField } from "../../forms/OptionalField";
@@ -30,24 +29,28 @@ export class WebHookNotificationMethod extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {RequiredField(this, "URL Endpoint", "endpoint", { autoFocus: true })}
-          <Form.Group as={Col}>
-            <Form.Label className="required">HTTP Method</Form.Label>
-            <Form.Control
-              as="select"
-              size="sm"
-              name="method"
-              onChange={(e) => this.handleChange(e)}
+          <div className="space-y-2">
+            <Label className="required">HTTP Method</Label>
+            <Select
               value={stateProperty(this, "method")}
+              onValueChange={(value) => this.handleChange({
+                target: { name: "method", value: value }
+              })}
             >
-              <option value="POST">POST</option>
-              <option value="PUT">PUT</option>
-            </Form.Control>
-          </Form.Group>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Select method" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="POST">POST</SelectItem>
+                <SelectItem value="PUT">PUT</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           {NotificationFormatSelector(this, "format")}
-        </Row>
-        <Row>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {OptionalField(
             this,
             "Additional Headers",
@@ -55,7 +58,7 @@ export class WebHookNotificationMethod extends Component {
             { as: "textarea", rows: 5 },
             "Enter one header per line in the format 'Header: Value'.",
           )}
-        </Row>
+        </div>
       </>
     );
   }

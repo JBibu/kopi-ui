@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../forms";
 import { OptionalField } from "../forms/OptionalField";
 import { RequiredBoolean } from "../forms/RequiredBoolean";
@@ -25,7 +24,7 @@ export class SetupRepositoryS3 extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(this, "Bucket", "bucket", {
             autoFocus: true,
             placeholder: "enter bucket name",
@@ -36,12 +35,12 @@ export class SetupRepositoryS3 extends Component {
           {OptionalField(this, "Override Region", "region", {
             placeholder: "enter specific region (e.g., us-west-1) or leave empty",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {RequiredBoolean(this, "Use HTTP connection (insecure)", "doNotUseTLS")}
           {RequiredBoolean(this, "Do not verify TLS certificate", "doNotVerifyTLS")}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {RequiredField(this, "Access Key ID", "accessKeyID", {
             placeholder: "enter access key ID",
           })}
@@ -53,12 +52,12 @@ export class SetupRepositoryS3 extends Component {
             placeholder: "enter session token or leave empty",
             type: "password",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {OptionalField(this, "Object Name Prefix", "prefix", {
             placeholder: "enter object name prefix or leave empty",
           })}
-        </Row>
+        </div>
       </>
     );
   }

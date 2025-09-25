@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../../forms";
 import { RequiredField } from "../../forms/RequiredField";
 import { NotificationFormatSelector } from "./NotificationFormatSelector";
@@ -28,15 +26,15 @@ export class PushoverNotificationMethod extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {RequiredField(this, "Pushover App Token", "appToken", {
             autoFocus: true,
           })}
           {RequiredField(this, "Recipient User Key or Group Key", "userKey", {})}
           {NotificationFormatSelector(this, "format")}
-        </Row>
-        <Row>
-          <Col xs={12}>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="col-span-full">
             <hr />
             <p>
               Go to{" "}
@@ -45,8 +43,8 @@ export class PushoverNotificationMethod extends Component {
               </a>{" "}
               to setup your App Token and retrieve User or Group Keys.
             </p>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </>
     );
   }

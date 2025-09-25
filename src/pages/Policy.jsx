@@ -1,6 +1,4 @@
 import React, { createRef } from "react";
-import Col from "react-bootstrap/esm/Col";
-import Row from "react-bootstrap/esm/Row";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PolicyEditor } from "../components/policy-editor/PolicyEditor";
 import { CLIEquivalent } from "../components/CLIEquivalent";
@@ -23,14 +21,9 @@ export function Policy() {
         &nbsp;&nbsp;{PolicyTypeName(source)}
       </h4>
       <PolicyEditor ref={editorRef} userName={userName} host={host} path={path} close={() => navigate(-1)} />
-      <Row>
-        <Col>&nbsp;</Col>
-      </Row>
-      <Row>
-        <Col xs={12}>
-          <CLIEquivalent command={`policy set "${userName}@${host}:${path}"`} />
-        </Col>
-      </Row>
+      <div className="mt-6">
+        <CLIEquivalent command={`policy set "${userName}@${host}:${path}"`} />
+      </div>
     </>
   );
 }

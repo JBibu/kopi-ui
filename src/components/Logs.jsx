@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
-import Table from "react-bootstrap/Table";
+import { Table, TableBody, TableCell, TableRow } from "./ui/table";
 import { handleChange } from "../forms";
 import { redirect } from "../utils/uiutil";
 import PropTypes from "prop-types";
@@ -117,16 +117,16 @@ export class Logs extends Component {
     if (logs) {
       return (
         <div className="logs-table">
-          <Table size="sm" bordered hover>
-            <tbody>
+          <Table className="text-sm border">
+            <TableBody>
               {logs.map((v, ndx) => (
-                <tr key={ndx + "-" + v.ts} className={"loglevel-" + v.level}>
-                  <td className="elide" title={this.fullLogTime(v.ts)}>
+                <TableRow key={ndx + "-" + v.ts} className={"loglevel-" + v.level}>
+                  <TableCell className="elide" title={this.fullLogTime(v.ts)}>
                     {this.formatLogTime(v.ts)} {v.msg} {this.formatLogParams(v)}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
+            </TableBody>
           </Table>
           <div ref={this.messagesEndRef} />
         </div>

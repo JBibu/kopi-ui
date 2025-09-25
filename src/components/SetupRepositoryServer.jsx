@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../forms";
 import { OptionalField } from "../forms/OptionalField";
 import { RequiredField } from "../forms/RequiredField";
@@ -21,17 +20,17 @@ export class SetupRepositoryServer extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(this, "Server address", "url", {
             autoFocus: true,
             placeholder: "enter server URL (https://<host>:port)",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {OptionalField(this, "Trusted server certificate fingerprint (SHA256)", "serverCertFingerprint", {
             placeholder: "enter trusted server certificate fingerprint printed at server startup",
           })}
-        </Row>
+        </div>
       </>
     );
   }

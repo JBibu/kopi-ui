@@ -1,22 +1,26 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
+import { Label } from "../ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { stateProperty } from "../../forms";
 
 export function NotificationFormatSelector(component, name) {
   return (
-    <Form.Group as={Col}>
-      <Form.Label className="required">Notification Format</Form.Label>
-      <Form.Control
-        as="select"
-        size="sm"
-        name={name}
-        onChange={(e) => component.handleChange(e)}
+    <div className="space-y-2">
+      <Label className="required">Notification Format</Label>
+      <Select
         value={stateProperty(component, name)}
+        onValueChange={(value) => component.handleChange({
+          target: { name: name, value: value }
+        })}
       >
-        <option value="txt">Plain Text Format</option>
-        <option value="html">HTML Format</option>
-      </Form.Control>
-    </Form.Group>
+        <SelectTrigger className="h-9">
+          <SelectValue placeholder="Select format" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="txt">Plain Text Format</SelectItem>
+          <SelectItem value="html">HTML Format</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
   );
 }

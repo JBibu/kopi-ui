@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../forms";
 import { OptionalField } from "../forms/OptionalField";
 import { RequiredField } from "../forms/RequiredField";
@@ -22,17 +21,17 @@ export class SetupRepositoryRclone extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(this, "Rclone Remote Path", "remotePath", {
             autoFocus: true,
             placeholder: "enter <name-of-rclone-remote>:<path>",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {OptionalField(this, "Rclone Executable Path", "rcloneExe", {
             placeholder: "enter path to rclone executable",
           })}
-        </Row>
+        </div>
       </>
     );
   }

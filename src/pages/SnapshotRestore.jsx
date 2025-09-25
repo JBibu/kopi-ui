@@ -1,9 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import { Button } from "../components/ui/button";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { handleChange, validateRequiredFields } from "../forms";
@@ -110,8 +107,8 @@ export class SnapshotRestoreInternal extends Component {
         <GoBackButton />
         &nbsp;<span className="page-title">Restore</span>
         <hr />
-        <Form onSubmit={this.start}>
-          <Row>
+        <form onSubmit={this.start} className="space-y-4">
+          <div>
             {RequiredField(
               this,
               "Destination",
@@ -122,59 +119,45 @@ export class SnapshotRestoreInternal extends Component {
               },
               "You can also restore to a .zip or .tar file by providing the appropriate extension.",
             )}
-          </Row>
-          <Row>{RequiredBoolean(this, "Skip previously restored files and symlinks", "incremental")}</Row>
-          <Row>
+          </div>
+          <div>{RequiredBoolean(this, "Skip previously restored files and symlinks", "incremental")}</div>
+          <div>
             {RequiredBoolean(
               this,
               "Continue on Errors",
               "continueOnErrors",
               "When a restore error occurs, attempt to continue instead of failing fast.",
             )}
-          </Row>
-          <Row>{RequiredBoolean(this, "Restore File Ownership", "restoreOwnership")}</Row>
-          <Row>{RequiredBoolean(this, "Restore File Permissions", "restorePermissions")}</Row>
-          <Row>{RequiredBoolean(this, "Restore File Modification Time", "restoreModTimes")}</Row>
-          <Row>{RequiredBoolean(this, "Overwrite Files", "overwriteFiles")}</Row>
-          <Row>{RequiredBoolean(this, "Overwrite Directories", "overwriteDirectories")}</Row>
-          <Row>{RequiredBoolean(this, "Overwrite Symbolic Links", "overwriteSymlinks")}</Row>
-          <Row>{RequiredBoolean(this, "Write files atomically", "writeFilesAtomically")}</Row>
-          <Row>{RequiredBoolean(this, "Write Sparse Files", "writeSparseFiles")}</Row>
-          <Row>
-            <Col>
-              <hr />
-            </Col>
-          </Row>
-          <Row>
+          </div>
+          <div>{RequiredBoolean(this, "Restore File Ownership", "restoreOwnership")}</div>
+          <div>{RequiredBoolean(this, "Restore File Permissions", "restorePermissions")}</div>
+          <div>{RequiredBoolean(this, "Restore File Modification Time", "restoreModTimes")}</div>
+          <div>{RequiredBoolean(this, "Overwrite Files", "overwriteFiles")}</div>
+          <div>{RequiredBoolean(this, "Overwrite Directories", "overwriteDirectories")}</div>
+          <div>{RequiredBoolean(this, "Overwrite Symbolic Links", "overwriteSymlinks")}</div>
+          <div>{RequiredBoolean(this, "Write files atomically", "writeFilesAtomically")}</div>
+          <div>{RequiredBoolean(this, "Write Sparse Files", "writeSparseFiles")}</div>
+          <hr className="my-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {RequiredNumberField(this, "Shallow Restore At Depth", "restoreDirEntryAtDepth")}
             {RequiredNumberField(this, "Minimal File Size For Shallow Restore", "minSizeForPlaceholder")}
-          </Row>
-          <Row>
-            <Col>
-              <hr />
-            </Col>
-          </Row>
-          <Row>
+          </div>
+          <hr className="my-4" />
+          <div>
             {RequiredBoolean(
               this,
               "Disable ZIP compression",
               "uncompressedZip",
               "Do not compress when restoring to a ZIP file (faster).",
             )}
-          </Row>
-          <Row>
-            <Col>
-              <hr />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Button variant="primary" type="submit" data-testid="submit-button">
-                Begin Restore
-              </Button>
-            </Col>
-          </Row>
-        </Form>
+          </div>
+          <hr className="my-4" />
+          <div>
+            <Button variant="default" type="submit" data-testid="submit-button">
+              Begin Restore
+            </Button>
+          </div>
+        </form>
       </div>
     );
   }

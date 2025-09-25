@@ -1,12 +1,11 @@
 import React from "react";
-import Row from "react-bootstrap/Row";
 import { LabelColumn } from "./LabelColumn";
 import { ValueColumn } from "./ValueColumn";
 import { EffectiveValueColumn } from "./EffectiveValueColumn";
 
 export function SectionHeaderRow() {
   return (
-    <Row>
+    <div className="space-y-4">
       <LabelColumn />
       <ValueColumn>
         <div className="policyEditorHeader">Defined</div>
@@ -14,6 +13,6 @@ export function SectionHeaderRow() {
       <EffectiveValueColumn>
         <div className="policyEditorHeader">Effective</div>
       </EffectiveValueColumn>
-    </Row>
+    </div>
   );
 }

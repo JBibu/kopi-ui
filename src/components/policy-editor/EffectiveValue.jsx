@@ -1,5 +1,4 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
 import { getDeepStateProperty } from "../../utils/deepstate";
 import { EffectiveValueColumn } from "./EffectiveValueColumn";
 
@@ -8,15 +7,15 @@ export function EffectiveValue(component, policyField) {
 
   return (
     <EffectiveValueColumn>
-      <Form.Group>
-        <Form.Control
+      <div className="space-y-2">
+        <select
           data-testid={"effective-" + policyField}
-          size="sm"
           value={getDeepStateProperty(component, "resolved.effective." + policyField, undefined)}
           readOnly={true}
+          className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
         />
-        <Form.Text data-testid={"definition-" + policyField}>{component.PolicyDefinitionPoint(dsp)}</Form.Text>
-      </Form.Group>
+        <p className="text-sm text-muted-foreground" data-testid={"definition-" + policyField}>{component.PolicyDefinitionPoint(dsp)}</p>
+      </div>
     </EffectiveValueColumn>
   );
 }

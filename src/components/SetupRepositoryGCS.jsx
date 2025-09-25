@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../forms";
 import { OptionalField } from "../forms/OptionalField";
 import { RequiredField } from "../forms/RequiredField";
@@ -22,7 +21,7 @@ export class SetupRepositoryGCS extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(this, "GCS Bucket", "bucket", {
             autoFocus: true,
             placeholder: "enter bucket name",
@@ -31,19 +30,19 @@ export class SetupRepositoryGCS extends Component {
             placeholder: "enter object name prefix or leave empty",
             type: "password",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {OptionalField(this, "Credentials File", "credentialsFile", {
             placeholder: "enter name of credentials JSON file",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {OptionalField(this, "Credentials JSON", "credentials", {
             placeholder: "paste JSON credentials here",
             as: "textarea",
             rows: 5,
           })}
-        </Row>
+        </div>
       </>
     );
   }

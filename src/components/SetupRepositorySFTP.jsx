@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields, stateProperty } from "../forms";
 import { OptionalField } from "../forms/OptionalField";
 import { OptionalNumberField } from "../forms/OptionalNumberField";
@@ -58,7 +57,7 @@ export class SetupRepositorySFTP extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(this, "Host", "host", {
             autoFocus: true,
             placeholder: "ssh host name (e.g., example.com)",
@@ -69,29 +68,29 @@ export class SetupRepositorySFTP extends Component {
           {OptionalNumberField(this, "Port", "port", {
             placeholder: "port number (e.g., 22)",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {RequiredField(this, "Path", "path", {
             placeholder: "enter remote path to repository, e.g., '/mnt/data/repository'",
           })}
-        </Row>
+        </div>
         {!this.state.externalSSH && (
           <>
-            <Row>
+            <div className="space-y-4">
               {OptionalField(this, "Password", "password", {
                 type: "password",
                 placeholder: "password",
               })}
-            </Row>
-            <Row>
+            </div>
+            <div className="space-y-4">
               {OptionalField(this, "Path to key file", "keyfile", {
                 placeholder: "enter path to the key file",
               })}
               {OptionalField(this, "Path to known_hosts File", "knownHostsFile", {
                 placeholder: "enter path to the known_hosts file",
               })}
-            </Row>
-            <Row>
+            </div>
+            <div className="space-y-4">
               {OptionalField(
                 this,
                 "Key Data",
@@ -128,7 +127,7 @@ export class SetupRepositorySFTP extends Component {
                   Either <b>Known Hosts File</b> or <b>Known Hosts Data</b> is required, but not both.
                 </>,
               )}
-            </Row>
+            </div>
             <hr />
           </>
         )}
@@ -140,14 +139,14 @@ export class SetupRepositorySFTP extends Component {
         )}
         {this.state.externalSSH && (
           <>
-            <Row>
+            <div className="space-y-4">
               {OptionalField(this, "SSH Command", "sshCommand", {
                 placeholder: "provide enter passwordless SSH command to execute (typically 'ssh')",
               })}
               {OptionalField(this, "SSH Arguments", "sshArguments", {
                 placeholder: "enter SSH command arguments ('user@host -s sftp' will be appended automatically)",
               })}
-            </Row>
+            </div>
           </>
         )}
       </>

@@ -4,13 +4,12 @@ import { EmailNotificationMethod } from "./EmailNotificationMethod";
 import { PushoverNotificationMethod } from "./PushoverNotificationMethod";
 import { WebHookNotificationMethod } from "./WebHookNotificationMethod";
 
-import Badge from "react-bootstrap/Badge";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Dropdown from "react-bootstrap/Dropdown";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Table from "react-bootstrap/Table";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Table } from "../ui/table";
 import { handleChange, stateProperty, valueToNumber } from "../../forms";
 import { RequiredField } from "../../forms/RequiredField";
 
@@ -190,10 +189,10 @@ export class NotificationEditor extends Component {
   renderEditor(SelectedEditor) {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           <h4>{this.state.isNewProfile ? "New Notification Profile" : "Edit Notification Profile"}</h4>
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {RequiredField(
             this,
             "Profile Name",
@@ -204,29 +203,33 @@ export class NotificationEditor extends Component {
             },
             "Unique name for this notification profile",
           )}
-          <Form.Group as={Col}>
-            <Form.Label className="required">Minimum Severity</Form.Label>
-            <Form.Control
-              as="select"
-              size="sm"
-              name="editedProfile.minSeverity"
-              onChange={(e) => this.handleChange(e, valueToNumber)}
-              value={stateProperty(this, "editedProfile.minSeverity")}
+          <div className="space-y-2">
+            <Label className="required">Minimum Severity</Label>
+            <Select
+              value={stateProperty(this, "editedProfile.minSeverity")?.toString()}
+              onValueChange={(value) => this.handleChange({
+                target: { name: "editedProfile.minSeverity", value: parseInt(value, 10) }
+              }, valueToNumber)}
             >
-              {severityOptions.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </Form.Control>
-            <Form.Text className="text-muted">Minimum severity required to use this notification profile</Form.Text>
-          </Form.Group>
-        </Row>
-        <Row>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Select severity" />
+              </SelectTrigger>
+              <SelectContent>
+                {severityOptions.map((o) => (
+                  <SelectItem key={o.value} value={o.value.toString()}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-muted-foreground">Minimum severity required to use this notification profile</p>
+          </div>
+        </div>
+        <div className="space-y-4">
           <SelectedEditor ref={this.optionsEditor} initial={this.state.editedProfile.method.config} />
-        </Row>
-        <Row>
-          <Col>
+        </div>
+        <div className="space-y-4">
+          <div>
             <hr />
             {this.state.isNewProfile ? (
               <Button size="sm" onClick={() => this.saveNewProfile()}>
@@ -243,8 +246,8 @@ export class NotificationEditor extends Component {
             <Button size="sm" variant="danger" onClick={() => this.setEditedProfile(null, false)}>
               Cancel
             </Button>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </>
     );
   }
@@ -253,7 +256,7 @@ export class NotificationEditor extends Component {
     return (
       <>
         {this.state.notificationProfiles && this.state.notificationProfiles.length > 0 ? (
-          <Row>
+          <div className="space-y-4">
             <Table striped bordered hover>
               <thead>
                 <tr>
@@ -287,9 +290,9 @@ export class NotificationEditor extends Component {
                 ))}
               </tbody>
             </Table>
-          </Row>
+          </div>
         ) : (
-          <Row>
+          <div className="space-y-4">
             <p>
               <Badge bg="warning" text="dark">
                 Important
@@ -299,16 +302,18 @@ export class NotificationEditor extends Component {
               <br />
               Click the button below to add a new profile to receive notifications from Kopia.
             </p>
-          </Row>
+          </div>
         )}
-        <Row>
-          <Dropdown>
-            <Dropdown.Toggle size="sm" variant="primary" id="newProfileButton">
-              Create New Profile
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
+        <div className="space-y-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" variant="default" id="newProfileButton">
+                Create New Profile
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
               {Object.keys(notificationMethods).map((k) => (
-                <Dropdown.Item
+                <DropdownMenuItem
                   key={k}
                   onClick={() =>
                     // create empty profile
@@ -323,11 +328,11 @@ export class NotificationEditor extends Component {
                   }
                 >
                   {notificationMethods[k].displayName}
-                </Dropdown.Item>
+                </DropdownMenuItem>
               ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </Row>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </>
     );
   }

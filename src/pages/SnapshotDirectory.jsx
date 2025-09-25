@@ -2,11 +2,9 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { Component } from "react";
-import Button from "react-bootstrap/Button";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Spinner from "react-bootstrap/Spinner";
+import { Spinner } from "../components/ui/spinner";
+import { Button } from "../components/ui/button";
 import { DirectoryItems } from "../components/DirectoryItems";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { DirectoryBreadcrumbs } from "../components/DirectoryBreadcrumbs";
@@ -143,8 +141,8 @@ class SnapshotDirectoryInternal extends Component {
     return (
       <>
         <DirectoryBreadcrumbs />
-        <Row>
-          <Col xs="auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="flex flex-wrap items-center gap-2">
             {this.state.mountInfo.path ? (
               <>
                 <Button size="sm" variant="secondary" onClick={this.unmount}>
@@ -159,10 +157,10 @@ class SnapshotDirectoryInternal extends Component {
                 )}
                 <input
                   readOnly={true}
-                  className="form-control form-control-sm mounted-path"
+                  className="border border-input bg-background px-3 py-1 text-sm rounded-md flex-1 min-w-0"
                   value={this.state.mountInfo.path}
                 />
-                <Button size="sm" variant="success" onClick={this.copyPath} data-testid="copy-path-button">
+                <Button size="sm" onClick={this.copyPath} data-testid="copy-path-button">
                   <FontAwesomeIcon icon={faCopy} />
                 </Button>
               </>
@@ -173,24 +171,17 @@ class SnapshotDirectoryInternal extends Component {
                 </Button>
               </>
             )}
-            &nbsp;
-            <Button size="sm" variant="primary" href={"/snapshots/dir/" + this.props.params.oid + "/restore"}>
+            <Button size="sm" href={"/snapshots/dir/" + this.props.params.oid + "/restore"}>
               Restore Files & Directories
             </Button>
-            &nbsp;
-          </Col>
-          <Col xs={12} md={6}>
+          </div>
+          <div className="text-sm text-muted-foreground">
             You can mount/restore all the files & directories that you see below or restore files individually.
-          </Col>
-        </Row>
-        <Row>
-          <Col>&nbsp;</Col>
-        </Row>
-        <Row>
-          <Col xs={12}>
-            <DirectoryItems items={items} historyState={this.props.location.state} />
-          </Col>
-        </Row>
+          </div>
+        </div>
+        <div className="mb-4">
+          <DirectoryItems items={items} historyState={this.props.location.state} />
+        </div>
         <CLIEquivalent command={`snapshot list ${this.state.oid}`} />
       </>
     );

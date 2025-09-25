@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../forms";
 import { RequiredField } from "../forms/RequiredField";
 import PropTypes from "prop-types";
@@ -21,13 +20,13 @@ export class SetupRepositoryToken extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(this, "Token", "token", {
             autoFocus: true,
             type: "password",
             placeholder: "paste connection token",
           })}
-        </Row>
+        </div>
       </>
     );
   }

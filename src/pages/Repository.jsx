@@ -1,12 +1,10 @@
 import axios from "axios";
 import React, { Component } from "react";
-import Badge from "react-bootstrap/Badge";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Spinner from "react-bootstrap/Spinner";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Spinner } from "../components/ui/spinner";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { handleChange } from "../forms";
 import { SetupRepository } from "../components/SetupRepository";
 import { CLIEquivalent } from "../components/CLIEquivalent";
@@ -135,37 +133,36 @@ export class Repository extends Component {
     }
 
     if (isLoading) {
-      return <Spinner animation="border" variant="primary" />;
+      return <Spinner size="default" />;
     }
 
     if (this.state.status.initTaskID) {
       return (
         <>
-          <h4>
-            <Spinner animation="border" variant="primary" size="sm" />
-            &nbsp;Initializing Repository...
+          <h4 className="flex items-center gap-2">
+            <Spinner size="sm" />
+            Initializing Repository...
           </h4>
           {this.state.showLog ? (
             <>
-              <Button size="sm" variant="light" onClick={() => this.setState({ showLog: false })}>
+              <Button size="sm" variant="outline" onClick={() => this.setState({ showLog: false })}>
                 <FontAwesomeIcon icon={faChevronCircleUp} /> Hide Log
               </Button>
               <Logs taskID={this.state.status.initTaskID} />
             </>
           ) : (
-            <Button size="sm" variant="light" onClick={() => this.setState({ showLog: true })}>
+            <Button size="sm" variant="outline" onClick={() => this.setState({ showLog: true })}>
               <FontAwesomeIcon icon={faChevronCircleDown} /> Show Log
             </Button>
           )}
           <hr />
           <Button
             size="sm"
-            variant="danger"
-            icon={faWindowClose}
+            variant="destructive"
             title="Cancel"
             onClick={() => cancelTask(this.state.status.initTaskID)}
           >
-            Cancel Connection
+            <FontAwesomeIcon icon={faWindowClose} /> Cancel Connection
           </Button>
         </>
       );
@@ -178,79 +175,72 @@ export class Repository extends Component {
             <FontAwesomeIcon icon={faCheck} style={{ marginRight: 4 }} />
             <span>Connected To Repository</span>
           </p>
-          <Form>
-            <Row>
-              <Form.Group as={Col}>
-                <InputGroup>
-                  <Form.Control
-                    autoFocus={true}
-                    isInvalid={!this.state.status.description}
-                    name="status.description"
-                    value={this.state.status.description}
-                    onChange={this.handleChange}
-                    size="sm"
-                  />
-                  &nbsp;
-                  <Button data-testid="update-description" size="sm" onClick={this.updateDescription} type="button">
-                    Update Description
-                  </Button>
-                </InputGroup>
-                <Form.Control.Feedback type="invalid">Description Is Required</Form.Control.Feedback>
-              </Form.Group>
-            </Row>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <Input
+                  autoFocus={true}
+                  className={!this.state.status.description ? 'border-red-500' : ''}
+                  name="status.description"
+                  value={this.state.status.description}
+                  onChange={this.handleChange}
+                  size="sm"
+                />
+                <Button data-testid="update-description" size="sm" onClick={this.updateDescription} type="button">
+                  Update Description
+                </Button>
+              </div>
+              {!this.state.status.description && (
+                <p className="text-red-500 text-sm">Description Is Required</p>
+              )}
+            </div>
             {this.state.status.readonly && (
-              <Row>
-                <Badge pill variant="warning">
+              <div>
+                <Badge className="bg-yellow-500 text-yellow-50">
                   Repository is read-only
                 </Badge>
-              </Row>
+              </div>
             )}
-          </Form>
+          </div>
           <hr />
-          <Form>
+          <div className="space-y-4">
             {this.state.status.apiServerURL ? (
-              <>
-                <Row>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Server URL</Form.Label>
-                    <Form.Control readOnly defaultValue={this.state.status.apiServerURL} />
-                  </Form.Group>
-                </Row>
-              </>
+              <div className="space-y-2">
+                <Label className="required">Server URL</Label>
+                <Input readOnly defaultValue={this.state.status.apiServerURL} />
+              </div>
             ) : (
-              <>
-                <Row>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Config File</Form.Label>
-                    <Form.Control readOnly defaultValue={this.state.status.configFile} />
-                  </Form.Group>
-                </Row>
-                <Row>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Provider</Form.Label>
-                    <Form.Control readOnly defaultValue={this.state.status.storage} />
-                  </Form.Group>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Encryption Algorithm</Form.Label>
-                    <Form.Control readOnly defaultValue={this.state.status.encryption} />
-                  </Form.Group>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Hash Algorithm</Form.Label>
-                    <Form.Control readOnly defaultValue={this.state.status.hash} />
-                  </Form.Group>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Splitter Algorithm</Form.Label>
-                    <Form.Control readOnly defaultValue={this.state.status.splitter} />
-                  </Form.Group>
-                </Row>
-                <Row>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Repository Format</Form.Label>
-                    <Form.Control readOnly defaultValue={this.state.status.formatVersion} />
-                  </Form.Group>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Error Correction Overhead</Form.Label>
-                    <Form.Control
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="required">Config File</Label>
+                  <Input readOnly defaultValue={this.state.status.configFile} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="space-y-2">
+                    <Label className="required">Provider</Label>
+                    <Input readOnly defaultValue={this.state.status.storage} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="required">Encryption Algorithm</Label>
+                    <Input readOnly defaultValue={this.state.status.encryption} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="required">Hash Algorithm</Label>
+                    <Input readOnly defaultValue={this.state.status.hash} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="required">Splitter Algorithm</Label>
+                    <Input readOnly defaultValue={this.state.status.splitter} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="space-y-2">
+                    <Label className="required">Repository Format</Label>
+                    <Input readOnly defaultValue={this.state.status.formatVersion} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="required">Error Correction Overhead</Label>
+                    <Input
                       readOnly
                       defaultValue={
                         this.state.status.eccOverheadPercent > 0
@@ -258,43 +248,31 @@ export class Repository extends Component {
                           : "Disabled"
                       }
                     />
-                  </Form.Group>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Error Correction Algorithm</Form.Label>
-                    <Form.Control readOnly defaultValue={this.state.status.ecc || "-"} />
-                  </Form.Group>
-                  <Form.Group as={Col}>
-                    <Form.Label className="required">Internal Compression</Form.Label>
-                    <Form.Control readOnly defaultValue={this.state.status.supportsContentCompression ? "yes" : "no"} />
-                  </Form.Group>
-                </Row>
-              </>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="required">Error Correction Algorithm</Label>
+                    <Input readOnly defaultValue={this.state.status.ecc || "-"} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="required">Internal Compression</Label>
+                    <Input readOnly defaultValue={this.state.status.supportsContentCompression ? "yes" : "no"} />
+                  </div>
+                </div>
+              </div>
             )}
-            <Row>
-              <Form.Group as={Col}>
-                <Form.Label className="required">Connected as:</Form.Label>
-                <Form.Control readOnly defaultValue={this.state.status.username + "@" + this.state.status.hostname} />
-              </Form.Group>
-            </Row>
-            <Row>
-              <Col>&nbsp;</Col>
-            </Row>
-            <Row>
-              <Col>
-                <Button data-testid="disconnect" size="sm" variant="danger" onClick={this.disconnect}>
-                  Disconnect
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-          <Row>
-            <Col>&nbsp;</Col>
-          </Row>
-          <Row>
-            <Col xs={12}>
+            <div className="space-y-2">
+              <Label className="required">Connected as:</Label>
+              <Input readOnly defaultValue={this.state.status.username + "@" + this.state.status.hostname} />
+            </div>
+            <div className="pt-4">
+              <Button data-testid="disconnect" size="sm" variant="destructive" onClick={this.disconnect}>
+                Disconnect
+              </Button>
+            </div>
+            <div className="pt-4">
               <CLIEquivalent command="repository status" />
-            </Col>
-          </Row>
+            </div>
+          </div>
         </>
       );
     }

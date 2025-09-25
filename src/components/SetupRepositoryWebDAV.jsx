@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../forms";
 import { OptionalField } from "../forms/OptionalField";
 import { RequiredField } from "../forms/RequiredField";
@@ -22,13 +21,13 @@ export class SetupRepositoryWebDAV extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(this, "WebDAV Server URL", "url", {
             autoFocus: true,
             placeholder: "http[s]://server:port/path",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {OptionalField(this, "Username", "username", {
             placeholder: "enter username",
           })}
@@ -36,7 +35,7 @@ export class SetupRepositoryWebDAV extends Component {
             placeholder: "enter password",
             type: "password",
           })}
-        </Row>
+        </div>
       </>
     );
   }

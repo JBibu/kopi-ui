@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,4 +59,8 @@ export const AlertProvider = ({ children }) => {
       </AlertDialog>
     </AlertContext.Provider>
   );
+};
+
+AlertProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

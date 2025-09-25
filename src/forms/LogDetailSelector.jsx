@@ -1,28 +1,44 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { valueToNumber, stateProperty } from ".";
 
 export function LogDetailSelector(component, name) {
+  const options = [
+    { value: "", label: "(inherit from parent)" },
+    { value: "0", label: "0 - no output" },
+    { value: "1", label: "1 - minimal details" },
+    { value: "2", label: "2" },
+    { value: "3", label: "3" },
+    { value: "4", label: "4" },
+    { value: "5", label: "5 - normal details" },
+    { value: "6", label: "6" },
+    { value: "7", label: "7" },
+    { value: "8", label: "8" },
+    { value: "9", label: "9" },
+    { value: "10", label: "10 - maximum details" }
+  ];
+
+  const currentValue = stateProperty(component, name);
+
   return (
-    <Form.Control
-      as="select"
-      size="sm"
+    <Select
       name={name}
-      onChange={(e) => component.handleChange(e, valueToNumber)}
-      value={stateProperty(component, name)}
+      value={currentValue?.toString() || ""}
+      onValueChange={(value) => {
+        const event = { target: { name, value } };
+        component.handleChange(event, valueToNumber);
+      }}
     >
-      <option value="">(inherit from parent)</option>
-      <option value="0">0 - no output</option>
-      <option value="1">1 - minimal details</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5 - normal details</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-      <option value="9">9</option>
-      <option value="10">10 - maximum details</option>
-    </Form.Control>
+      <SelectTrigger className="h-9">
+        <SelectValue placeholder="(inherit from parent)" />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

@@ -3,11 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import moment from "moment";
 import React, { Component } from "react";
-import Badge from "react-bootstrap/Badge";
-import Col from "react-bootstrap/Col";
-import Dropdown from "react-bootstrap/Dropdown";
-import Row from "react-bootstrap/Row";
-import Spinner from "react-bootstrap/Spinner";
+import { Badge } from "../components/ui/badge";
+import { Spinner } from "../components/ui/spinner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { handleChange } from "../forms";
@@ -380,55 +384,51 @@ export class Snapshots extends Component {
 
     return (
       <>
-        <div className="list-actions">
-          <Row>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
             {this.state.multiUser && (
-              <>
-                <Col xs="auto">
-                  <Dropdown>
-                    <Dropdown.Toggle size="sm" variant="primary" id="dropdown-basic">
-                      <FontAwesomeIcon icon={faUserFriends} />
-                      &nbsp;{this.state.selectedOwner}
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => this.selectOwner(localSnapshots)}>{localSnapshots}</Dropdown.Item>
-                      <Dropdown.Item onClick={() => this.selectOwner(allSnapshots)}>{allSnapshots}</Dropdown.Item>
-                      <Dropdown.Divider />
-                      {uniqueOwners.map((v) => (
-                        <Dropdown.Item key={v} onClick={() => this.selectOwner(v)}>
-                          {v}
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </Col>
-              </>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="outline">
+                    <FontAwesomeIcon icon={faUserFriends} className="mr-2" />
+                    {this.state.selectedOwner}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => this.selectOwner(localSnapshots)}>
+                    {localSnapshots}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => this.selectOwner(allSnapshots)}>
+                    {allSnapshots}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  {uniqueOwners.map((v) => (
+                    <DropdownMenuItem key={v} onClick={() => this.selectOwner(v)}>
+                      {v}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
-            <Col xs="auto">
-              <Button data-testid="new-snapshot" size="sm" asChild>
-                <Link to="/snapshots/new">
-                  New Snapshot
-                </Link>
-              </Button>
-            </Col>
-            <Col></Col>
-            <Col xs="auto">
-              <Button
-                size="sm"
-                title="Synchronize"
-                variant="outline"
-                onClick={this.sync}
-                disabled={this.state.isRefreshing}
-              >
-                {this.state.isRefreshing ? (
-                  <Spinner animation="border" variant="light" size="sm" />
-                ) : (
-                  <FontAwesomeIcon icon={faSync} />
-                )}
-              </Button>
-            </Col>
-          </Row>
+            <Button data-testid="new-snapshot" size="sm" asChild>
+              <Link to="/snapshots/new">
+                New Snapshot
+              </Link>
+            </Button>
+          </div>
+          <Button
+            size="sm"
+            title="Synchronize"
+            variant="outline"
+            onClick={this.sync}
+            disabled={this.state.isRefreshing}
+          >
+            {this.state.isRefreshing ? (
+              <Spinner size="sm" />
+            ) : (
+              <FontAwesomeIcon icon={faSync} />
+            )}
+          </Button>
         </div>
 
         <KopiaTable data={sources} columns={columns} />

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../forms";
 import { RequiredField } from "../forms/RequiredField";
 import { OptionalField } from "../forms/OptionalField";
@@ -22,13 +21,13 @@ export class SetupRepositoryB2 extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(this, "B2 Bucket", "bucket", {
             autoFocus: true,
             placeholder: "enter bucket name",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {RequiredField(this, "Key ID", "keyId", {
             placeholder: "enter application or account key ID",
           })}
@@ -36,12 +35,12 @@ export class SetupRepositoryB2 extends Component {
             placeholder: "enter secret application or account key",
             type: "password",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {OptionalField(this, "Object Name Prefix", "prefix", {
             placeholder: "enter object name prefix or leave empty",
           })}
-        </Row>
+        </div>
       </>
     );
   }

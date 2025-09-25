@@ -1,10 +1,6 @@
 import { useContext, React } from "react";
-import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
+import { Label } from "../components/ui/label";
 import { NotificationEditor } from "../components/notifications/NotificationEditor";
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
 
@@ -16,14 +12,18 @@ export function Preferences() {
     useContext(UIPreferencesContext);
 
   return (
-    <Tabs defaultActiveKey="appearance" id="preferences" className="mb-3">
-      <Tab eventKey="appearance" title="Appearance" id="tab-appearance">
-        <Container fluid>
-          <Row>
-            <Form.Group as={Col} controlId="theme">
-              <Form.Label className="required">Theme</Form.Label>
+    <Tabs defaultValue="appearance" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="appearance">Appearance</TabsTrigger>
+        <TabsTrigger value="notifications">Notifications</TabsTrigger>
+      </TabsList>
+      <TabsContent value="appearance" className="mt-6">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="themeSelector" className="required">Theme</Label>
               <select
-                className="form-select form-select-sm"
+                className="form-select form-select-sm w-full"
                 title="Select theme"
                 id="themeSelector"
                 value={theme}
@@ -34,11 +34,11 @@ export function Preferences() {
                 <option value="pastel">pastel</option>
                 <option value="ocean">ocean</option>
               </select>
-            </Form.Group>
-            <Form.Group as={Col} controlId="appearance">
-              <Form.Label className="required">Appearance</Form.Label>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="fontSizeInput" className="required">Appearance</Label>
               <select
-                className="form-select form-select-sm"
+                className="form-select form-select-sm w-full"
                 title="Select font size"
                 id="fontSizeInput"
                 value={fontSize}
@@ -48,11 +48,11 @@ export function Preferences() {
                 <option value="fs-5">medium</option>
                 <option value="fs-4">large</option>
               </select>
-            </Form.Group>
-            <Form.Group as={Col} controlId="byteRepresentation">
-              <Form.Label className="required">Byte representation</Form.Label>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bytesBaseInput" className="required">Byte representation</Label>
               <select
-                className="form-select form-select-sm"
+                className="form-select form-select-sm w-full"
                 title="Select byte representation"
                 id="bytesBaseInput"
                 value={bytesStringBase2}
@@ -61,17 +61,17 @@ export function Preferences() {
                 <option value="true">Base-2 (KiB, MiB, GiB, TiB)</option>
                 <option value="false">Base-10 (KB, MB, GB, TB)</option>
               </select>
-            </Form.Group>
-          </Row>
-        </Container>
-      </Tab>
-      <Tab eventKey="notifications" title="Notifications" id="tab-notifications">
-        <div className="tab-content-fix">
-          <Container fluid>
-            <NotificationEditor />
-          </Container>
+            </div>
+          </div>
         </div>
-      </Tab>
+      </TabsContent>
+      <TabsContent value="notifications" className="mt-6">
+        <div className="tab-content-fix">
+          <div className="container mx-auto px-4">
+            <NotificationEditor />
+          </div>
+        </div>
+      </TabsContent>
     </Tabs>
   );
 }

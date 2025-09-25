@@ -2,7 +2,8 @@ import { faBan, faCheck, faExclamationCircle, faXmark } from "@fortawesome/free-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React from "react";
-import Spinner from "react-bootstrap/Spinner";
+import { Spinner } from "../components/ui/spinner";
+import { Button } from "../components/ui/button";
 import { formatDuration } from "./formatutils";
 
 export function cancelTask(tid) {
@@ -20,10 +21,10 @@ export function taskStatusSymbol(task) {
     case "RUNNING":
       return (
         <>
-          <Spinner animation="border" variant="primary" size="sm" /> Running for {dur}
-          <button className="btn btn-sm btn-link" type="button" onClick={() => cancelTask(task.id)}>
+          <Spinner className="w-4 h-4 mr-2" /> Running for {dur}
+          <Button variant="ghost" size="sm" onClick={() => cancelTask(task.id)}>
             <FontAwesomeIcon color="red" size="lg" title="Cancel task" icon={faXmark} />
-          </button>
+          </Button>
         </>
       );
     case "SUCCESS":

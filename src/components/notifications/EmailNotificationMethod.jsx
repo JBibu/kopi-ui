@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../../forms";
 import { RequiredField } from "../../forms/RequiredField";
 import { RequiredNumberField } from "../../forms/RequiredNumberField";
@@ -30,14 +29,14 @@ export class EmailNotificationMethod extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {RequiredField(this, "SMTP Server", "smtpServer", {
             autoFocus: true,
             placeholder: "SMTP server DNS name, e.g. smtp.gmail.com",
           })}
           {RequiredNumberField(this, "SMTP Port", "smtpPort", {})}
-        </Row>
-        <Row>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {OptionalField(this, "SMTP Username", "smtpUsername", {
             placeholder: "SMTP server username, typically the email address",
           })}
@@ -48,8 +47,8 @@ export class EmailNotificationMethod extends Component {
           {OptionalField(this, "SMTP Identity (Optional)", "smtpIdentity", {
             placeholder: "SMTP server identity (often empty)",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {RequiredField(this, "Mail From", "from", {
             placeholder: "sender email address",
           })}
@@ -60,7 +59,7 @@ export class EmailNotificationMethod extends Component {
             placeholder: "CC addresses (comma-separated)",
           })}
           {NotificationFormatSelector(this, "format")}
-        </Row>
+        </div>
       </>
     );
   }

@@ -2,12 +2,9 @@ import { faUserFriends } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { Component } from "react";
-import Badge from "react-bootstrap/Badge";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Dropdown from "react-bootstrap/Dropdown";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
 import { Link, useNavigate } from "react-router-dom";
 import { handleChange } from "../forms";
 import { OptionalDirectory } from "../forms/OptionalDirectory";
@@ -170,7 +167,7 @@ export class PoliciesInternal extends Component {
     for (let pol in policies.policy) {
       if (!isEmpty(policies.policy[pol])) {
         bits.push(
-          <Badge bg="policy-badge" key={pol}>
+          <Badge variant="secondary" key={pol}>
             {pol}
           </Badge>,
         );
@@ -281,12 +278,12 @@ export class PoliciesInternal extends Component {
         cell: (x) => (
           <Button
             data-testid="edit-policy"
-            as={Link}
-            to={policyEditorURL(x.row.original.target)}
-            variant="primary"
+            asChild
             size="sm"
           >
-            Edit
+            <Link to={policyEditorURL(x.row.original.target)}>
+              Edit
+            </Link>
           </Button>
         ),
       },
@@ -296,45 +293,47 @@ export class PoliciesInternal extends Component {
       <>
         {!this.state.editorTarget && (
           <div className="list-actions">
-            <Form onSubmit={this.editPolicyForPath}>
-              <Row>
-                <Col xs="auto">
-                  <Dropdown>
-                    <Dropdown.Toggle size="sm" variant="primary" id="dropdown-basic">
-                      <FontAwesomeIcon icon={faUserFriends} />
-                      &nbsp;{this.state.selectedOwner}
-                    </Dropdown.Toggle>
+            <form onSubmit={this.editPolicyForPath}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="outline" id="dropdown-basic">
+                        <FontAwesomeIcon icon={faUserFriends} />
+                        &nbsp;{this.state.selectedOwner}
+                      </Button>
+                    </DropdownMenuTrigger>
 
-                    <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => this.selectOwner(applicablePolicies)}>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => this.selectOwner(applicablePolicies)}>
                         {applicablePolicies}
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => this.selectOwner(localPolicies)}>{localPolicies}</Dropdown.Item>
-                      <Dropdown.Item onClick={() => this.selectOwner(allPolicies)}>{allPolicies}</Dropdown.Item>
-                      <Dropdown.Divider />
-                      <Dropdown.Item onClick={() => this.selectOwner(globalPolicy)}>{globalPolicy}</Dropdown.Item>
-                      <Dropdown.Item onClick={() => this.selectOwner(perUserPolicies)}>{perUserPolicies}</Dropdown.Item>
-                      <Dropdown.Item onClick={() => this.selectOwner(perHostPolicies)}>{perHostPolicies}</Dropdown.Item>
-                      <Dropdown.Divider />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => this.selectOwner(localPolicies)}>{localPolicies}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => this.selectOwner(allPolicies)}>{allPolicies}</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => this.selectOwner(globalPolicy)}>{globalPolicy}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => this.selectOwner(perUserPolicies)}>{perUserPolicies}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => this.selectOwner(perHostPolicies)}>{perHostPolicies}</DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       {uniqueOwners.map((v) => (
-                        <Dropdown.Item key={v} onClick={() => this.selectOwner(v)}>
+                        <DropdownMenuItem key={v} onClick={() => this.selectOwner(v)}>
                           {v}
-                        </Dropdown.Item>
+                        </DropdownMenuItem>
                       ))}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </Col>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
                 {this.state.selectedOwner === localPolicies ||
                 this.state.selectedOwner === this.state.localSourceName ||
                 this.state.selectedOwner === applicablePolicies ? (
                   <>
-                    <Col>
+                    <div className="flex-1">
                       {OptionalDirectory(this, null, "policyPath", {
                         autoFocus: true,
                         placeholder: "enter directory to find or set policy",
                       })}
-                    </Col>
-                    <Col xs="auto">
+                    </div>
+                    <div>
                       <Button
                         disabled={!this.state.policyPath}
                         size="sm"
@@ -343,13 +342,13 @@ export class PoliciesInternal extends Component {
                       >
                         Set Policy
                       </Button>
-                    </Col>
+                    </div>
                   </>
                 ) : (
-                  <Col />
+                  <div />
                 )}
-              </Row>
-            </Form>
+              </div>
+            </form>
           </div>
         )}
 

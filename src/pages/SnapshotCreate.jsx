@@ -1,9 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
+import { Button } from "../components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { handleChange } from "../forms";
 import { PolicyEditor } from "../components/policy-editor/PolicyEditor";
@@ -165,50 +162,47 @@ class SnapshotCreateInternal extends Component {
   render() {
     return (
       <>
-        <Form.Group>
-          <GoBackButton />
-        </Form.Group>
-        <br />
-        <h4>New Snapshot</h4>
-        <br />
-        <Row>
-          <Col>
-            {RequiredDirectory(this, null, "path", {
-              autoFocus: true,
-              placeholder: "enter path to snapshot",
-            })}
-          </Col>
-          <Col xs="auto">
-            <Button
-              data-testid="estimate-now"
-              size="sm"
-              disabled={!this.state.resolvedSource?.path}
-              title="Estimate"
-              variant="secondary"
-              onClick={this.estimate}
-            >
-              Estimate
-            </Button>
-            <Button
-              data-testid="snapshot-now"
-              size="sm"
-              disabled={!this.state.resolvedSource?.path}
-              title="Snapshot Now"
-              variant="primary"
-              onClick={this.snapshotNow}
-            >
-              Snapshot Now
-            </Button>
-          </Col>
-        </Row>
-        {this.state.estimateTaskID && this.state.estimateTaskVisible && (
-          <SnapshotEstimation taskID={this.state.estimateTaskID} hideDescription={true} showZeroCounters={true} />
-        )}
-        <br />
-        {this.state.resolvedSource && (
-          <Row>
-            <Col xs={12}>
-              <Form.Text>{this.state.resolvedSource ? this.state.resolvedSource.path : this.state.path}</Form.Text>
+        <div className="space-y-4">
+          <div>
+            <GoBackButton />
+          </div>
+          <h4 className="text-xl font-medium">New Snapshot</h4>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              {RequiredDirectory(this, null, "path", {
+                autoFocus: true,
+                placeholder: "enter path to snapshot",
+              })}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                data-testid="estimate-now"
+                size="sm"
+                disabled={!this.state.resolvedSource?.path}
+                title="Estimate"
+                variant="secondary"
+                onClick={this.estimate}
+              >
+                Estimate
+              </Button>
+              <Button
+                data-testid="snapshot-now"
+                size="sm"
+                disabled={!this.state.resolvedSource?.path}
+                title="Snapshot Now"
+                variant="default"
+                onClick={this.snapshotNow}
+              >
+                Snapshot Now
+              </Button>
+            </div>
+          </div>
+          {this.state.estimateTaskID && this.state.estimateTaskVisible && (
+            <SnapshotEstimation taskID={this.state.estimateTaskID} hideDescription={true} showZeroCounters={true} />
+          )}
+          {this.state.resolvedSource && (
+            <div className="w-full">
+              <p className="text-sm text-muted-foreground mb-4">{this.state.resolvedSource ? this.state.resolvedSource.path : this.state.path}</p>
               <PolicyEditor
                 ref={this.policyEditorRef}
                 embedded
@@ -216,13 +210,12 @@ class SnapshotCreateInternal extends Component {
                 userName={this.state.resolvedSource.userName}
                 path={this.state.resolvedSource.path}
               />
-            </Col>
-          </Row>
-        )}
-        <br />
-        <CLIEquivalent
-          command={`snapshot create ${this.state.resolvedSource ? this.state.resolvedSource.path : this.state.path}`}
-        />
+            </div>
+          )}
+          <CLIEquivalent
+            command={`snapshot create ${this.state.resolvedSource ? this.state.resolvedSource.path : this.state.path}`}
+          />
+        </div>
       </>
     );
   }

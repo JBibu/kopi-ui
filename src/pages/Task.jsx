@@ -2,13 +2,12 @@ import { faStopCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { Component, useContext } from "react";
-import Alert from "react-bootstrap/Alert";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Table from "react-bootstrap/Table";
-import Spinner from "react-bootstrap/Spinner";
+import { Alert } from "../components/ui/alert";
+import { Button } from "../components/ui/button";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "../components/ui/table";
+import { Spinner } from "../components/ui/spinner";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { Logs } from "../components/Logs";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { formatDuration, sizeDisplayName } from "../utils/formatutils";
@@ -88,32 +87,32 @@ class TaskInternal extends Component {
     switch (task.status) {
       case "SUCCESS":
         return (
-          <Alert size="sm" variant="success">
+          <Alert className="border-green-200 bg-green-50 text-green-800">
             Task succeeded after {dur}.
           </Alert>
         );
 
       case "FAILED":
         return (
-          <Alert variant="danger">
+          <Alert variant="destructive">
             <b>Error:</b> {task.errorMessage}.
           </Alert>
         );
 
       case "CANCELED":
-        return <Alert variant="warning">Task canceled.</Alert>;
+        return <Alert className="border-yellow-200 bg-yellow-50 text-yellow-800">Task canceled.</Alert>;
 
       case "CANCELING":
         return (
-          <Alert variant="primary">
-            <Spinner animation="border" variant="warning" size="sm" /> Canceling {dur}: {task.progressInfo}.
+          <Alert className="border-blue-200 bg-blue-50 text-blue-800">
+            <Spinner size="sm" className="inline mr-2" /> Canceling {dur}: {task.progressInfo}.
           </Alert>
         );
 
       default:
         return (
-          <Alert variant="primary">
-            <Spinner animation="border" variant="primary" size="sm" /> Running for {dur}: {task.progressInfo}.
+          <Alert className="border-blue-200 bg-blue-50 text-blue-800">
+            <Spinner size="sm" className="inline mr-2" /> Running for {dur}: {task.progressInfo}.
           </Alert>
         );
     }
@@ -138,10 +137,10 @@ class TaskInternal extends Component {
     }
 
     return (
-      <tr key={label}>
-        <td>{label}</td>
-        <td>{formatted}</td>
-      </tr>
+      <TableRow key={label}>
+        <TableCell>{label}</TableCell>
+        <TableCell>{formatted}</TableCell>
+      </TableRow>
     );
   }
 
@@ -193,64 +192,51 @@ class TaskInternal extends Component {
     }
 
     return (
-      <Form>
+      <div className="space-y-6">
         {this.props.navigate && (
-          <Row>
-            <Form.Group>
-              <h4>
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-xl font-medium flex items-center gap-2">
                 <GoBackButton />
                 {task.status === "RUNNING" && (
-                  <>
-                    &nbsp;
-                    <Button size="sm" variant="danger" onClick={() => cancelTask(task.id)}>
-                      <FontAwesomeIcon icon={faStopCircle} /> Stop{" "}
-                    </Button>
-                  </>
+                  <Button size="sm" variant="destructive" onClick={() => cancelTask(task.id)}>
+                    <FontAwesomeIcon icon={faStopCircle} /> Stop
+                  </Button>
                 )}
-                &nbsp;{task.kind}: {task.description}
+                {task.kind}: {task.description}
               </h4>
-            </Form.Group>
-          </Row>
+            </div>
+          </div>
         )}
-        <Row>
-          <Col xs={12}>{this.summaryControl(task)}</Col>
-        </Row>
+        <div className="w-full">{this.summaryControl(task)}</div>
         {task.counters && (
-          <Row>
-            <Col>
-              <Table bordered hover size="sm">
-                <thead>
-                  <tr>
-                    <th>Counter</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody>{this.sortedBadges(task.counters, bytesStringBase2)}</tbody>
-              </Table>
-            </Col>
-          </Row>
+          <div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Counter</TableHead>
+                  <TableHead>Value</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>{this.sortedBadges(task.counters, bytesStringBase2)}</TableBody>
+            </Table>
+          </div>
         )}
-        <Row>
-          <Col xs={6}>
-            <Form.Group>
-              <Form.Label>Started</Form.Label>
-              <Form.Control type="text" readOnly={true} value={new Date(task.startTime).toLocaleString()} />
-            </Form.Group>
-          </Col>
-          <Col xs={6}>
-            <Form.Group>
-              <Form.Label>Finished</Form.Label>
-              <Form.Control type="text" readOnly={true} value={new Date(task.endTime).toLocaleString()} />
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row>
-          <Form.Group>
-            <Form.Label>Logs</Form.Label>
-            <Logs taskID={this.taskID(this.props)} />
-          </Form.Group>
-        </Row>
-      </Form>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Started</Label>
+            <Input type="text" readOnly value={new Date(task.startTime).toLocaleString()} />
+          </div>
+          <div className="space-y-2">
+            <Label>Finished</Label>
+            <Input type="text" readOnly value={new Date(task.endTime).toLocaleString()} />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label>Logs</Label>
+          <Logs taskID={this.taskID(this.props)} />
+        </div>
+      </div>
     );
   }
 }

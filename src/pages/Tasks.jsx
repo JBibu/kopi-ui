@@ -3,11 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import moment from "moment";
 import React, { Component } from "react";
-import Alert from "react-bootstrap/Alert";
-import Col from "react-bootstrap/Col";
-import Dropdown from "react-bootstrap/Dropdown";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
+import { Alert } from "../components/ui/alert";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
 import { handleChange } from "../forms";
 import KopiaTable from "../components/KopiaTable";
@@ -138,41 +137,45 @@ export class Tasks extends Component {
 
     return (
       <>
-        <Form>
+        <div className="space-y-4">
           <div className="list-actions">
-            <Row>
-              <Col xs="auto">
-                <Dropdown>
-                  <Dropdown.Toggle size="sm" variant="primary">
-                    Status: {this.state.showStatus}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => this.setState({ showStatus: "All" })}>All</Dropdown.Item>
-                    <Dropdown.Divider />
-                    <Dropdown.Item onClick={() => this.setState({ showStatus: "Running" })}>Running</Dropdown.Item>
-                    <Dropdown.Item onClick={() => this.setState({ showStatus: "Failed" })}>Failed</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Col>
-              <Col xs="auto">
-                <Dropdown>
-                  <Dropdown.Toggle size="sm" variant="primary">
-                    Kind: {this.state.showKind}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => this.setState({ showKind: "All" })}>All</Dropdown.Item>
-                    <Dropdown.Divider />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="col-span-1">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      Status: {this.state.showStatus}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => this.setState({ showStatus: "All" })}>All</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => this.setState({ showStatus: "Running" })}>Running</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => this.setState({ showStatus: "Failed" })}>Failed</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="col-span-1">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      Kind: {this.state.showKind}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => this.setState({ showKind: "All" })}>All</DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     {this.state.uniqueKinds.map((k) => (
-                      <Dropdown.Item key={k} onClick={() => this.setState({ showKind: k })}>
+                      <DropdownMenuItem key={k} onClick={() => this.setState({ showKind: k })}>
                         {k}
-                      </Dropdown.Item>
+                      </DropdownMenuItem>
                     ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Col>
-              <Col xs="4">
-                <Form.Control
-                  size="sm"
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="col-span-2">
+                <Input
+                  className="text-sm"
                   type="text"
                   name="searchDescription"
                   placeholder="case-sensitive search description"
@@ -180,22 +183,20 @@ export class Tasks extends Component {
                   onChange={this.handleChange}
                   autoFocus={true}
                 />
-              </Col>
-            </Row>
+              </div>
+            </div>
           </div>
-          <Row>
-            <Col>
-              {!items.length ? (
-                <Alert variant="info">
-                  <FontAwesomeIcon size="sm" icon={faInfoCircle} /> A list of tasks will appear here when you create
-                  snapshots, restore, run maintenance, etc.
-                </Alert>
-              ) : (
-                <KopiaTable data={filteredItems} columns={columns} />
-              )}
-            </Col>
-          </Row>
-        </Form>
+          <div className="w-full">
+            {!items.length ? (
+              <Alert>
+                <FontAwesomeIcon size="sm" icon={faInfoCircle} className="mr-2" /> A list of tasks will appear here when you create
+                snapshots, restore, run maintenance, etc.
+              </Alert>
+            ) : (
+              <KopiaTable data={filteredItems} columns={columns} />
+            )}
+          </div>
+        </div>
       </>
     );
   }

@@ -2,9 +2,8 @@ import { faChevronCircleDown, faChevronCircleUp, faStopCircle } from "@fortaweso
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { Component, useContext } from "react";
-import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/esm/Spinner";
-import Form from "react-bootstrap/Form";
+import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
 import { Logs } from "./Logs";
 import { sizeDisplayName } from "../utils/formatutils";
 import { redirect } from "../utils/uiutil";
@@ -79,7 +78,7 @@ export class SnapshotEstimationInternal extends Component {
     if (task.status === "RUNNING") {
       return (
         <>
-          <Spinner animation="border" variant="primary" size="sm" />
+          <Spinner size="sm" />
         </>
       );
     }
@@ -109,7 +108,7 @@ export class SnapshotEstimationInternal extends Component {
     return (
       <>
         {task.counters && (
-          <Form.Text className="estimateResults">
+          <p className="estimateResults text-sm text-muted-foreground">
             {this.taskStatusDescription(task)} Bytes:{" "}
             <b>{sizeDisplayName(task.counters["Bytes"]?.value, bytesStringBase2)}</b> (
             <b>{sizeDisplayName(task.counters["Excluded Bytes"]?.value, bytesStringBase2)}</b> excluded) Files:{" "}
@@ -117,25 +116,25 @@ export class SnapshotEstimationInternal extends Component {
             Directories: <b>{task.counters["Directories"]?.value}</b> (
             <b>{task.counters["Excluded Directories"]?.value}</b> excluded) Errors:{" "}
             <b>{task.counters["Errors"]?.value}</b> (<b>{task.counters["Ignored Errors"]?.value}</b> ignored)
-          </Form.Text>
+          </p>
         )}
         {task.status === "RUNNING" && (
           <>
             &nbsp;
-            <Button size="sm" variant="light" onClick={() => cancelTask(task.id)}>
-              <FontAwesomeIcon icon={faStopCircle} color="red" /> Cancel{" "}
+            <Button size="sm" variant="outline" onClick={() => cancelTask(task.id)}>
+              <FontAwesomeIcon icon={faStopCircle} color="red" /> Cancel
             </Button>
           </>
         )}
         {this.state.showLog ? (
           <>
-            <Button size="sm" variant="light" onClick={() => this.setState({ showLog: false })}>
+            <Button size="sm" variant="outline" onClick={() => this.setState({ showLog: false })}>
               <FontAwesomeIcon icon={faChevronCircleUp} /> Hide Log
             </Button>
             <Logs taskID={this.taskID(this.props)} />
           </>
         ) : (
-          <Button size="sm" variant="light" onClick={() => this.setState({ showLog: true })}>
+          <Button size="sm" variant="outline" onClick={() => this.setState({ showLog: true })}>
             <FontAwesomeIcon icon={faChevronCircleDown} /> Show Log
           </Button>
         )}

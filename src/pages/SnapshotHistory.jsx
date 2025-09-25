@@ -1,8 +1,5 @@
 import axios from "axios";
 import React, { Component, useContext } from "react";
-import Badge from "react-bootstrap/Badge";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
@@ -26,8 +23,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
-import Col from "react-bootstrap/Col";
-import Spinner from "react-bootstrap/Spinner";
+import { Spinner } from "../components/ui/spinner";
+import { Badge } from "../components/ui/badge";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import KopiaTable from "../components/KopiaTable";
 import { CLIEquivalent } from "../components/CLIEquivalent";
@@ -479,84 +476,69 @@ class SnapshotHistoryInternal extends Component {
 
     return (
       <>
-        <Row>
-          <Col>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
             <GoBackButton />
-            &nbsp;
             {snapshots.length > 0 &&
               (selectedElements.length < snapshots.length ? (
-                <Button size="sm" variant="primary" onClick={this.selectAll}>
+                <Button size="sm" onClick={this.selectAll}>
                   Select All
                 </Button>
               ) : (
-                <Button size="sm" variant="primary" onClick={this.deselectAll}>
+                <Button size="sm" onClick={this.deselectAll}>
                   Deselect All
                 </Button>
               ))}
-            &nbsp;
             {selectedElements.length > 0 && (
-              <>
-                &nbsp;
-                <Button size="sm" variant="danger" onClick={this.showDeleteConfirm}>
-                  Delete Selected ({selectedElements.length})
-                </Button>
-              </>
+              <Button size="sm" variant="destructive" onClick={this.showDeleteConfirm}>
+                Delete Selected ({selectedElements.length})
+              </Button>
             )}
             {snapshots.length === 0 && (
-              <>
-                &nbsp;
-                <Button size="sm" variant="danger" onClick={this.deleteSnapshotSource}>
-                  Delete Snapshot Source
-                </Button>
-              </>
+              <Button size="sm" variant="destructive" onClick={this.deleteSnapshotSource}>
+                Delete Snapshot Source
+              </Button>
             )}
-          </Col>
-          <Col></Col>
-          <Col xs="auto">
-            <Button size="sm" variant="primary">
-              {this.state.isRefreshing ? (
-                <Spinner animation="border" variant="light" size="sm" />
-              ) : (
-                <RefreshCw className="h-4 w-4" title="Fetch snapshots" onClick={this.fetchSnapshots} />
-              )}
-            </Button>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <div className="vpadded">
-              Displaying{" "}
-              {snapshots.length !== unfilteredCount
-                ? snapshots.length + " out of " + unfilteredCount
-                : snapshots.length}{" "}
-              snapshots of&nbsp;
-              <b>
-                {this.state.userName}@{this.state.host}:{this.state.path}
-              </b>
-            </div>
-          </Col>
-        </Row>
+          </div>
+          <Button size="sm">
+            {this.state.isRefreshing ? (
+              <Spinner size="sm" />
+            ) : (
+              <RefreshCw className="h-4 w-4" title="Fetch snapshots" onClick={this.fetchSnapshots} />
+            )}
+          </Button>
+        </div>
+        <div className="mb-4">
+          <div className="py-2">
+            Displaying{" "}
+            {snapshots.length !== unfilteredCount
+              ? snapshots.length + " out of " + unfilteredCount
+              : snapshots.length}{" "}
+            snapshots of&nbsp;
+            <b>
+              {this.state.userName}@{this.state.host}:{this.state.path}
+            </b>
+          </div>
+        </div>
         {unfilteredCount !== uniqueCount && (
-          <Row>
-            <Col>
-              <div className="vpadded">
-                <Form.Group controlId="formBasicCheckbox">
-                  <Form.Check
-                    type="checkbox"
-                    checked={this.state.showHidden}
-                    label={"Show " + unfilteredCount + " individual snapshots"}
-                    onChange={this.toggleShowHidden}
-                  />
-                </Form.Group>
+          <div className="mb-4">
+            <div className="py-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="showHidden"
+                  checked={this.state.showHidden}
+                  onCheckedChange={this.toggleShowHidden}
+                />
+                <Label htmlFor="showHidden">
+                  Show {unfilteredCount} individual snapshots
+                </Label>
               </div>
-            </Col>
-          </Row>
+            </div>
+          </div>
         )}
-        <Row>
-          <Col xs={12}>
-            <KopiaTable data={snapshots} columns={columns} />
-          </Col>
-        </Row>
+        <div className="mb-4">
+          <KopiaTable data={snapshots} columns={columns} />
+        </div>
 
         <CLIEquivalent
           command={`snapshot list "${this.state.userName}@${this.state.host}:${this.state.path}"${this.state.showHidden ? " --show-identical" : ""}`}

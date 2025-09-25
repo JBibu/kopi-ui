@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Row from "react-bootstrap/Row";
 import { handleChange, validateRequiredFields } from "../forms";
 import { OptionalField } from "../forms/OptionalField";
 import { RequiredField } from "../forms/RequiredField";
@@ -21,7 +20,7 @@ export class SetupRepositoryAzure extends Component {
   render() {
     return (
       <>
-        <Row>
+        <div className="space-y-4">
           {RequiredField(this, "Container", "container", {
             autoFocus: true,
             placeholder: "enter container name",
@@ -29,8 +28,8 @@ export class SetupRepositoryAzure extends Component {
           {OptionalField(this, "Object Name Prefix", "prefix", {
             placeholder: "enter object name prefix or leave empty",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {RequiredField(this, "Storage Account", "storageAccount", {
             placeholder: "enter storage account name",
           })}
@@ -38,8 +37,8 @@ export class SetupRepositoryAzure extends Component {
             placeholder: "enter secret access key",
             type: "password",
           })}
-        </Row>
-        <Row>
+        </div>
+        <div className="space-y-4">
           {OptionalField(this, "Azure Storage Domain", "storageDomain", {
             placeholder: "enter storage domain or leave empty for default 'blob.core.windows.net'",
           })}
@@ -47,7 +46,7 @@ export class SetupRepositoryAzure extends Component {
             placeholder: "enter secret SAS Token",
             type: "password",
           })}
-        </Row>
+        </div>
       </>
     );
   }
