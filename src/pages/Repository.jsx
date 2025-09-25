@@ -53,7 +53,7 @@ export function Repository() {
         }, 1000);
       }
     }
-  }, [appContext]);
+  }, [appContext.repositoryDescriptionUpdated]);
 
   const fetchStatus = useCallback(() => {
     if (isMounted.current) {
@@ -74,7 +74,7 @@ export function Repository() {
     if (result) {
       appContext.repositoryUpdated(false);
     }
-  }, [appContext]);
+  }, [appContext.repositoryUpdated]);
 
 
   const updateDescription = useCallback(async () => {
@@ -94,7 +94,7 @@ export function Repository() {
       appContext.repositoryDescriptionUpdated(result.data.description);
     }
     setIsLoading(false);
-  }, [status.description, appContext]);
+  }, [status.description, appContext.repositoryDescriptionUpdated]);
 
   // Setup effect on mount
   useEffect(() => {
