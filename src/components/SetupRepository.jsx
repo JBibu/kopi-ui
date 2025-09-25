@@ -7,6 +7,7 @@ import { Spinner } from "./ui/spinner";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Collapse } from "./ui/collapse";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { AppContext } from "../contexts/AppContext";
 import { handleChange, validateRequiredFields } from "../forms";
 import { RequiredBoolean } from "../forms/RequiredBoolean";
@@ -261,25 +262,55 @@ export class SetupRepository extends Component {
     this.setState({ confirmCreate: false });
   }
 
+
   renderProviderSelection() {
+    // Separate storage providers from connection methods
+    const storageProviders = supportedProviders.filter(x => !x.provider.startsWith("_"));
+    const connectionMethods = supportedProviders.filter(x => x.provider.startsWith("_"));
+
     return (
-      <>
-        <h3>Select Storage Type</h3>
-        <p>To connect to a repository or create one, select the preferred storage type:</p>
-        <div className="space-y-4">
-          {supportedProviders.map((x) => (
-            <Button
-              key={x.provider}
-              data-testid={"provider-" + x.provider}
-              onClick={() => this.setState({ provider: x.provider, providerSettings: {} })}
-              variant={x.provider.startsWith("_") ? "secondary" : "primary"}
-              className="providerIcon"
-            >
-              {x.description}
-            </Button>
-          ))}
+      <div className="max-w-6xl mx-auto space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-3">Connect to Repository</h1>
+          <p className="text-muted-foreground text-lg">Choose your storage provider or connection method</p>
         </div>
-      </>
+
+        {/* Storage Providers Section */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Storage Providers</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {storageProviders.map((provider) => (
+              <Card
+                key={provider.provider}
+                className="cursor-pointer transition-colors hover:border-primary/50 h-24"
+                onClick={() => this.setState({ provider: provider.provider, providerSettings: {} })}
+              >
+                <CardContent className="flex items-center justify-center h-full p-4">
+                  <h3 className="text-lg font-medium text-center">{provider.description}</h3>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Connection Methods Section */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Connection Methods</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {connectionMethods.map((provider) => (
+              <Card
+                key={provider.provider}
+                className="cursor-pointer transition-colors hover:border-secondary/50 h-24"
+                onClick={() => this.setState({ provider: provider.provider, providerSettings: {} })}
+              >
+                <CardContent className="flex items-center justify-center h-full p-4">
+                  <h3 className="text-lg font-medium text-center">{provider.description}</h3>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -353,33 +384,48 @@ export class SetupRepository extends Component {
       }
     }
 
+    let title = "Storage Configuration";
+    if (this.state.provider === "_token") {
+      title = "Enter Repository Token";
+    } else if (this.state.provider === "_server") {
+      title = "Kopia Server Parameters";
+    }
+
     return (
-      <form onSubmit={this.verifyStorage}>
-        {!this.state.provider.startsWith("_") && <h3>Storage Configuration</h3>}
-        {this.state.provider === "_token" && <h3>Enter Repository Token</h3>}
-        {this.state.provider === "_server" && <h3>Kopia Server Parameters</h3>}
-        <SelectedProvider ref={this.optionsEditor} initial={this.state.providerSettings} />
-        {this.connectionErrorInfo()}
-        <hr />
-        <Button
-          data-testid="back-button"
-          
-          onClick={() =>
-            this.setState({
-              provider: null,
-              providerSettings: null,
-              connectError: null,
-            })
-          }
-        >
-          Back
-        </Button>
-        &nbsp;
-        <Button  type="submit" data-testid="submit-button">
-          Next
-        </Button>
-        {this.loadingSpinner()}
-      </form>
+      <div className="max-w-4xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={this.verifyStorage} className="space-y-6">
+              <SelectedProvider ref={this.optionsEditor} initial={this.state.providerSettings} />
+              {this.connectionErrorInfo()}
+
+              <div className="flex gap-4 pt-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  data-testid="back-button"
+                  onClick={() =>
+                    this.setState({
+                      provider: null,
+                      providerSettings: null,
+                      connectError: null,
+                    })
+                  }
+                >
+                  Back
+                </Button>
+                <Button type="submit" data-testid="submit-button">
+                  Next
+                </Button>
+                {this.loadingSpinner()}
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -405,150 +451,166 @@ export class SetupRepository extends Component {
 
   renderConfirmCreate() {
     return (
-      <form onSubmit={this.createRepository}>
-        <h3>Create New Repository</h3>
-        <p>Enter a strong password to create Kopia repository in the provided storage.</p>
-        <div className="space-y-4">
-          {RequiredField(
-            this,
-            "Repository Password",
-            "password",
-            {
-              autoFocus: true,
-              type: "password",
-              placeholder: "enter repository password",
-            },
-            "Used to encrypt the repository's contents",
-          )}
-          {RequiredField(this, "Confirm Repository Password", "confirmPassword", {
-            type: "password",
-            placeholder: "enter repository password again",
-          })}
-        </div>
-        <div style={{ marginTop: "1rem" }}>{this.toggleAdvancedButton()}</div>
-        <Collapse in={this.state.showAdvanced}>
-          <div id="advanced-options-div" style={{ marginTop: "1rem" }}>
-            <div className="space-y-4">
-              <div >
-                <Label className="required">Encryption</Label>
-                <select
-                  name="encryption"
-                  onChange={this.handleChange}
-                  data-testid="control-encryption"
-                  value={this.state.encryption}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      <div className="max-w-4xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle>Create New Repository</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={this.createRepository} className="space-y-6">
+              <p className="text-muted-foreground">Enter a strong password to create Kopia repository in the provided storage.</p>
+
+              <div className="space-y-4">
+                {RequiredField(
+                  this,
+                  "Repository Password",
+                  "password",
+                  {
+                    autoFocus: true,
+                    type: "password",
+                    placeholder: "enter repository password",
+                  },
+                  "Used to encrypt the repository's contents",
+                )}
+                {RequiredField(this, "Confirm Repository Password", "confirmPassword", {
+                  type: "password",
+                  placeholder: "enter repository password again",
+                })}
+              </div>
+
+              <div>{this.toggleAdvancedButton()}</div>
+
+              <Collapse in={this.state.showAdvanced}>
+                <div id="advanced-options-div" className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="required">Encryption</Label>
+                      <select
+                        name="encryption"
+                        onChange={this.handleChange}
+                        data-testid="control-encryption"
+                        value={this.state.encryption}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {this.state.algorithms.encryption.map((x) => toAlgorithmOption(x, this.state.defaultEncryption))}
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="required">Hash Algorithm</Label>
+                      <select
+                        name="hash"
+                        onChange={this.handleChange}
+                        data-testid="control-hash"
+                        value={this.state.hash}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {this.state.algorithms.hash.map((x) => toAlgorithmOption(x, this.state.defaultHash))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="required">Splitter</Label>
+                      <select
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        name="splitter"
+                        onChange={this.handleChange}
+                        data-testid="control-splitter"
+                        value={this.state.splitter}
+                      >
+                        {this.state.algorithms.splitter.map((x) => toAlgorithmOption(x, this.state.defaultSplitter))}
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="required">Repository Format</Label>
+                      <select
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        name="formatVersion"
+                        onChange={this.handleChange}
+                        data-testid="control-formatVersion"
+                        value={this.state.formatVersion}
+                      >
+                        <option value="2">Latest format</option>
+                        <option value="1">Legacy format compatible with v0.8</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="required">Error Correction Overhead</Label>
+                      <select
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        name="eccOverheadPercent"
+                        onChange={this.handleChange}
+                        data-testid="control-eccOverheadPercent"
+                        value={this.state.eccOverheadPercent}
+                      >
+                        <option value="0">Disabled</option>
+                        <option value="1">1%</option>
+                        <option value="2">2%</option>
+                        <option value="5">5%</option>
+                        <option value="10">10%</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="required">Error Correction Algorithm</Label>
+                      <select
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        name="ecc"
+                        onChange={this.handleChange}
+                        data-testid="control-ecc"
+                        disabled={this.state.eccOverheadPercent === "0"}
+                        value={this.state.eccOverheadPercent === "0" ? "-" : this.state.ecc}
+                      >
+                        {this.state.eccOverheadPercent === "0"
+                          ? [
+                              <option key="empty" value="">
+                                -
+                              </option>,
+                            ]
+                          : this.state.algorithms.ecc.map((x) => toAlgorithmOption(x, this.state.defaultEcc))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-md">
+                    <strong>[EXPERIMENTAL]</strong> Error correction can help protect from certain kinds of data corruption due to
+                    spontaneous bit flips in the storage media.{" "}
+                    <a href="https://kopia.io/docs/advanced/ecc/" target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                      Click here to learn more.
+                    </a>
+                  </div>
+
+                  {this.overrideUsernameHostnameRow()}
+
+                  <div className="text-sm text-muted-foreground">
+                    Additional parameters can be set when creating repository using command line.
+                  </div>
+                </div>
+              </Collapse>
+
+              {this.connectionErrorInfo()}
+
+              <div className="flex gap-4 pt-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  data-testid="back-button"
+                  onClick={() => this.setState({ providerSettings: {}, storageVerified: false })}
                 >
-                  {this.state.algorithms.encryption.map((x) => toAlgorithmOption(x, this.state.defaultEncryption))}
-                </select>
+                  Back
+                </Button>
+                <Button type="submit" data-testid="submit-button">
+                  Create Repository
+                </Button>
+                {this.loadingSpinner()}
               </div>
-              <div >
-                <Label className="required">Hash Algorithm</Label>
-                <select
-                  name="hash"
-                  onChange={this.handleChange}
-                  data-testid="control-hash"
-                  value={this.state.hash}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {this.state.algorithms.hash.map((x) => toAlgorithmOption(x, this.state.defaultHash))}
-                </select>
-              </div>
-              <div >
-                <Label className="required">Splitter</Label>
-                <select
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  name="splitter"
-                  onChange={this.handleChange}
-                  data-testid="control-splitter"
-                  value={this.state.splitter}
-                >
-                  {this.state.algorithms.splitter.map((x) => toAlgorithmOption(x, this.state.defaultSplitter))}
-                </select>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div >
-                <Label className="required">Repository Format</Label>
-                <select
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  name="formatVersion"
-                  onChange={this.handleChange}
-                  data-testid="control-formatVersion"
-                  value={this.state.formatVersion}
-                >
-                  <option value="2">Latest format</option>
-                  <option value="1">Legacy format compatible with v0.8</option>
-                </select>
-              </div>
-              <div >
-                <Label className="required">Error Correction Overhead</Label>
-                <select
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  name="eccOverheadPercent"
-                  onChange={this.handleChange}
-                  data-testid="control-eccOverheadPercent"
-                  value={this.state.eccOverheadPercent}
-                >
-                  <option value="0">Disabled</option>
-                  <option value="1">1%</option>
-                  <option value="2">2%</option>
-                  <option value="5">5%</option>
-                  <option value="10">10%</option>
-                </select>
-              </div>
-              <div  >
-                <Label className="required">Error Correction Algorithm</Label>
-                <select
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  name="ecc"
-                  onChange={this.handleChange}
-                  data-testid="control-ecc"
-                  disabled={this.state.eccOverheadPercent === "0"}
-                  value={this.state.eccOverheadPercent === "0" ? "-" : this.state.ecc}
-                >
-                  {this.state.eccOverheadPercent === "0"
-                    ? [
-                        <option key="empty" value="">
-                          -
-                        </option>,
-                      ]
-                    : this.state.algorithms.ecc.map((x) => toAlgorithmOption(x, this.state.defaultEcc))}
-                </select>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div></div>
-              <div className="text-muted">
-                [EXPERIMENTAL] Error correction can help protect from certain kinds of data corruption due to
-                spontaneous bit flips in the storage media.{" "}
-                <a href="https://kopia.io/docs/advanced/ecc/" target="_blank" rel="noreferrer">
-                  Click here to learn more.
-                </a>
-              </div>
-            </div>
-            {this.overrideUsernameHostnameRow()}
-            <div style={{ marginTop: "1rem" }}>
-              <div >
-                <p>Additional parameters can be set when creating repository using command line.</p>
-              </div>
-            </div>
-          </div>
-        </Collapse>
-        {this.connectionErrorInfo()}
-        <hr />
-        <Button
-          data-testid="back-button"
-          
-          onClick={() => this.setState({ providerSettings: {}, storageVerified: false })}
-        >
-          Back
-        </Button>
-        &nbsp;
-        <Button  type="submit" data-testid="submit-button">
-          Create Repository
-        </Button>
-        {this.loadingSpinner()}
-      </form>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -587,77 +649,90 @@ export class SetupRepository extends Component {
 
   renderConfirmConnect() {
     return (
-      <form onSubmit={this.connectToRepository}>
-        <h3>Connect To Repository</h3>
-        <div className="space-y-4">
-          <div >
-            <Label className="required">Connect As</Label>
-            <Input value={this.state.username + "@" + this.state.hostname} readOnly={true} size="sm" />
-            <p className="text-muted">To override, click &apos;Show Advanced Options&apos;</p>
-          </div>
-        </div>
-        <div className="space-y-4">
-          {this.state.provider !== "_token" &&
-            this.state.provider !== "_server" &&
-            RequiredField(
-              this,
-              "Repository Password",
-              "password",
-              {
-                autoFocus: true,
-                type: "password",
-                placeholder: "enter repository password",
-              },
-              "Used to encrypt the repository's contents",
-            )}
-          {this.state.provider === "_server" &&
-            RequiredField(this, "Server Password", "password", {
-              autoFocus: true,
-              type: "password",
-              placeholder: "enter password to connect to server",
-            })}
-        </div>
-        <div className="space-y-4">
-          {RequiredField(
-            this,
-            "Repository Description",
-            "description",
-            {
-              autoFocus: this.state.provider === "_token",
-              placeholder: "enter repository description",
-            },
-            "Helps to distinguish between multiple connected repositories",
-          )}
-        </div>
-        {this.toggleAdvancedButton()}
-        <Collapse in={this.state.showAdvanced}>
-          <div id="advanced-options-div" className="advancedOptions">
-            <div className="space-y-4">
-              {RequiredBoolean(
-                this,
-                "Connect in read-only mode",
-                "readonly",
-                "Read-only mode prevents any changes to the repository.",
-              )}
-            </div>
-            {this.overrideUsernameHostnameRow()}
-          </div>
-        </Collapse>
-        {this.connectionErrorInfo()}
-        <hr />
-        <Button
-          data-testid="back-button"
-          
-          onClick={() => this.setState({ providerSettings: {}, storageVerified: false })}
-        >
-          Back
-        </Button>
-        &nbsp;
-        <Button  type="submit" data-testid="submit-button">
-          Connect To Repository
-        </Button>
-        {this.loadingSpinner()}
-      </form>
+      <div className="max-w-4xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle>Connect To Repository</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={this.connectToRepository} className="space-y-6">
+              <div>
+                <Label className="required">Connect As</Label>
+                <Input value={this.state.username + "@" + this.state.hostname} readOnly={true} size="sm" />
+                <p className="text-sm text-muted-foreground mt-1">To override, click &apos;Show Advanced Options&apos;</p>
+              </div>
+
+              <div className="space-y-4">
+                {this.state.provider !== "_token" &&
+                  this.state.provider !== "_server" &&
+                  RequiredField(
+                    this,
+                    "Repository Password",
+                    "password",
+                    {
+                      autoFocus: true,
+                      type: "password",
+                      placeholder: "enter repository password",
+                    },
+                    "Used to encrypt the repository's contents",
+                  )}
+                {this.state.provider === "_server" &&
+                  RequiredField(this, "Server Password", "password", {
+                    autoFocus: true,
+                    type: "password",
+                    placeholder: "enter password to connect to server",
+                  })}
+              </div>
+
+              <div>
+                {RequiredField(
+                  this,
+                  "Repository Description",
+                  "description",
+                  {
+                    autoFocus: this.state.provider === "_token",
+                    placeholder: "enter repository description",
+                  },
+                  "Helps to distinguish between multiple connected repositories",
+                )}
+              </div>
+
+              <div>{this.toggleAdvancedButton()}</div>
+
+              <Collapse in={this.state.showAdvanced}>
+                <div id="advanced-options-div" className="space-y-4">
+                  <div>
+                    {RequiredBoolean(
+                      this,
+                      "Connect in read-only mode",
+                      "readonly",
+                      "Read-only mode prevents any changes to the repository.",
+                    )}
+                  </div>
+                  {this.overrideUsernameHostnameRow()}
+                </div>
+              </Collapse>
+
+              {this.connectionErrorInfo()}
+
+              <div className="flex gap-4 pt-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  data-testid="back-button"
+                  onClick={() => this.setState({ providerSettings: {}, storageVerified: false })}
+                >
+                  Back
+                </Button>
+                <Button type="submit" data-testid="submit-button">
+                  Connect To Repository
+                </Button>
+                {this.loadingSpinner()}
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 

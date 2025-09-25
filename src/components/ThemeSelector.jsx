@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Monitor } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from './ui/select';
 import { Button } from './ui/button';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from './theme-provider';
 
 const ThemeIcon = ({ theme, size = 16 }) => {
   const iconProps = { size };
@@ -25,6 +25,8 @@ const ThemeIcon = ({ theme, size = 16 }) => {
       return <Sun {...iconProps} />;
     case 'dark':
       return <Moon {...iconProps} />;
+    case 'system':
+      return <Monitor {...iconProps} />;
     default:
       return <Sun {...iconProps} />;
   }
@@ -36,7 +38,13 @@ ThemeIcon.propTypes = {
 };
 
 export const ThemeSelector = ({ variant = 'dropdown' }) => {
-  const { theme, themes, changeTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+
+  const themes = [
+    { value: 'light', label: 'Light' },
+    { value: 'dark', label: 'Dark' },
+    { value: 'system', label: 'System' }
+  ];
 
   // Clean dropdown for navbar - icon only button with dropdown
   if (variant === 'dropdown') {
@@ -44,7 +52,8 @@ export const ThemeSelector = ({ variant = 'dropdown' }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-8 w-8">
-            <ThemeIcon theme={theme} size={18} />
+            <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
             <span className="sr-only">Toggle theme</span>
           </Button>
         </DropdownMenuTrigger>
@@ -52,7 +61,7 @@ export const ThemeSelector = ({ variant = 'dropdown' }) => {
           {themes.map((themeOption) => (
             <DropdownMenuItem
               key={themeOption.value}
-              onClick={() => changeTheme(themeOption.value)}
+              onClick={() => setTheme(themeOption.value)}
               className="cursor-pointer"
             >
               <ThemeIcon theme={themeOption.value} />
@@ -67,13 +76,13 @@ export const ThemeSelector = ({ variant = 'dropdown' }) => {
   // Radio button group for preferences page
   if (variant === 'radio') {
     return (
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-3 gap-4">
         {themes.map((themeOption) => (
           <Button
             key={themeOption.value}
             variant={theme === themeOption.value ? 'default' : 'outline'}
             size="lg"
-            onClick={() => changeTheme(themeOption.value)}
+            onClick={() => setTheme(themeOption.value)}
             className="flex flex-col items-center gap-2 h-auto py-4"
           >
             <ThemeIcon theme={themeOption.value} size={24} />
@@ -86,7 +95,7 @@ export const ThemeSelector = ({ variant = 'dropdown' }) => {
 
   // Select for preferences page (fallback)
   return (
-    <Select value={theme} onValueChange={changeTheme}>
+    <Select value={theme} onValueChange={setTheme}>
       <SelectTrigger className="w-full">
         <SelectValue>
           <div className="flex items-center gap-2">

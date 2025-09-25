@@ -33,8 +33,7 @@ import { compare, objectLink, parseQuery, rfc3339TimestampForDisplay } from "../
 import { errorAlert, redirect, sizeWithFailures } from "../utils/uiutil";
 import { sourceQueryStringParams } from "../utils/policyutil";
 import { GoBackButton } from "../components/GoBackButton";
-import { RefreshCw, Pin } from "lucide-react";
-import { File } from "lucide-react";
+import { RefreshCw, Pin, File } from "lucide-react";
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
 import PropTypes from "prop-types";
 

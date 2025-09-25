@@ -4,7 +4,7 @@ import { valueToNumber, stateProperty } from ".";
 
 export function LogDetailSelector(component, name) {
   const options = [
-    { value: "", label: "(inherit from parent)" },
+    { value: "inherit", label: "(inherit from parent)" },
     { value: "0", label: "0 - no output" },
     { value: "1", label: "1 - minimal details" },
     { value: "2", label: "2" },
@@ -19,13 +19,15 @@ export function LogDetailSelector(component, name) {
   ];
 
   const currentValue = stateProperty(component, name);
+  const displayValue = currentValue?.toString() || "inherit";
 
   return (
     <Select
       name={name}
-      value={currentValue?.toString() || ""}
+      value={displayValue}
       onValueChange={(value) => {
-        const event = { target: { name, value } };
+        const actualValue = value === "inherit" ? "" : value;
+        const event = { target: { name, value: actualValue } };
         component.handleChange(event, valueToNumber);
       }}
     >

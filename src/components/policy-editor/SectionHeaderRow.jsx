@@ -1,18 +1,15 @@
 import React from "react";
-import { LabelColumn } from "./LabelColumn";
-import { ValueColumn } from "./ValueColumn";
-import { EffectiveValueColumn } from "./EffectiveValueColumn";
 
 export function SectionHeaderRow() {
   return (
-    <div className="space-y-4">
-      <LabelColumn />
-      <ValueColumn>
-        <div className="policyEditorHeader">Defined</div>
-      </ValueColumn>
-      <EffectiveValueColumn>
-        <div className="policyEditorHeader">Effective</div>
-      </EffectiveValueColumn>
+    <div className="flex flex-col sm:flex-row gap-4 mb-6 border-b border-border pb-2">
+      <div className="flex-1 sm:w-2/5"></div>
+      <div className="flex-1 sm:w-1/4">
+        <div className="policyEditorHeader font-semibold text-sm text-muted-foreground">Defined</div>
+      </div>
+      <div className="flex-1 sm:w-1/3">
+        <div className="policyEditorHeader font-semibold text-sm text-muted-foreground">Effective</div>
+      </div>
     </div>
   );
 }

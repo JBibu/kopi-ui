@@ -6,7 +6,7 @@ import { EffectiveValue } from "./EffectiveValue";
 
 export function ActionRowTimeout(component, action) {
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <LabelColumn name="Timeout" help="Timeout in seconds before Kopia kills the process" />
       <WideValueColumn>{OptionalNumberField(component, "", "policy." + action, {})}</WideValueColumn>
       {EffectiveValue(component, action)}

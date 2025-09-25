@@ -31,7 +31,7 @@ class TaskInternal extends Component {
     this.fetchTask = this.fetchTask.bind(this);
 
     // poll frequently, we will stop as soon as the task ends.
-    this.interval = window.setInterval(() => this.fetchTask(), 500);
+    this.interval = window.setInterval(() => this.fetchTask(), 2000); // Reduced from 500ms to 2s for performance
   }
 
   componentDidMount() {

@@ -1,30 +1,26 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
-export const PAGE_SIZES = [10, 20, 30, 40, 50, 100];
+export const PAGE_SIZES = [5, 10, 20, 30, 40, 50, 100];
 export const UIPreferencesContext = React.createContext<UIPreferences>({} as UIPreferences);
 
 const DEFAULT_PREFERENCES = {
   pageSize: PAGE_SIZES[0],
   bytesStringBase2: false,
   defaultSnapshotViewAll: false,
-  theme: getDefaultTheme(),
   preferWebDav: false,
   fontSize: "text-base",
 } as SerializedUIPreferences;
 const PREFERENCES_URL = "/api/v1/ui-preferences";
 
-export type Theme = "light" | "dark" | "pastel" | "ocean";
-export type PageSize = 10 | 20 | 30 | 40 | 50 | 100;
+export type PageSize = 5 | 10 | 20 | 30 | 40 | 50 | 100;
 export type FontSize = "text-sm" | "text-base" | "text-lg";
 
 export interface UIPreferences {
   get pageSize(): PageSize;
-  get theme(): Theme;
   get bytesStringBase2(): boolean;
   get defaultSnapshotViewAll(): boolean;
   get fontSize(): FontSize;
-  setTheme: (theme: Theme) => void;
   setPageSize: (pageSize: number) => void;
   setByteStringBase: (bytesStringBase2: string) => void;
   setDefaultSnapshotViewAll: (defaultSnapshotViewAll: boolean) => void;
@@ -35,7 +31,6 @@ interface SerializedUIPreferences {
   pageSize?: number;
   bytesStringBase2?: boolean;
   defaultSnapshotViewAll?: boolean;
-  theme: Theme;
   fontSize: FontSize;
 }
 
@@ -44,16 +39,6 @@ export interface UIPreferenceProviderProps {
   initalValue: UIPreferences | undefined;
 }
 
-/**
- * Returns a default theme based on the user's browser settings.
- * @returns Theme
- */
-function getDefaultTheme(): Theme {
-  if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    return "dark";
-  }
-  return "light";
-}
 
 function normalizePageSize(pageSize: number): PageSize {
   for (let index = 0; index < PAGE_SIZES.length; index++) {
@@ -74,15 +59,6 @@ function normalizePageSize(pageSize: number): PageSize {
 export function UIPreferenceProvider(props: UIPreferenceProviderProps) {
   const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
 
-  const setTheme = useCallback(
-    (theme: Theme) =>
-      setPreferences((oldPreferences) => {
-        syncTheme(theme, oldPreferences.fontSize);
-        return { ...oldPreferences, theme };
-      }),
-    [],
-  );
-
   const setPageSize = (pageSize: PageSize) =>
     setPreferences((oldPreferences) => {
       return { ...oldPreferences, pageSize };
@@ -102,7 +78,7 @@ export function UIPreferenceProvider(props: UIPreferenceProviderProps) {
   const setFontSize = useCallback(
     (fontSize: FontSize) =>
       setPreferences((oldPreferences) => {
-        syncTheme(oldPreferences.theme, fontSize);
+        syncFontSize(fontSize);
         return { ...oldPreferences, fontSize };
       }),
     [],
@@ -113,9 +89,6 @@ export function UIPreferenceProvider(props: UIPreferenceProviderProps) {
       .get(PREFERENCES_URL)
       .then((result) => {
         const storedPreferences = result.data as SerializedUIPreferences;
-        if (!storedPreferences.theme || (storedPreferences.theme as string) === "") {
-          storedPreferences.theme = getDefaultTheme();
-        }
         if (!storedPreferences.fontSize || (storedPreferences.fontSize as string) === "") {
           storedPreferences.fontSize = DEFAULT_PREFERENCES.fontSize;
         }
@@ -133,12 +106,12 @@ export function UIPreferenceProvider(props: UIPreferenceProviderProps) {
         } else {
           storedPreferences.pageSize = normalizePageSize(storedPreferences.pageSize);
         }
-        setTheme(storedPreferences.theme);
-        setFontSize(storedPreferences.fontSize);
+        // Apply font size immediately
+        syncFontSize(storedPreferences.fontSize);
         setPreferences(storedPreferences);
       })
       .catch((err) => console.error(err));
-  }, [setTheme, setFontSize]);
+  }, [setFontSize]);
 
   useEffect(() => {
     if (!preferences) {
@@ -151,28 +124,19 @@ export function UIPreferenceProvider(props: UIPreferenceProviderProps) {
   }, [preferences]);
 
   /**
-   * Synchronizes the theme as well as the font size with the class.
-   * Only removes and adds theme and font-related classes.
+   * Synchronizes the font size with the DOM classes.
    *
-   * @param theme
-   * The theme to be set
    * @param fontSize
    * The font size to be set
    */
-  const syncTheme = (theme: Theme, fontSize: FontSize) => {
+  const syncFontSize = (fontSize: FontSize) => {
     const doc = document.documentElement;
-
-    // Remove old theme classes
-    doc.classList.remove("light", "dark", "pastel", "ocean");
 
     // Remove old font size classes
     doc.classList.remove("text-sm", "text-base", "text-lg");
 
     // Remove legacy Bootstrap font size classes if they exist
     doc.classList.remove("fs-6", "fs-5", "fs-4");
-
-    // Add new theme class
-    doc.classList.add(theme);
 
     // Add new font size class
     doc.classList.add(fontSize);
@@ -185,7 +149,6 @@ export function UIPreferenceProvider(props: UIPreferenceProviderProps) {
 
   const providedValue = {
     ...preferences,
-    setTheme,
     setPageSize,
     setByteStringBase,
     setDefaultSnapshotViewAll,

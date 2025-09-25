@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { ThemeSelector } from "../components/ThemeSelector";
 import { NotificationEditor } from "../components/notifications/NotificationEditor";
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
-import { Palette, Type, Binary } from "lucide-react";
+import { Palette, Type, Binary, Info } from "lucide-react";
 
 /**
  * Preferences page with appearance and notification settings
@@ -23,9 +23,10 @@ export function Preferences() {
       </div>
 
       <Tabs defaultValue="appearance" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="appearance">Appearance</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="about">About</TabsTrigger>
         </TabsList>
 
         <TabsContent value="appearance" className="mt-6 space-y-6">
@@ -72,28 +73,19 @@ export function Preferences() {
                   <Binary className="h-4 w-4" />
                   Byte Representation
                 </Label>
-                <Select value={bytesStringBase2} onValueChange={setByteStringBase}>
+                <Select value={bytesStringBase2.toString()} onValueChange={setByteStringBase}>
                   <SelectTrigger id="bytesBaseInput">
-                    <SelectValue />
+                    <SelectValue placeholder={bytesStringBase2 ? "Base-2" : "Base-10"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="true">
-                      <div>
-                        <div className="font-medium">Base-2</div>
-                        <div className="text-xs text-muted-foreground">KiB, MiB, GiB, TiB</div>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="false">
-                      <div>
-                        <div className="font-medium">Base-10</div>
-                        <div className="text-xs text-muted-foreground">KB, MB, GB, TB</div>
-                      </div>
-                    </SelectItem>
+                    <SelectItem value="true">Base-2 (KiB, MiB, GiB, TiB)</SelectItem>
+                    <SelectItem value="false">Base-10 (KB, MB, GB, TB)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </CardContent>
           </Card>
+
         </TabsContent>
 
         <TabsContent value="notifications" className="mt-6">
@@ -104,6 +96,26 @@ export function Preferences() {
             </CardHeader>
             <CardContent>
               <NotificationEditor />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="about" className="mt-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Info className="h-5 w-5" />
+                <CardTitle>Build Information</CardTitle>
+              </div>
+              <CardDescription>Application version information</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between items-center py-3 px-4 bg-muted/30 rounded-md">
+                <span className="text-sm font-medium">Vite Version</span>
+                <span className="text-sm font-mono text-muted-foreground">
+                  {import.meta.env.VITE_FULL_VERSION_INFO || "Development"}
+                </span>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

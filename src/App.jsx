@@ -3,7 +3,7 @@ import "./css/App.css";
 import axios from "axios";
 import React, { Component } from "react";
 import { BrowserRouter as Router, NavLink, Navigate, Route, Routes } from "react-router-dom";
-import { Navbar, NavbarBrand, NavbarNav, NavbarLink } from "./components/ui/navbar";
+import { Navbar, NavbarBrand, NavbarLink } from "./components/ui/navbar";
 import { ThemeSelector } from "./components/ThemeSelector";
 import { Policy } from "./pages/Policy";
 import { Preferences } from "./pages/Preferences";
@@ -18,7 +18,7 @@ import { SnapshotHistory } from "./pages/SnapshotHistory";
 import { SnapshotRestore } from "./pages/SnapshotRestore";
 import { AppContext } from "./contexts/AppContext";
 import { UIPreferenceProvider } from "./contexts/UIPreferencesContext";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import { ThemeProvider } from "./components/theme-provider";
 
 export default class App extends Component {
   constructor() {
@@ -121,12 +121,15 @@ export default class App extends Component {
                   <img src="/kopia-flat.svg" className="h-8 w-8" alt="Kopia logo" />
                   <span className="text-lg font-semibold">Kopia</span>
                 </NavbarBrand>
-                <NavbarNav>
+
+                {/* Left-aligned Navigation Links */}
+                <div className="flex items-center space-x-1 ml-8">
                   <NavbarLink
                     testId="tab-snapshots"
                     to="/snapshots"
                     disabled={!isRepositoryConnected}
                     title={!isRepositoryConnected ? "Repository is not connected" : ""}
+                    className="font-bold"
                   >
                     Snapshots
                   </NavbarLink>
@@ -135,6 +138,7 @@ export default class App extends Component {
                     to="/policies"
                     disabled={!isRepositoryConnected}
                     title={!isRepositoryConnected ? "Repository is not connected" : ""}
+                    className="font-bold"
                   >
                     Policies
                   </NavbarLink>
@@ -143,6 +147,7 @@ export default class App extends Component {
                     to="/tasks"
                     disabled={!isRepositoryConnected}
                     title={!isRepositoryConnected ? "Repository is not connected" : ""}
+                    className="font-bold"
                   >
                     Tasks
                     {runningTaskCount > 0 && (
@@ -151,27 +156,35 @@ export default class App extends Component {
                       </span>
                     )}
                   </NavbarLink>
-                  <NavbarLink testId="tab-repo" to="/repo">
+                  <NavbarLink testId="tab-repo" to="/repo" className="font-bold">
                     Repository
                   </NavbarLink>
-                  <NavbarLink testId="tab-preferences" to="/preferences">
+                  <NavbarLink testId="tab-preferences" to="/preferences" className="font-bold">
                     Preferences
                   </NavbarLink>
-                  <div className="ml-auto">
-                    <ThemeSelector />
-                  </div>
-                </NavbarNav>
+                </div>
+
+                {/* Spacer to push right section to the right */}
+                <div className="flex-1"></div>
+
+                {/* Right Section: Repository Status + Theme Selector */}
+                <div className="flex items-center gap-3">
+                  {this.state.repoDescription && (
+                    <NavLink
+                      to="/repo"
+                      className="inline-flex items-center gap-2 px-2 py-1 rounded-md bg-background/50 border border-border/50 text-inherit no-underline hover:border-primary/50 hover:bg-accent/50"
+                    >
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-xs font-bold text-foreground">
+                        {this.state.repoDescription}
+                      </span>
+                    </NavLink>
+                  )}
+                  <ThemeSelector />
+                </div>
               </Navbar>
 
             <main className="container mx-auto px-4 py-6">
-              {this.state.repoDescription && (
-                <NavLink to="/repo" className="block mb-6 text-inherit no-underline hover:text-primary">
-                  <h2 className="text-xl font-semibold text-muted-foreground">
-                    {this.state.repoDescription}
-                  </h2>
-                </NavLink>
-              )}
-
               <Routes>
                 <Route path="snapshots" element={<Snapshots />} />
                 <Route path="snapshots/new" element={<SnapshotCreate />} />

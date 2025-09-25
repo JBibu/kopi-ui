@@ -32,7 +32,6 @@ class SnapshotDirectoryInternal extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.params.oid !== prevProps.params.oid) {
-      console.log("OID changed", prevProps.params.oid, "=>", this.props.params.oid);
       this.fetchDirectory();
     }
   }

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 export function WideValueColumn(props) {
   return (
-    <div className="col-span-full sm:col-span-4 policyValue">
+    <div className="flex-1 sm:w-3/5 policyValue">
       {props.children}
     </div>
   );

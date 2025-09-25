@@ -125,7 +125,7 @@ export class PolicyEditor extends Component {
           this.setState({ resolvedError: error });
         });
     } catch (e) {
-      console.log("Error resolving policy: ", e);
+      this.setState({ resolvedError: "Failed to resolve policy configuration" });
     }
   }
 
@@ -291,7 +291,7 @@ export class PolicyEditor extends Component {
               </AccordionTrigger>
               <AccordionContent>
                 <SectionHeaderRow />
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Latest Snapshots"
                     help="Number of the most recent snapshots to retain per source"
@@ -303,7 +303,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "retention.keepLatest")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Hourly"
                     help="How many hourly snapshots to retain per source. The latest snapshot from each hour will be retained"
@@ -315,7 +315,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "retention.keepHourly")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Daily"
                     help="How many daily snapshots to retain per source. The latest snapshot from each day will be retained"
@@ -327,7 +327,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "retention.keepDaily")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Weekly"
                     help="How many weekly snapshots to retain per source. The latest snapshot from each week will be retained"
@@ -339,7 +339,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "retention.keepWeekly")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Monthly"
                     help="How many monthly snapshots to retain per source. The latest snapshot from each calendar month will be retained"
@@ -351,7 +351,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "retention.keepMonthly")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Annual"
                     help="How many annual snapshots to retain per source. The latest snapshot from each calendar year will be retained"
@@ -363,7 +363,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "retention.keepAnnual")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Ignore Identical Snapshots"
                     help="Do NOT save a snapshot when no files have been changed"
@@ -382,7 +382,7 @@ export class PolicyEditor extends Component {
               </AccordionTrigger>
               <AccordionContent>
                 <SectionHeaderRow />
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Ignore Files"
                     help={
@@ -403,15 +403,15 @@ export class PolicyEditor extends Component {
                   </WideValueColumn>
                   {EffectiveTextAreaValue(this, "files.ignore")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Ignore Rules From Parent Directories"
                     help="When set, ignore rules from the parent directory are ignored"
                   />
                   <ValueColumn>{RequiredBoolean(this, "", "policy.files.noParentIgnore")}</ValueColumn>
-                  <EffectiveValueColumn />
+                  {EffectiveBooleanValue(this, "files.noParentIgnore")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Ignore Rule Files"
                     help="List of additional files containing ignore rules (each file configures ignore rules for the directory and its subdirectories)"
@@ -423,15 +423,15 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveTextAreaValue(this, "files.ignoreDotFiles")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Ignore Rule Files From Parent Directories"
                     help="When set, the files specifying ignore rules (.kopiaignore, etc.) from the parent directory are ignored"
                   />
                   <ValueColumn>{RequiredBoolean(this, "", "policy.files.noParentDotFiles")}</ValueColumn>
-                  <EffectiveValueColumn />
+                  {EffectiveBooleanValue(this, "files.noParentDotFiles")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Ignore Well-Known Cache Directories"
                     help="Ignore directories containing CACHEDIR.TAG and similar"
@@ -441,7 +441,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveBooleanValue(this, "files.ignoreCacheDirs")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Ignore Files larger than"
                     help="When set, the files larger than the specified size are ignored (specified in bytes)"
@@ -449,7 +449,7 @@ export class PolicyEditor extends Component {
                   <ValueColumn>{OptionalNumberField(this, "", "policy.files.maxFileSize")}</ValueColumn>
                   {EffectiveValue(this, "files.maxFileSize")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Scan only one filesystem"
                     help="Do not cross filesystem boundaries when creating a snapshot"
@@ -468,21 +468,21 @@ export class PolicyEditor extends Component {
               </AccordionTrigger>
               <AccordionContent>
                 <SectionHeaderRow />
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn name="Ignore Directory Errors" help="Treat directory read errors as non-fatal." />
                   <ValueColumn>
                     {OptionalBoolean(this, null, "policy.errorHandling.ignoreDirectoryErrors", "inherit from parent")}
                   </ValueColumn>
                   {EffectiveBooleanValue(this, "errorHandling.ignoreDirectoryErrors")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn name="Ignore File Errors" help="Treat file read errors as non-fatal." />
                   <ValueColumn>
                     {OptionalBoolean(this, null, "policy.errorHandling.ignoreFileErrors", "inherit from parent")}
                   </ValueColumn>
                   {EffectiveBooleanValue(this, "errorHandling.ignoreFileErrors")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Ignore Unknown Directory Entries"
                     help="Treat unrecognized/unsupported directory entries as non-fatal errors."
@@ -501,7 +501,7 @@ export class PolicyEditor extends Component {
               </AccordionTrigger>
               <AccordionContent>
                 <SectionHeaderRow />
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Compression Algorithm"
                     help="Specify compression algorithm to use when snapshotting files in this directory and subdirectories"
@@ -519,7 +519,7 @@ export class PolicyEditor extends Component {
                   </WideValueColumn>
                   {EffectiveValue(this, "compression.compressorName")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Minimum File Size"
                     help="Files that are smaller than the provided value will not be compressed"
@@ -531,7 +531,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "compression.minSize")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Max File Size"
                     help="Files whose size exceeds the provided value will not be compressed"
@@ -543,7 +543,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "compression.maxSize")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Only Compress Extensions"
                     help="Only compress files with the following file extensions (one extension per line)"
@@ -555,7 +555,7 @@ export class PolicyEditor extends Component {
                   </WideValueColumn>
                   {EffectiveTextAreaValue(this, "compression.onlyCompress")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Never Compress Extensions"
                     help="Never compress the following file extensions (one extension per line)"
@@ -576,7 +576,7 @@ export class PolicyEditor extends Component {
               </AccordionTrigger>
               <AccordionContent>
                 <SectionHeaderRow />
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Snapshot Frequency"
                     help="How frequently to create snapshots in KopiaUI or Kopia server (has no effect outside of the server mode)"
@@ -601,7 +601,7 @@ export class PolicyEditor extends Component {
                   </WideValueColumn>
                   {EffectiveValue(this, "scheduling.intervalSeconds")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Times Of Day"
                     help="Create snapshots at the specified times of day (24hr format)"
@@ -613,7 +613,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveTimesOfDayValue(this, "scheduling.timeOfDay")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Cron Expressions"
                     help={
@@ -634,7 +634,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveListValue(this, "scheduling.cron")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Run Missed Snapshots on Startup"
                     help="Immediately run any missed snapshots when kopia starts (only relevant for Time-of-day snapshots)"
@@ -644,7 +644,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveBooleanValue(this, "scheduling.runMissed")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Manual Snapshots Only"
                     help="Only create snapshots manually (disables scheduled snapshots)"
@@ -654,7 +654,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveBooleanValue(this, "scheduling.manual")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Upcoming Snapshots"
                     help="Times of upcoming snapshots calculated based on policy parameters"
@@ -671,7 +671,7 @@ export class PolicyEditor extends Component {
               </AccordionTrigger>
               <AccordionContent>
                 <SectionHeaderRow />
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Maximum Parallel Snapshots"
                     help="Maximum number of snapshots that can be uploaded simultaneously"
@@ -686,7 +686,7 @@ export class PolicyEditor extends Component {
                   </ValueColumn>
                   {EffectiveValue(this, "upload.maxParallelSnapshots")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Maximum Parallel File Reads"
                     help="Maximum number of files that will be read in parallel (defaults to the number of logical processors)"
@@ -749,17 +749,17 @@ export class PolicyEditor extends Component {
               </AccordionTrigger>
               <AccordionContent>
                 <SectionHeaderRow />
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn name="Directory Snapshotted" help="Log verbosity when a directory is snapshotted" />
                   <WideValueColumn>{LogDetailSelector(this, "policy.logging.directories.snapshotted")}</WideValueColumn>
                   {EffectiveValue(this, "logging.directories.snapshotted")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn name="Directory Ignored" help="Log verbosity when a directory is ignored" />
                   <WideValueColumn>{LogDetailSelector(this, "policy.logging.directories.ignored")}</WideValueColumn>
                   {EffectiveValue(this, "logging.directories.ignored")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="File Snapshotted"
                     help="Log verbosity when a file, symbolic link, etc. is snapshotted"
@@ -767,12 +767,12 @@ export class PolicyEditor extends Component {
                   <WideValueColumn>{LogDetailSelector(this, "policy.logging.entries.snapshotted")}</WideValueColumn>
                   {EffectiveValue(this, "logging.entries.snapshotted")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn name="File Ignored" help="Log verbosity when a file, symbolic link, etc. is ignored" />
                   <WideValueColumn>{LogDetailSelector(this, "policy.logging.entries.ignored")}</WideValueColumn>
                   {EffectiveValue(this, "logging.entries.ignored")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Cache Hit"
                     help="Log verbosity when a cache is used instead of uploading the file"
@@ -780,7 +780,7 @@ export class PolicyEditor extends Component {
                   <WideValueColumn>{LogDetailSelector(this, "policy.logging.entries.cacheHit")}</WideValueColumn>
                   {EffectiveValue(this, "logging.entries.cacheHit")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Cache Miss"
                     help="Log verbosity when a cache cannot be used and a file must be hashed"
@@ -796,14 +796,15 @@ export class PolicyEditor extends Component {
                 &nbsp;Other
               </AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn
                     name="Disable Parent Policy Evaluation"
                     help="Prevents any parent policies from affecting this directory and its subdirectories"
                   />
                   <ValueColumn>{RequiredBoolean(this, "", "policy.noParent")}</ValueColumn>
+                  {EffectiveBooleanValue(this, "noParent")}
                 </div>
-                <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <LabelColumn name="JSON Representation" help="This is the internal representation of a policy" />
                   <WideValueColumn>
                     <pre className="debug-json">{JSON.stringify(this.state.policy, null, 4)}</pre>

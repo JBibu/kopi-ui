@@ -6,7 +6,7 @@ import { EffectiveValue } from "./EffectiveValue";
 
 export function ActionRowScript(component, action, name, help) {
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <LabelColumn name={name} help={help} />
       <WideValueColumn>{OptionalFieldNoLabel(component, "", "policy." + action, {})}</WideValueColumn>
       {EffectiveValue(component, action)}

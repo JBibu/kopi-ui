@@ -8,8 +8,8 @@ export function GoBackButton() {
   const navigate = useNavigate();
 
   return (
-    <Button size="sm" variant="outline" onClick={() => navigate(-1)}>
-      <FontAwesomeIcon icon={faChevronLeft} /> Return{" "}
+    <Button size="sm" variant="ghost" onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">
+      <FontAwesomeIcon icon={faChevronLeft} className="mr-2" /> Return
     </Button>
   );
 }

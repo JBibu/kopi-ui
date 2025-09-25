@@ -6,7 +6,7 @@ import { EffectiveValue } from "./EffectiveValue";
 
 export function ActionRowMode(component, action) {
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <LabelColumn
         name="Command Mode"
         help="Essential (must succeed; default behavior), optional (failures are tolerated), or async (Kopia will start the action but not wait for it to finish)"

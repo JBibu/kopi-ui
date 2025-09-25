@@ -4,6 +4,7 @@ import axios from "axios";
 import moment from "moment";
 import React, { Component } from "react";
 import { Alert } from "../components/ui/alert";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
@@ -138,13 +139,17 @@ export class Tasks extends Component {
     return (
       <div className="container mx-auto p-6 max-w-6xl">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold">Tasks</h1>
+          <h1 className="text-3xl font-bold mb-2">Tasks</h1>
           <p className="text-muted-foreground">Monitor running and completed tasks</p>
         </div>
 
-        <div className="space-y-6">
-          <div className="bg-card border rounded-lg p-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Task List</CardTitle>
+            <CardDescription>View and filter running and completed tasks</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="col-span-1">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -190,18 +195,17 @@ export class Tasks extends Component {
                 />
               </div>
             </div>
-            <div className="w-full">
-              {!items.length ? (
-                <Alert>
-                  <FontAwesomeIcon size="sm" icon={faInfoCircle} className="mr-2" /> A list of tasks will appear here when you create
-                  snapshots, restore, run maintenance, etc.
-                </Alert>
-              ) : (
-                <KopiaTable data={filteredItems} columns={columns} />
-              )}
-            </div>
-          </div>
-        </div>
+
+            {!items.length ? (
+              <Alert>
+                <FontAwesomeIcon size="sm" icon={faInfoCircle} className="mr-2" /> A list of tasks will appear here when you create
+                snapshots, restore, run maintenance, etc.
+              </Alert>
+            ) : (
+              <KopiaTable data={filteredItems} columns={columns} />
+            )}
+          </CardContent>
+        </Card>
       </div>
     );
   }

@@ -255,26 +255,32 @@ export class PoliciesInternal extends Component {
     const columns = [
       {
         header: "Username",
-        width: 100,
+        width: 120,
         accessorFn: (x) => x.target.userName || "*",
       },
       {
         header: "Host",
-        width: 100,
+        width: 120,
         accessorFn: (x) => x.target.host || "*",
       },
       {
         header: "Path",
+        width: 200,
         accessorFn: (x) => x.target.path || "*",
       },
       {
-        header: "Defined",
-        cell: (x) => this.policySummary(x.row.original),
+        header: "Policy Settings",
+        width: 300,
+        cell: (x) => (
+          <div className="flex flex-wrap gap-1">
+            {this.policySummary(x.row.original)}
+          </div>
+        ),
       },
       {
         id: "edit",
         header: "Actions",
-        width: 50,
+        width: 80,
         cell: (x) => (
           <Button
             data-testid="edit-policy"
