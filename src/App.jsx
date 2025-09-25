@@ -1,4 +1,3 @@
-/* import "bootstrap/dist/css/bootstrap.min.css"; */
 import "./css/Theme.css";
 import "./css/App.css";
 import "./css/globals.css";

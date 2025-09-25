@@ -7,9 +7,6 @@ body {
   background-color: var(--background-color);
 }
 
-.container-fluid {
-  color: var(--color-text-body);
-}
 
 #kopia .options-select {
   overflow: ellipsis;
@@ -26,51 +23,6 @@ body {
   filter: brightness(80%);
 }
 
-/* Table styling - keeping for compatibility with existing tables */
-#kopia .table,
-#kopia .table-hover > tbody > tr:hover > * {
-  color: var(--color-text-body);
-  --bs-table-bg: var(--background-color);
-  --bs-table-color: var(--color-text-body);
-}
-
-#kopia .table-striped > tbody > tr:nth-of-type(odd) > * {
-  color: var(--color-text-body);
-  background-color: var(--color-select);
-}
-
-#kopia .table-striped > tbody > tr:nth-of-type(even) > * {
-  color: var(--color-text-body);
-  background-color: var(--background-color);
-}
-
-/* Navigation styling - keeping for compatibility */
-#kopia nav.navbar {
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-bottom: 10px;
-}
-
-#kopia .navbar-light .navbar-nav .nav-link,
-#kopia .navbar-light .navbar-nav .nav-link.active,
-#kopia .navbar-light .navbar-nav .show > .nav-link {
-  color: var(--color-text-nav);
-  text-align: center;
-}
-
-#kopia .navbar-light .navbar-nav .nav-link::after {
-  display: block;
-  content: attr(data-title);
-  font-weight: bold;
-  height: 0px;
-  overflow: hidden;
-  visibility: hidden;
-}
-
-#kopia .navbar-light .navbar-nav .nav-link:hover {
-  color: var(--color-text-nav);
-  filter: brightness(80%);
-}
 
 .popover {
   max-width: 1000px;
@@ -84,10 +36,6 @@ body {
   height: 32px;
 }
 
-.form-label {
-  padding-bottom: 0px;
-  padding-top: 15px;
-}
 
 .active {
   font-weight: bold;
@@ -167,12 +115,6 @@ body {
   display: none;
 }
 
-div.tab-body {
-  padding: 10px;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-}
 
 .policy-help {
   font-size: 80%;
@@ -293,9 +235,6 @@ div.tab-body {
   color: var(--color-badge-warning);
 }
 
-#kopia .tab-content-fix {
-  font-weight: normal;
-}
 
 .cursor-pointer {
   cursor: pointer;
