@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { handleChange, validateRequiredFields, stateProperty } from "../forms";
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
+import { validateRequiredFields, stateProperty } from "../forms";
 import { OptionalField } from "../forms/OptionalField";
 import { OptionalNumberField } from "../forms/OptionalNumberField";
 import { RequiredBoolean } from "../forms/RequiredBoolean";
@@ -18,81 +18,97 @@ function hasExactlyOneOf(component, names) {
   return count === 1;
 }
 
-export class SetupRepositorySFTP extends Component {
-  constructor(props) {
-    super();
+export const SetupRepositorySFTP = forwardRef(function SetupRepositorySFTP(props, ref) {
+  const [state, setState] = useState({
+    port: 22,
+    validated: false,
+    ...props.initial,
+  });
 
-    this.state = {
-      port: 22,
-      validated: false,
-      ...props.initial,
-    };
-    this.handleChange = handleChange.bind(this);
-  }
+  // Create a component-like object for forms compatibility
+  const componentRef = useRef({
+    state: state,
+    setState: setState,
+  });
 
-  validate() {
-    this.setState({
+  // Update componentRef when state changes
+  useEffect(() => {
+    componentRef.current.state = state;
+    componentRef.current.setState = setState;
+  }, [state]);
+
+  const validate = () => {
+    setState(prevState => ({
+      ...prevState,
       validated: true,
-    });
+    }));
 
-    if (!validateRequiredFields(this, ["host", "port", "username", "path"])) {
+    // Update componentRef immediately for validation
+    componentRef.current.state = { ...componentRef.current.state, validated: true };
+
+    if (!validateRequiredFields(componentRef.current, ["host", "port", "username", "path"])) {
       return false;
     }
 
-    if (this.state.externalSSH) {
+    if (componentRef.current.state.externalSSH) {
       return true;
     }
 
-    if (!hasExactlyOneOf(this, ["password", "keyfile", "keyData"])) {
+    if (!hasExactlyOneOf(componentRef.current, ["password", "keyfile", "keyData"])) {
       return false;
     }
 
-    if (!hasExactlyOneOf(this, ["knownHostsFile", "knownHostsData"])) {
+    if (!hasExactlyOneOf(componentRef.current, ["knownHostsFile", "knownHostsData"])) {
       return false;
     }
 
     return true;
-  }
+  };
 
-  render() {
-    return (
-      <>
-        <div className="space-y-4">
-          {RequiredField(this, "Host", "host", {
-            autoFocus: true,
-            placeholder: "ssh host name (e.g., example.com)",
-          })}
-          {RequiredField(this, "User", "username", {
-            placeholder: "user name",
-          })}
-          {OptionalNumberField(this, "Port", "port", {
-            placeholder: "port number (e.g., 22)",
-          })}
-        </div>
-        <div className="space-y-4">
-          {RequiredField(this, "Path", "path", {
-            placeholder: "enter remote path to repository, e.g., '/mnt/data/repository'",
-          })}
-        </div>
-        {!this.state.externalSSH && (
+  // Expose methods to parent via ref
+  useImperativeHandle(ref, () => ({
+    validate,
+    state
+  }));
+
+  return (
+    <>
+      <div className="space-y-4">
+        {RequiredField(componentRef.current, "Host", "host", {
+          autoFocus: true,
+          placeholder: "ssh host name (e.g., example.com)",
+        })}
+        {RequiredField(componentRef.current, "User", "username", {
+          placeholder: "user name",
+        })}
+        {OptionalNumberField(componentRef.current, "Port", "port", {
+          placeholder: "port number (e.g., 22)",
+        })}
+      </div>
+      <div className="space-y-4">
+        {RequiredField(componentRef.current, "Path", "path", {
+          placeholder: "enter remote path to repository, e.g., '/mnt/data/repository'",
+        })}
+      </div>
+      {!state.externalSSH && (
           <>
             <div className="space-y-4">
-              {OptionalField(this, "Password", "password", {
+              {OptionalField(componentRef.current, "Password", "password", {
                 type: "password",
                 placeholder: "password",
               })}
             </div>
             <div className="space-y-4">
-              {OptionalField(this, "Path to key file", "keyfile", {
+              {OptionalField(componentRef.current, "Path to key file", "keyfile", {
                 placeholder: "enter path to the key file",
               })}
-              {OptionalField(this, "Path to known_hosts File", "knownHostsFile", {
+              {OptionalField(componentRef.current, "Path to known_hosts File", "knownHostsFile", {
                 placeholder: "enter path to the known_hosts file",
               })}
             </div>
             <div className="space-y-4">
               {OptionalField(
-                this,
+                componentRef.current,
                 "Key Data",
                 "keyData",
                 {
@@ -100,9 +116,9 @@ export class SetupRepositorySFTP extends Component {
                   as: "textarea",
                   rows: 5,
                   isInvalid:
-                    this.state.validated &&
-                    !this.state.externalSSH &&
-                    !hasExactlyOneOf(this, ["password", "keyfile", "keyData"]),
+                    state.validated &&
+                    !state.externalSSH &&
+                    !hasExactlyOneOf(componentRef.current, ["password", "keyfile", "keyData"]),
                 },
                 null,
                 <>
@@ -110,7 +126,7 @@ export class SetupRepositorySFTP extends Component {
                 </>,
               )}
               {OptionalField(
-                this,
+                componentRef.current,
                 "Known Hosts Data",
                 "knownHostsData",
                 {
@@ -118,9 +134,9 @@ export class SetupRepositorySFTP extends Component {
                   as: "textarea",
                   rows: 5,
                   isInvalid:
-                    this.state.validated &&
-                    !this.state.externalSSH &&
-                    !hasExactlyOneOf(this, ["knownHostsFile", "knownHostsData"]),
+                    state.validated &&
+                    !state.externalSSH &&
+                    !hasExactlyOneOf(componentRef.current, ["knownHostsFile", "knownHostsData"]),
                 },
                 null,
                 <>
@@ -132,18 +148,18 @@ export class SetupRepositorySFTP extends Component {
           </>
         )}
         {RequiredBoolean(
-          this,
+          componentRef.current,
           "Launch external password-less SSH command",
           "externalSSH",
           "By default Kopia connects to the server using internal SSH client which supports limited options. Alternatively it may launch external password-less SSH command, which supports additional options, but is generally less efficient than the built-in client.",
         )}
-        {this.state.externalSSH && (
+        {state.externalSSH && (
           <>
             <div className="space-y-4">
-              {OptionalField(this, "SSH Command", "sshCommand", {
+              {OptionalField(componentRef.current, "SSH Command", "sshCommand", {
                 placeholder: "provide enter passwordless SSH command to execute (typically 'ssh')",
               })}
-              {OptionalField(this, "SSH Arguments", "sshArguments", {
+              {OptionalField(componentRef.current, "SSH Arguments", "sshArguments", {
                 placeholder: "enter SSH command arguments ('user@host -s sftp' will be appended automatically)",
               })}
             </div>
@@ -151,8 +167,7 @@ export class SetupRepositorySFTP extends Component {
         )}
       </>
     );
-  }
-}
+});
 
 SetupRepositorySFTP.propTypes = {
   initial: PropTypes.object,
