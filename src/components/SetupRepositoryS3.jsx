@@ -1,44 +1,29 @@
-import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle } from "react";
-import { validateRequiredFields } from "../forms";
+import React, { forwardRef, useImperativeHandle } from "react";
+import PropTypes from "prop-types";
+
 import { OptionalField } from "../forms/OptionalField";
 import { RequiredBoolean } from "../forms/RequiredBoolean";
 import { RequiredField } from "../forms/RequiredField";
-import PropTypes from "prop-types";
+
+import { useFormValidation, createLegacyFormRef } from "../hooks/useFormValidation";
 
 export const SetupRepositoryS3 = forwardRef(function SetupRepositoryS3(props, ref) {
-  const [state, setState] = useState({
-    doNotUseTLS: false,
-    doNotVerifyTLS: false,
-    ...props.initial,
-  });
+  const formState = useFormValidation(
+    {
+      doNotUseTLS: false,
+      doNotVerifyTLS: false,
+      ...props.initial,
+    },
+    ["bucket", "endpoint", "accessKeyID", "secretAccessKey"]
+  );
 
-  // Create handleChange function that works with the form system
-  const handleChange = useCallback((event, valueGetter = (x) => x.value) => {
-    const fieldName = event.target.name;
-    const fieldValue = valueGetter(event.target);
-    setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));
-  }, []);
-
-  // Create a component-like object for forms compatibility
-  const componentRef = useRef({
-    state: state,
-    setState: setState,
-    handleChange: handleChange,
-  });
-
-  // Keep componentRef in sync with current state
-  componentRef.current.state = state;
-  componentRef.current.setState = setState;
-  componentRef.current.handleChange = handleChange;
-
-  const validate = () => {
-    return validateRequiredFields(componentRef.current, ["bucket", "endpoint", "accessKeyID", "secretAccessKey"]);
-  };
+  // Create legacy compatibility object for existing form components
+  const componentRef = createLegacyFormRef(formState);
 
   // Expose methods to parent via ref
   useImperativeHandle(ref, () => ({
-    validate,
-    state
+    validate: formState.validate,
+    state: formState.state
   }));
 
   return (

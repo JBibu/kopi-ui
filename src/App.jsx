@@ -1,10 +1,11 @@
-import "./css/globals.css";
-import "./css/App.css";
-import axios from "axios";
 import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import { BrowserRouter as Router, NavLink, Navigate, Route, Routes } from "react-router-dom";
+
 import { Navbar, NavbarBrand, NavbarLink } from "./components/ui/navbar";
 import { ThemeSelector } from "./components/ThemeSelector";
+import { NotificationDisplay } from "./components/NotificationDisplay";
+
 import { Policy } from "./pages/Policy";
 import { Preferences } from "./pages/Preferences";
 import { Policies } from "./pages/Policies";
@@ -16,9 +17,14 @@ import { SnapshotCreate } from "./pages/SnapshotCreate";
 import { SnapshotDirectory } from "./pages/SnapshotDirectory";
 import { SnapshotHistory } from "./pages/SnapshotHistory";
 import { SnapshotRestore } from "./pages/SnapshotRestore";
+
 import { AppContext } from "./contexts/AppContext";
 import { UIPreferenceProvider } from "./contexts/UIPreferencesContext";
 import { ThemeProvider } from "./components/theme-provider";
+import { ErrorProvider } from "./contexts/ErrorContext";
+
+import "./css/globals.css";
+import "./css/App.css";
 
 export default function App() {
   const [runningTaskCount, setRunningTaskCount] = useState(0);
@@ -105,8 +111,9 @@ export default function App() {
   return (
     <Router>
       <ThemeProvider>
-        <AppContext.Provider value={contextValue}>
-          <UIPreferenceProvider>
+        <ErrorProvider>
+          <AppContext.Provider value={contextValue}>
+            <UIPreferenceProvider>
             <Navbar>
               <NavbarBrand to="/">
                 <img src="/kopia-flat.svg" className="h-8 w-8" alt="Kopia logo" />
@@ -198,8 +205,10 @@ export default function App() {
                 <Route path="/" element={<Navigate to="/snapshots" />} />
               </Routes>
             </main>
-          </UIPreferenceProvider>
-        </AppContext.Provider>
+            <NotificationDisplay position="top-right" />
+            </UIPreferenceProvider>
+          </AppContext.Provider>
+        </ErrorProvider>
       </ThemeProvider>
     </Router>
   );

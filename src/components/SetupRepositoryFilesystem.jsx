@@ -1,39 +1,37 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
+import PropTypes from "prop-types";
+import { FolderOpen } from "lucide-react";
+
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { FolderOpen } from "lucide-react";
-import PropTypes from "prop-types";
+
+import { useFormValidation } from "../hooks/useFormValidation";
 
 export const SetupRepositoryFilesystem = forwardRef(function SetupRepositoryFilesystem(props, ref) {
-  const [state, setState] = useState({
-    path: "",
-    ...props.initial,
-  });
+  const formState = useFormValidation(
+    {
+      path: "",
+      ...props.initial,
+    },
+    ["path"]
+  );
 
   const handlePathChange = (e) => {
-    setState(prev => ({ ...prev, path: e.target.value }));
+    formState.handleChange("path", e.target.value);
   };
 
   const onDirectorySelected = (path) => {
-    setState(prev => ({ ...prev, path }));
-  };
-
-  const validate = () => {
-    if (!state.path) {
-      setState(prev => ({ ...prev, path: "" })); // Trigger validation UI
-      return false;
-    }
-    return true;
+    formState.handleChange("path", path);
   };
 
   // Expose methods to parent via ref
   useImperativeHandle(ref, () => ({
-    validate,
-    state
+    validate: formState.validate,
+    state: formState.state
   }));
 
-  const isInvalid = state.path === "";
+  const isInvalid = formState.errors.path && formState.touched.path;
 
   return (
     <div className="space-y-2">
@@ -45,7 +43,7 @@ export const SetupRepositoryFilesystem = forwardRef(function SetupRepositoryFile
         <Input
           id="path"
           name="path"
-          value={state.path || ""}
+          value={formState.state.path || ""}
           data-testid="control-path"
           onChange={handlePathChange}
           className={isInvalid ? "border-red-500 focus:border-red-500 flex-1" : "flex-1"}
@@ -63,7 +61,7 @@ export const SetupRepositoryFilesystem = forwardRef(function SetupRepositoryFile
           </Button>
         )}
       </div>
-      {isInvalid && <p className="text-sm text-red-500">Required field</p>}
+      {isInvalid && <p className="text-sm text-red-500">{formState.errors.path}</p>}
     </div>
   );
 });

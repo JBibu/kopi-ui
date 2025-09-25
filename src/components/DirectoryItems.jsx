@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext, useMemo } from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+
 import KopiaTable from "./KopiaTable";
+
 import { objectLink, rfc3339TimestampForDisplay } from "../utils/formatutils";
 import { sizeWithFailures } from "../utils/uiutil";
+
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
-import PropTypes from "prop-types";
 
 function objectName(name, typeID) {
   if (typeID === "d") {
@@ -39,10 +42,11 @@ function directoryLinkOrDownload(x, state) {
 }
 
 export function DirectoryItems({ historyState, items }) {
-  const context = React.useContext(UIPreferencesContext);
+  // Context hooks
+  const { bytesStringBase2 } = useContext(UIPreferencesContext);
 
-  const { bytesStringBase2 } = context;
-  const columns = [
+  // Memoized columns definition
+  const columns = useMemo(() => [
     {
       id: "name",
       header: "Name",
@@ -75,7 +79,7 @@ export function DirectoryItems({ historyState, items }) {
       header: "Directories",
       width: 100,
     },
-  ];
+  ], [bytesStringBase2, historyState]);
 
   return <KopiaTable data={items} columns={columns} />;
 }
