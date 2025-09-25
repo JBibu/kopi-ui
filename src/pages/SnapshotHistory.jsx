@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { Component, useContext } from "react";
 import { Button } from "../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
@@ -475,7 +476,37 @@ class SnapshotHistoryInternal extends Component {
     const selectedElements = Object.keys(this.state.selectedSnapshotManifestIDs);
 
     return (
-      <>
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">Snapshot History</h1>
+          <p className="text-muted-foreground">
+            {this.state.userName}@{this.state.host}:{this.state.path}
+          </p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Snapshots</CardTitle>
+                <CardDescription>
+                  Displaying{" "}
+                  {snapshots.length !== unfilteredCount
+                    ? snapshots.length + " out of " + unfilteredCount
+                    : snapshots.length}{" "}
+                  snapshots{uniqueCount !== unfilteredCount && ` (${uniqueCount} unique)`}
+                </CardDescription>
+              </div>
+              <Button size="sm" variant="outline" onClick={this.fetchSnapshots} disabled={this.state.isRefreshing}>
+                {this.state.isRefreshing ? (
+                  <Spinner size="sm" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <GoBackButton />
@@ -499,25 +530,6 @@ class SnapshotHistoryInternal extends Component {
                 Delete Snapshot Source
               </Button>
             )}
-          </div>
-          <Button size="sm" variant="outline" onClick={this.fetchSnapshots} disabled={this.state.isRefreshing}>
-            {this.state.isRefreshing ? (
-              <Spinner size="sm" />
-            ) : (
-              <RefreshCw className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-        <div className="mb-4">
-          <div className="py-2">
-            Displaying{" "}
-            {snapshots.length !== unfilteredCount
-              ? snapshots.length + " out of " + unfilteredCount
-              : snapshots.length}{" "}
-            snapshots of&nbsp;
-            <b>
-              {this.state.userName}@{this.state.host}:{this.state.path}
-            </b>
           </div>
         </div>
         {unfilteredCount !== uniqueCount && (
@@ -543,6 +555,8 @@ class SnapshotHistoryInternal extends Component {
         <CLIEquivalent
           command={`snapshot list "${this.state.userName}@${this.state.host}:${this.state.path}"${this.state.showHidden ? " --show-identical" : ""}`}
         />
+          </CardContent>
+        </Card>
 
         <AlertDialog open={this.state.showDeleteConfirmationDialog} onOpenChange={this.cancelDelete}>
           <AlertDialogContent>
@@ -668,7 +682,7 @@ class SnapshotHistoryInternal extends Component {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </>
+      </div>
     );
   }
 }

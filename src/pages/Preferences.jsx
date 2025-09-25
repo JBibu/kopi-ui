@@ -16,7 +16,7 @@ export function Preferences() {
     useContext(UIPreferencesContext);
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto p-6 max-w-6xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">Preferences</h1>
         <p className="text-muted-foreground">Customize your Kopia UI experience</p>

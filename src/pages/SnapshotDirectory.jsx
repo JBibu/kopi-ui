@@ -5,6 +5,7 @@ import React, { Component } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { Spinner } from "../components/ui/spinner";
 import { Button } from "../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { DirectoryItems } from "../components/DirectoryItems";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { DirectoryBreadcrumbs } from "../components/DirectoryBreadcrumbs";
@@ -139,9 +140,20 @@ class SnapshotDirectoryInternal extends Component {
     }
 
     return (
-      <>
-        <DirectoryBreadcrumbs />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="mb-6">
+          <DirectoryBreadcrumbs />
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Snapshot Contents</CardTitle>
+            <CardDescription>
+              Browse and restore files from this snapshot
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="flex flex-wrap items-center gap-2">
             {this.state.mountInfo.path ? (
               <>
@@ -185,7 +197,9 @@ class SnapshotDirectoryInternal extends Component {
           <DirectoryItems items={items} historyState={this.props.location.state} />
         </div>
         <CLIEquivalent command={`snapshot list ${this.state.oid}`} />
-      </>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 }
