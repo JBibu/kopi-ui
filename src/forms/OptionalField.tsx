@@ -2,19 +2,10 @@ import React from "react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { stateProperty } from ".";
-
-// Component with state interface for form handling
-interface ComponentWithState {
-  state: Record<string, any>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-interface OptionalFieldProps {
-  [key: string]: any;
-}
+import { FormComponentRef, OptionalFieldProps } from "../types/forms";
 
 export function OptionalField(
-  component: ComponentWithState,
+  component: FormComponentRef,
   label: string,
   name: string,
   props: OptionalFieldProps = {},

@@ -128,7 +128,7 @@ export function Snapshots(): React.JSX.Element {
   }, [fetchSourcesWithoutSpinner]);
 
   // Memoized helper functions
-  const setHeader = useCallback((x: any): string => {
+  const setHeader = useCallback((x: { cell: { getValue: () => string; column: { Header?: string } } }): string => {
     switch (x.cell.getValue()) {
       case "IDLE":
       case "PAUSED":
@@ -184,7 +184,7 @@ export function Snapshots(): React.JSX.Element {
         );
 
       case "UPLOADING": {
-        let u = row.original.upload;
+        const u = row.original.upload;
         let totals = "";
         if (u) {
           // title calculation removed as it's no longer used
@@ -282,7 +282,7 @@ export function Snapshots(): React.JSX.Element {
       id: "path",
       header: "Path",
       accessorFn: (x: SourceWithUpload) => x.source,
-      sortType: (a: any, b: any) => {
+      sortType: (a: { original: SourceWithUpload }, b: { original: SourceWithUpload }) => {
         const v = compare(a.original.source.path, b.original.source.path);
         if (v !== 0) {
           return v;
@@ -314,7 +314,7 @@ export function Snapshots(): React.JSX.Element {
       cell: ({ row, cell }) =>
         sizeWithFailures(
           cell.getValue() as number,
-          row.original.lastSnapshot?.summary as any,
+          row.original.lastSnapshot?.summary,
           bytesStringBase2,
         ),
     },

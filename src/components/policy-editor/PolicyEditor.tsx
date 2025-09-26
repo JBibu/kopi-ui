@@ -92,7 +92,7 @@ const usePolicyEditor = (props: PolicyEditorProps) => {
 
     try {
       // Clone and clean up policy before saving
-      let policy: Policy = JSON.parse(JSON.stringify(state.policy));
+      const policy: Policy = JSON.parse(JSON.stringify(state.policy));
 
       if (policy.files) {
         if (policy.files.ignore) {

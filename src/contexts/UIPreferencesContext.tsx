@@ -31,7 +31,7 @@ interface StoredPreferences {
   bytesStringBase2?: boolean;
   defaultSnapshotViewAll?: boolean;
   preferWebDav?: boolean;
-  fontSize?: string; // Allow legacy string values for migration
+  fontSize?: string;
 }
 
 export const UIPreferencesContext = React.createContext<UIPreferencesContextValue>({} as UIPreferencesContextValue);
@@ -98,15 +98,6 @@ export function UIPreferenceProvider({ children, initalValue: _initalValue }: UI
         if (!storedPreferences.fontSize || storedPreferences.fontSize === "") {
           storedPreferences.fontSize = DEFAULT_PREFERENCES.fontSize;
         }
-        // Migrate legacy Bootstrap font sizes to Tailwind
-        const legacyFontSize = storedPreferences.fontSize;
-        if (legacyFontSize === "fs-6") {
-          storedPreferences.fontSize = "text-sm";
-        } else if (legacyFontSize === "fs-5") {
-          storedPreferences.fontSize = "text-base";
-        } else if (legacyFontSize === "fs-4") {
-          storedPreferences.fontSize = "text-lg";
-        }
         const pageSize = storedPreferences.pageSize;
         if (!pageSize || pageSize === 0) {
           storedPreferences.pageSize = DEFAULT_PREFERENCES.pageSize;
@@ -142,8 +133,6 @@ export function UIPreferenceProvider({ children, initalValue: _initalValue }: UI
     // Remove old font size classes
     doc.classList.remove("text-sm", "text-base", "text-lg");
 
-    // Remove legacy Bootstrap font size classes if they exist
-    doc.classList.remove("fs-6", "fs-5", "fs-4");
 
     // Add new font size class
     doc.classList.add(fontSize);

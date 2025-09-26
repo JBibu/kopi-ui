@@ -7,7 +7,7 @@ import { objectLink, rfc3339TimestampForDisplay } from "../utils/formatutils";
 import { sizeWithFailures } from "../utils/uiutil";
 
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
-import { DirectoryEntry, SnapshotSummary, KopiaTableColumn } from "../types";
+import { DirectoryEntry, KopiaTableColumn } from "../types";
 
 interface BreadcrumbState {
   label: string;

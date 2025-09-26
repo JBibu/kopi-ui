@@ -1,17 +1,38 @@
 import { useState, useCallback } from 'react';
 
+export interface FormValidationState {
+  state: Record<string, unknown>;
+  setState: (updates: Record<string, unknown>) => void;
+  errors: Record<string, string | null>;
+  touched: Record<string, boolean>;
+  handleChange: (name: string, value: unknown) => void;
+  handleChangeEvent: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => void;
+  setFieldTouched: (name: string) => void;
+  validate: () => boolean;
+  clearErrors: () => void;
+  resetForm: () => void;
+  isValid: boolean;
+  hasErrors: boolean;
+}
+
+export interface LegacyFormRef {
+  state: Record<string, unknown>;
+  setState: (updates: Record<string, unknown>) => void;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => void;
+}
+
 /**
  * Unified form validation hook to replace the complex componentRef pattern
- * @param {Object} initialState - Initial form state
- * @param {Array} requiredFields - Array of required field names
- * @returns {Object} Form state and handlers
  */
-export const useFormValidation = (initialState = {}, requiredFields = []) => {
-  const [state, setState] = useState(initialState);
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
+export const useFormValidation = (
+  initialState: Record<string, unknown> = {},
+  requiredFields: string[] = []
+): FormValidationState => {
+  const [state, setState] = useState<Record<string, unknown>>(initialState);
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const handleChange = useCallback((name, value) => {
+  const handleChange = useCallback((name: string, value: unknown) => {
     setState(prev => ({ ...prev, [name]: value }));
 
     // Clear error when field is modified
@@ -20,18 +41,21 @@ export const useFormValidation = (initialState = {}, requiredFields = []) => {
     }
   }, [errors]);
 
-  const handleChangeEvent = useCallback((event, valueGetter = (x) => x.value) => {
+  const handleChangeEvent = useCallback((
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    valueGetter: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown = (x) => x.value
+  ) => {
     const fieldName = event.target.name;
     const fieldValue = valueGetter(event.target);
     handleChange(fieldName, fieldValue);
   }, [handleChange]);
 
-  const setFieldTouched = useCallback((name) => {
+  const setFieldTouched = useCallback((name: string) => {
     setTouched(prev => ({ ...prev, [name]: true }));
   }, []);
 
   const validate = useCallback(() => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
     let isValid = true;
 
     requiredFields.forEach(field => {
@@ -44,7 +68,7 @@ export const useFormValidation = (initialState = {}, requiredFields = []) => {
     setErrors(newErrors);
 
     // Mark all fields as touched when validating
-    const allTouched = {};
+    const allTouched: Record<string, boolean> = {};
     Object.keys(state).forEach(key => {
       allTouched[key] = true;
     });
@@ -64,7 +88,7 @@ export const useFormValidation = (initialState = {}, requiredFields = []) => {
     setTouched({});
   }, [initialState]);
 
-  const updateState = useCallback((updates) => {
+  const updateState = useCallback((updates: Record<string, unknown>) => {
     setState(prev => ({ ...prev, ...updates }));
   }, []);
 
@@ -87,10 +111,8 @@ export const useFormValidation = (initialState = {}, requiredFields = []) => {
 /**
  * Legacy compatibility function for existing forms
  * Creates a component-like object that works with existing form utilities
- * @param {Object} formState - State from useFormValidation hook
- * @returns {Object} Component-like object for legacy compatibility
  */
-export const createLegacyFormRef = (formState) => {
+export const createLegacyFormRef = (formState: FormValidationState): LegacyFormRef => {
   return {
     state: formState.state,
     setState: formState.setState,

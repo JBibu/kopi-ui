@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { PolicyTypeName, policyEditorURL } from "../utils/policyutil";
 import { Source } from "../types";
 
-interface PolicyEditorLinkProps {
+interface _PolicyEditorLinkProps {
   source: Source;
 }
 

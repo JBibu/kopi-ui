@@ -155,7 +155,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): JSX.Eleme
   };
 
   const policySummary = (policies: Policy): JSX.Element[] => {
-    let bits: JSX.Element[] = [];
+    const bits: JSX.Element[] = [];
 
     function isEmptyObject(obj: any): boolean {
       return (
@@ -166,14 +166,14 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): JSX.Eleme
     }
 
     function isEmpty(obj: any): boolean {
-      for (var key in obj) {
+      for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) return isEmptyObject(obj[key]);
       }
       return true;
     }
 
     if (policies && typeof policies === 'object') {
-      for (let pol in policies) {
+      for (const pol in policies) {
         if (pol !== 'id' && pol !== 'target' && !isEmpty((policies as any)[pol])) {
           bits.push(
             <Badge variant="secondary" key={pol}>
@@ -198,7 +198,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): JSX.Eleme
     return x.target && formatOwnerName(x.target) === state.localSourceName;
   };
 
-  let { policies, sources, isLoading, error } = state;
+  const { policies: allPoliciesList, sources, isLoading, error } = state;
   if (error) {
     return <p>{error.message}</p>;
   }
@@ -206,7 +206,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): JSX.Eleme
     return <p>Loading ...</p>;
   }
 
-  let uniqueOwners = sources.reduce<string[]>((a, d) => {
+  const uniqueOwners = sources.reduce<string[]>((a, d) => {
     const owner = formatOwnerName(d.source);
 
     if (!a.includes(owner)) {
@@ -217,35 +217,36 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): JSX.Eleme
 
   uniqueOwners.sort();
 
+  let policies = allPoliciesList;
   switch (state.selectedOwner) {
     case allPolicies:
       // do nothing;
       break;
 
     case globalPolicy:
-      policies = policies.filter((x) => isGlobalPolicy(x));
+      policies = allPoliciesList.filter((x) => isGlobalPolicy(x));
       break;
 
     case localPolicies:
-      policies = policies.filter((x) => isLocalUserPolicy(x));
+      policies = allPoliciesList.filter((x) => isLocalUserPolicy(x));
       break;
 
     case applicablePolicies:
-      policies = policies.filter(
+      policies = allPoliciesList.filter(
         (x) => isLocalUserPolicy(x) || isLocalHostPolicy(x) || isGlobalPolicy(x),
       );
       break;
 
     case perUserPolicies:
-      policies = policies.filter((x) => !!x.target?.userName && !!x.target?.host && !x.target?.path);
+      policies = allPoliciesList.filter((x) => !!x.target?.userName && !!x.target?.host && !x.target?.path);
       break;
 
     case perHostPolicies:
-      policies = policies.filter((x) => !x.target?.userName && !!x.target?.host && !x.target?.path);
+      policies = allPoliciesList.filter((x) => !x.target?.userName && !!x.target?.host && !x.target?.path);
       break;
 
     default:
-      policies = policies.filter((x) => x.target && formatOwnerName(x.target) === state.selectedOwner);
+      policies = allPoliciesList.filter((x) => x.target && formatOwnerName(x.target) === state.selectedOwner);
       break;
   }
 

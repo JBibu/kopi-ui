@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import { Location, NavigateFunction } from 'react-router-dom';
-import { Policy, Repository, Source, Task } from './api';
+import { Policy, Source, Task } from './api';
 
 // Navigation Props
 export interface RouteComponentProps {
@@ -65,18 +65,18 @@ export interface ErrorContextValue {
 }
 
 // Table Component Props
-export interface KopiaTableColumn<T = any> {
+export interface KopiaTableColumn<T = Record<string, unknown>> {
   id?: string;
   header: string | ReactNode;
-  accessor?: string | ((row: T) => any);
-  accessorFn?: (row: T) => any;
-  cell?: (props: { row: { original: T }; cell: { getValue: () => any } }) => ReactNode;
+  accessor?: string | ((row: T) => unknown);
+  accessorFn?: (row: T) => unknown;
+  cell?: (props: { row: { original: T }; cell: { getValue: () => unknown } }) => ReactNode;
   width?: string | number;
   align?: 'left' | 'center' | 'right';
   sortable?: boolean;
 }
 
-export interface KopiaTableProps<T = any> {
+export interface KopiaTableProps<T = Record<string, unknown>> {
   data: T[];
   columns: KopiaTableColumn<T>[];
   defaultSort?: string;
@@ -128,7 +128,7 @@ export interface SelectOptionProps {
 export interface PolicyEditorProps {
   policy: Policy;
   policies?: Policy[];
-  policyDefinition?: any;
+  policyDefinition?: Record<string, unknown>;
   sourceInfo?: Source;
   onChange?: (policy: Policy) => void;
   onSave?: () => void;
@@ -143,9 +143,9 @@ export interface EffectiveValueProps {
     help?: string;
     type?: string;
     enum?: string[];
-    default?: any;
+    default?: unknown;
   };
-  effectiveValue?: any;
+  effectiveValue?: unknown;
   sourceDescription?: string;
   className?: string;
 }
@@ -162,8 +162,8 @@ export interface ProviderCardProps {
 
 export interface RepositorySetupFormProps {
   provider: string;
-  providerSettings: Record<string, any>;
-  onChange?: (settings: Record<string, any>) => void;
+  providerSettings: Record<string, unknown>;
+  onChange?: (settings: Record<string, unknown>) => void;
   onValidate?: () => boolean;
   advanced?: boolean;
 }
@@ -173,16 +173,16 @@ export interface NotificationEditorProps {
   profile?: {
     profileName: string;
     profileType: 'email' | 'webhook' | 'pushover';
-    config: Record<string, any>;
+    config: Record<string, unknown>;
   };
-  onSave?: (profile: any) => void;
+  onSave?: (profile: { profileName: string; profileType: string; config: Record<string, unknown> }) => void;
   onCancel?: () => void;
   isNew?: boolean;
 }
 
 export interface NotificationMethodProps {
-  config: Record<string, any>;
-  onChange?: (config: Record<string, any>) => void;
+  config: Record<string, unknown>;
+  onChange?: (config: Record<string, unknown>) => void;
   onValidate?: () => boolean;
 }
 
@@ -228,7 +228,7 @@ export interface DirectoryItemsProps {
     size?: number;
     mtime?: string;
   }>;
-  onItemClick?: (item: any) => void;
+  onItemClick?: (item: { name: string; type: 'f' | 'd' | 's'; size?: number; mtime?: string }) => void;
   onSelectionChange?: (selected: string[]) => void;
   multiSelect?: boolean;
 }

@@ -6,8 +6,8 @@
 // getDeepStateProperty("a.b") returns {"c":true}
 // getDeepStateProperty("a.b.c") returns true
 
-export function setDeepStateProperty(component, name, value) {
-  let newState = { ...component.state };
+export function setDeepStateProperty(component: { state: Record<string, unknown>; setState: (state: Record<string, unknown>) => void }, name: string, value: unknown): void {
+  const newState = { ...component.state };
   let st = newState;
 
   const parts = name.split(/\./);
@@ -35,7 +35,7 @@ export function setDeepStateProperty(component, name, value) {
 // getDeepStateProperty("a") returns {b":{"c":true}}
 // getDeepStateProperty("a.b") returns {"c":true}
 // getDeepStateProperty("a.b.c") returns true
-export function getDeepStateProperty(component, name, defaultValue = "") {
+export function getDeepStateProperty(component: { state: Record<string, unknown> }, name: string, defaultValue: unknown = ""): unknown {
   let st = component.state;
   const parts = name.split(/\./);
 

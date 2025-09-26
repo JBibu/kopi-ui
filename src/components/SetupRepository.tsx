@@ -282,7 +282,7 @@ export const SetupRepository: React.FC = () => {
       return;
     }
 
-    let request = {
+    const request = {
       storage: {
         type: state.provider,
         config: state.providerSettings,

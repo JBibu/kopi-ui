@@ -174,7 +174,7 @@ export interface SourcesResponse {
 // Storage Provider Types
 export interface ProviderSettings {
   type: string;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   description?: string;
   isReadOnly?: boolean;
   formatVersion?: number;
@@ -256,7 +256,7 @@ export interface EstimateResult {
 export interface NotificationProfile {
   profileName: string;
   profileType: 'email' | 'webhook' | 'pushover';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
 }
 
 export interface NotificationConfig {

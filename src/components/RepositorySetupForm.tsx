@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, ReactElement } from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { FolderOpen } from "lucide-react";
 
 import { Button } from "./ui/button";
@@ -15,12 +15,12 @@ interface FieldDefinition {
   component: typeof RequiredField | typeof OptionalField | typeof RequiredBoolean;
   label: string;
   name: string;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
 }
 
 interface ProviderConfig {
   name: string;
-  defaultState: Record<string, any>;
+  defaultState: Record<string, unknown>;
   requiredFields: string[];
   fields?: FieldDefinition[];
   customComponent?: boolean;
@@ -156,12 +156,12 @@ const FilesystemFields: React.FC<FilesystemFieldsProps> = ({ formState, onDirect
 
 interface RepositorySetupFormProps {
   provider: keyof typeof PROVIDERS;
-  initial?: Record<string, any>;
+  initial?: Record<string, unknown>;
 }
 
 export interface RepositorySetupFormHandle {
   validate: () => boolean;
-  state: Record<string, any>;
+  state: Record<string, unknown>;
 }
 
 export const RepositorySetupForm = forwardRef<RepositorySetupFormHandle, RepositorySetupFormProps>(
@@ -226,9 +226,13 @@ export const RepositorySetupForm = forwardRef<RepositorySetupFormHandle, Reposit
       <>
         {groupedFields.map((group, groupIndex) => (
           <div key={groupIndex} className="space-y-4">
-            {group.map((field) => {
+            {group.map((field, fieldIndex) => {
               const FieldComponent = field.component;
-              return FieldComponent(componentRef, field.label, field.name, field.props || {});
+              return (
+                <div key={`${groupIndex}-${fieldIndex}`}>
+                  {FieldComponent(componentRef, field.label, field.name, field.props || {})}
+                </div>
+              );
             })}
           </div>
         ))}
@@ -241,43 +245,43 @@ export const RepositorySetupForm = forwardRef<RepositorySetupFormHandle, Reposit
 export { PROVIDERS };
 
 // Export individual provider components for backward compatibility
-export const SetupRepositoryS3 = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, any> }>(
+export const SetupRepositoryS3 = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryS3(props, ref) {
     return <RepositorySetupForm provider="s3" {...props} ref={ref} />;
   }
 );
 
-export const SetupRepositoryGCS = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, any> }>(
+export const SetupRepositoryGCS = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryGCS(props, ref) {
     return <RepositorySetupForm provider="gcs" {...props} ref={ref} />;
   }
 );
 
-export const SetupRepositoryAzure = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, any> }>(
+export const SetupRepositoryAzure = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryAzure(props, ref) {
     return <RepositorySetupForm provider="azure" {...props} ref={ref} />;
   }
 );
 
-export const SetupRepositoryFilesystem = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, any> }>(
+export const SetupRepositoryFilesystem = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryFilesystem(props, ref) {
     return <RepositorySetupForm provider="filesystem" {...props} ref={ref} />;
   }
 );
 
-export const SetupRepositorySFTP = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, any> }>(
+export const SetupRepositorySFTP = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositorySFTP(props, ref) {
     return <RepositorySetupForm provider="sftp" {...props} ref={ref} />;
   }
 );
 
-export const SetupRepositoryWebDAV = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, any> }>(
+export const SetupRepositoryWebDAV = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryWebDAV(props, ref) {
     return <RepositorySetupForm provider="webdav" {...props} ref={ref} />;
   }
 );
 
-export const SetupRepositoryB2 = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, any> }>(
+export const SetupRepositoryB2 = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryB2(props, ref) {
     return <RepositorySetupForm provider="b2" {...props} ref={ref} />;
   }
