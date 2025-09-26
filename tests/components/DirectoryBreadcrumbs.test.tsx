@@ -154,8 +154,8 @@ describe("DirectoryBreadcrumbs", () => {
 
     renderWithRouter(<DirectoryBreadcrumbs />);
 
-    // FontAwesome renders as SVG with data-icon="circle-info"
-    const infoIcon = document.querySelector('svg[data-icon="circle-info"]');
+    // Lucide icons are rendered with specific SVG structure
+    const infoIcon = document.querySelector('svg[class*="lucide"]');
     expect(infoIcon).toBeInTheDocument();
 
     // Click on the info icon to show tooltip
@@ -184,7 +184,7 @@ describe("DirectoryBreadcrumbs", () => {
     renderWithRouter(<DirectoryBreadcrumbs />);
 
     // Should only show one info icon (for current item)
-    const infoIcons = document.querySelectorAll('svg[data-icon="circle-info"]');
+    const infoIcons = document.querySelectorAll('svg[class*="lucide"]');
     expect(infoIcons).toHaveLength(1);
   });
 
@@ -203,7 +203,7 @@ describe("DirectoryBreadcrumbs", () => {
     expect(screen.getByText("Current Directory")).toBeInTheDocument();
 
     // Should not show info icon when no OID
-    const infoIcon = document.querySelector('svg[data-icon="circle-info"]');
+    const infoIcon = document.querySelector('svg[class*="lucide"]');
     expect(infoIcon).not.toBeInTheDocument();
   });
 

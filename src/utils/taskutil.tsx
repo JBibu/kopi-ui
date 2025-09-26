@@ -1,5 +1,4 @@
-import { faBan, faCheck, faExclamationCircle, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Ban, Check, AlertCircle, X } from "lucide-react";
 import axios from "axios";
 import React from "react";
 import { Spinner } from "../components/ui/spinner";
@@ -24,28 +23,28 @@ export function taskStatusSymbol(task: Task): React.ReactElement | string {
         <>
           <Spinner className="w-4 h-4 mr-2" /> Running for {dur}
           <Button variant="ghost" size="sm" onClick={() => cancelTask(task.id)}>
-            <FontAwesomeIcon color="red" size="lg" title="Cancel task" icon={faXmark} />
+            <X className="h-4 w-4 text-red-600" title="Cancel task" />
           </Button>
         </>
       );
     case "success":
       return (
         <p title={dur}>
-          <FontAwesomeIcon icon={faCheck} color="green" /> Finished in {dur}
+          <Check className="h-4 w-4 text-green-600 inline mr-1" /> Finished in {dur}
         </p>
       );
 
     case "failed":
       return (
         <p title={dur}>
-          <FontAwesomeIcon icon={faExclamationCircle} color="red" /> Failed after {dur}
+          <AlertCircle className="h-4 w-4 text-red-600 inline mr-1" /> Failed after {dur}
         </p>
       );
 
     case "cancelled":
       return (
         <p title={dur}>
-          <FontAwesomeIcon icon={faBan} /> Canceled after {dur}
+          <Ban className="h-4 w-4 inline mr-1" /> Canceled after {dur}
         </p>
       );
 

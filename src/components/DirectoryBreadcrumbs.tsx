@@ -2,8 +2,7 @@ import React from "react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
 import { useNavigate, useLocation, Location } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { Info } from "lucide-react";
 
 interface BreadcrumbState {
   label: string;
@@ -40,7 +39,7 @@ export function DirectoryBreadcrumbs(): JSX.Element {
                       {state.oid && (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <FontAwesomeIcon icon={faInfoCircle} className="cursor-pointer" />
+                            <Info className="h-4 w-4 cursor-pointer" />
                           </TooltipTrigger>
                           <TooltipContent className="wide-tooltip">
                             <p>OID: {state.oid}</p>

@@ -1,16 +1,4 @@
-import {
-  faCalendarTimes,
-  faClock,
-  faExclamationTriangle,
-  faFileAlt,
-  faFileArchive,
-  faFolderOpen,
-  faMagic,
-  faCog,
-  faCogs,
-  faUpload,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { CalendarDays, Clock, AlertTriangle, File, Archive, FolderOpen, Wand2, Cog, Settings, Upload } from "lucide-react";
 import axios from "axios";
 import React, { Component } from "react";
 import { Button } from "../ui/button";
@@ -314,7 +302,7 @@ export class PolicyEditor extends Component<PolicyEditorProps, PolicyEditorState
           <Accordion type="multiple" defaultValue={["scheduling"]}>
             <AccordionItem value="retention">
               <AccordionTrigger>
-                <FontAwesomeIcon icon={faCalendarTimes} />
+                <CalendarDays className="h-4 w-4" />
                 &nbsp;Snapshot Retention
               </AccordionTrigger>
               <AccordionContent>

@@ -1,5 +1,4 @@
-import { faChevronCircleDown, faChevronCircleUp, faStopCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ChevronDown, ChevronUp, StopCircle } from "lucide-react";
 import axios from "axios";
 import React, { useState, useEffect, useContext, useCallback, useMemo } from "react";
 import { Button } from "./ui/button";
@@ -163,7 +162,7 @@ export function SnapshotEstimation(props: SnapshotEstimationProps): React.ReactE
             onClick={handleCancel}
             aria-label="Cancel task"
           >
-            <FontAwesomeIcon icon={faStopCircle} className="mr-1" />
+            <StopCircle className="h-4 w-4 mr-1" />
             Cancel
           </Button>
         )}
@@ -179,7 +178,7 @@ export function SnapshotEstimation(props: SnapshotEstimationProps): React.ReactE
               aria-expanded="true"
               aria-controls="task-logs"
             >
-              <FontAwesomeIcon icon={faChevronCircleUp} className="mr-1" />
+              <ChevronUp className="h-4 w-4 mr-1" />
               Hide Log
             </Button>
             <div id="task-logs">
@@ -195,7 +194,7 @@ export function SnapshotEstimation(props: SnapshotEstimationProps): React.ReactE
             aria-expanded="false"
             aria-controls="task-logs"
           >
-            <FontAwesomeIcon icon={faChevronCircleDown} className="mr-1" />
+            <ChevronDown className="h-4 w-4 mr-1" />
             Show Log
           </Button>
         )}

@@ -1,7 +1,9 @@
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Info } from "lucide-react";
 import axios, { AxiosError } from "axios";
-import moment from "moment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Alert } from "../components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
@@ -82,11 +84,11 @@ export function Tasks(): JSX.Element {
       cell: ({ row }) => (
         <Link
           to={"/tasks/" + row.original.id}
-          title={moment(row.original.startTime).toLocaleString()}
+          title={dayjs(row.original.startTime).toLocaleString()}
           className="text-primary hover:underline"
-          aria-label={`View task details for ${row.original.kind} started ${moment(row.original.startTime).fromNow()}`}
+          aria-label={`View task details for ${row.original.kind} started ${dayjs(row.original.startTime).fromNow()}`}
         >
-          {moment(row.original.startTime).fromNow()}
+          {dayjs(row.original.startTime).fromNow()}
         </Link>
       ),
     },
@@ -195,7 +197,7 @@ export function Tasks(): JSX.Element {
 
           {!items.length ? (
             <Alert>
-              <FontAwesomeIcon size="sm" icon={faInfoCircle} className="mr-2" />
+              <Info className="h-4 w-4 mr-2" />
               A list of tasks will appear here when you create snapshots, restore, run maintenance, etc.
             </Alert>
           ) : (

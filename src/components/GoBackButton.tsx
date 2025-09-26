@@ -1,5 +1,4 @@
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ChevronLeft } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +22,7 @@ export function GoBackButton({ onClick, label = "Return", className }: GoBackBut
       onClick={handleClick}
       className={`text-muted-foreground hover:text-foreground ${className || ''}`}
     >
-      <FontAwesomeIcon icon={faChevronLeft} className="mr-2" /> {label}
+      <ChevronLeft className="h-4 w-4 mr-2" /> {label}
     </Button>
   );
 }

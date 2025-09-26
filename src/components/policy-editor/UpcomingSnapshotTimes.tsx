@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import React from "react";
 import { LabelColumn } from "./LabelColumn";
 
@@ -29,7 +29,7 @@ export function UpcomingSnapshotTimes(resolved: ResolvedPolicy | null): JSX.Elem
       <ul data-testid="upcoming-snapshot-times">
         {times.map((x) => (
           <li key={x}>
-            {moment(x).format("L LT")} ({moment(x).fromNow()})
+            {dayjs(x).format("L LT")} ({dayjs(x).fromNow()})
           </li>
         ))}
       </ul>

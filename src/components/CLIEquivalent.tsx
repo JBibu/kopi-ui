@@ -1,5 +1,4 @@
-import { faCopy, faTerminal } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Copy, Terminal } from "lucide-react";
 import axios from "axios";
 import React, { useState, useRef } from "react";
 import { Button } from "./ui/button";
@@ -46,11 +45,11 @@ export function CLIEquivalent({ command }: CLIEquivalentProps): JSX.Element {
         variant="outline"
         onClick={() => setVisible(!visible)}
       >
-        <FontAwesomeIcon size="sm" icon={faTerminal} />
+        <Terminal className="h-4 w-4" />
       </Button>
       {visible && (
         <Button size="sm" variant="outline" title="Copy to clipboard" onClick={copyToClipboard}>
-          <FontAwesomeIcon size="sm" icon={faCopy} />
+          <Copy className="h-4 w-4" />
         </Button>
       )}
       {visible && (

@@ -1,5 +1,4 @@
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Copy } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import React, { useState, useEffect } from "react";
 import { useLocation, useParams, Location } from "react-router-dom";
@@ -192,7 +191,7 @@ function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryIntern
                 value={state.mountInfo.path}
               />
               <Button size="sm" variant="outline" onClick={copyPath} data-testid="copy-path-button">
-                <FontAwesomeIcon icon={faCopy} />
+                <Copy className="h-4 w-4" />
               </Button>
             </>
           ) : (

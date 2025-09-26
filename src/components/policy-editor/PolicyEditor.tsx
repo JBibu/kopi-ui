@@ -1,16 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
-import {
-  faCalendarTimes,
-  faClock,
-  faExclamationTriangle,
-  faFileAlt,
-  faFileArchive,
-  faCog,
-  faCogs,
-  faUpload,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { CalendarDays, Clock, AlertTriangle, File, Archive, Settings, Cog, Upload } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
@@ -357,7 +347,7 @@ export const PolicyEditor: React.FC<PolicyEditorProps> = (props) => {
         <AccordionItem value="retention">
           <AccordionTrigger>
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faCalendarTimes} />
+              <CalendarDays className="h-4 w-4" />
               <span>Snapshot Retention</span>
             </div>
           </AccordionTrigger>
@@ -392,7 +382,7 @@ export const PolicyEditor: React.FC<PolicyEditorProps> = (props) => {
         <AccordionItem value="files">
           <AccordionTrigger>
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faFileAlt} />
+              <File className="h-4 w-4" />
               <span>Files/Directories</span>
             </div>
           </AccordionTrigger>
@@ -416,7 +406,7 @@ export const PolicyEditor: React.FC<PolicyEditorProps> = (props) => {
         <AccordionItem value="scheduling">
           <AccordionTrigger>
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faClock} />
+              <Clock className="h-4 w-4" />
               <span>Scheduling</span>
             </div>
           </AccordionTrigger>
@@ -443,7 +433,7 @@ export const PolicyEditor: React.FC<PolicyEditorProps> = (props) => {
         <AccordionItem value="compression">
           <AccordionTrigger>
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faFileArchive} />
+              <Archive className="h-4 w-4" />
               <span>Compression</span>
             </div>
           </AccordionTrigger>
@@ -462,7 +452,7 @@ export const PolicyEditor: React.FC<PolicyEditorProps> = (props) => {
         <AccordionItem value="errorHandling">
           <AccordionTrigger>
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faExclamationTriangle} />
+              <AlertTriangle className="h-4 w-4" />
               <span>Error Handling</span>
             </div>
           </AccordionTrigger>
@@ -481,7 +471,7 @@ export const PolicyEditor: React.FC<PolicyEditorProps> = (props) => {
         <AccordionItem value="upload">
           <AccordionTrigger>
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faUpload} />
+              <Upload className="h-4 w-4" />
               <span>Upload</span>
             </div>
           </AccordionTrigger>
@@ -500,7 +490,7 @@ export const PolicyEditor: React.FC<PolicyEditorProps> = (props) => {
         <AccordionItem value="actions">
           <AccordionTrigger>
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faCogs} />
+              <Settings className="h-4 w-4" />
               <span>Actions</span>
             </div>
           </AccordionTrigger>
@@ -518,7 +508,7 @@ export const PolicyEditor: React.FC<PolicyEditorProps> = (props) => {
         <AccordionItem value="logging">
           <AccordionTrigger>
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faCog} />
+              <Cog className="h-4 w-4" />
               <span>Logging</span>
             </div>
           </AccordionTrigger>

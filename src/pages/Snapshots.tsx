@@ -1,7 +1,9 @@
-import { faSync, faUserFriends } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { RotateCw, Users } from "lucide-react";
 import axios, { AxiosError } from "axios";
-import moment from "moment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 import React, { useState, useEffect, useContext, useCallback, useMemo, useRef } from "react";
 import { Badge } from "../components/ui/badge";
 import { Spinner } from "../components/ui/spinner";
@@ -236,8 +238,8 @@ export function Snapshots(): React.JSX.Element {
       return <></>;
     }
 
-    const time = moment(cell.getValue());
-    const isOverdue = time.isBefore(moment());
+    const time = dayjs(cell.getValue());
+    const isOverdue = time.isBefore(dayjs());
 
     return (
       <div title={time.toLocaleString()}>
@@ -323,8 +325,8 @@ export function Snapshots(): React.JSX.Element {
       accessorFn: (x: SourceWithUpload) => x.lastSnapshot?.startTime ?? null,
       cell: ({ cell }) =>
         cell.getValue() ? (
-          <div title={moment(cell.getValue()).toLocaleString()}>
-            {moment(cell.getValue()).fromNow()}
+          <div title={dayjs(cell.getValue()).format()}>
+            {dayjs(cell.getValue()).fromNow()}
           </div>
         ) : (
           <span className="text-muted-foreground">None</span>
@@ -387,7 +389,7 @@ export function Snapshots(): React.JSX.Element {
                     variant="outline"
                     aria-label="Select snapshot owner"
                   >
-                    <FontAwesomeIcon icon={faUserFriends} className="mr-2" />
+                    <Users className="mr-2 h-4 w-4" />
                     {selectedOwner}
                   </Button>
                 </DropdownMenuTrigger>
@@ -424,7 +426,7 @@ export function Snapshots(): React.JSX.Element {
             {isRefreshing ? (
               <Spinner size="sm" />
             ) : (
-              <FontAwesomeIcon icon={faSync} />
+              <RotateCw className="h-4 w-4" />
             )}
           </Button>
         </div>

@@ -9,7 +9,7 @@ export default defineConfig(() => {
       outDir: "build",
       chunkSizeWarningLimit: 1000,
     },
-    plugins: [react()], // Temporarily disabled eslint() for TypeScript migration
+    plugins: [react()], // ESLint temporarily disabled - need to fix 309 linting issues
     test: {
       globals: true,
       environment: "jsdom",

@@ -1,5 +1,4 @@
-import { faAngleDoubleDown, faAngleDoubleUp } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ChevronsDown, ChevronsUp } from "lucide-react";
 import axios from "axios";
 import React, { useState, useEffect, useContext, useRef, useCallback, MutableRefObject } from "react";
 import { Button } from "./ui/button";
@@ -562,7 +561,7 @@ export const SetupRepository: React.FC = () => {
 
   const toggleAdvancedButton = useCallback(() => {
     // Determine button icon and text based upon component state.
-    const icon = state.showAdvanced ? faAngleDoubleUp : faAngleDoubleDown;
+    const IconComponent = state.showAdvanced ? ChevronsUp : ChevronsDown;
     const text = state.showAdvanced ? "Hide Advanced Options" : "Show Advanced Options";
 
     return (
@@ -573,7 +572,7 @@ export const SetupRepository: React.FC = () => {
         aria-expanded={state.showAdvanced}
         size="sm"
       >
-        <FontAwesomeIcon icon={icon} style={{ marginRight: 4 }} />
+        <IconComponent className="h-4 w-4 mr-1" />
         {text}
       </Button>
     );

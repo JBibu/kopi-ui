@@ -3,7 +3,12 @@ import React from "react";
 import { PolicyEditor } from "../../src/components/policy-editor/PolicyEditor";
 import { MemoryRouter } from "react-router-dom";
 import { setupAPIMock } from "../testutils/api-mocks";
-import moment from "moment";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
 import { fireEvent } from "@testing-library/react";
 
 // Mockup for the server
@@ -129,8 +134,8 @@ it("e2e", async () => {
   );
 
   const expectedUpcomingSnapshotTimes = [
-    `<li>${moment(ust1).format("L LT")} (${moment(ust1).fromNow()})</li>`,
-    `<li>${moment(ust2).format("L LT")} (${moment(ust2).fromNow()})</li>`,
+    `<li>${dayjs(ust1).format("L LT")} (${dayjs(ust1).fromNow()})</li>`,
+    `<li>${dayjs(ust2).format("L LT")} (${dayjs(ust2).fromNow()})</li>`,
   ].join("");
 
   await waitFor(() => expect(getByTestId("upcoming-snapshot-times").innerHTML).toEqual(expectedUpcomingSnapshotTimes));

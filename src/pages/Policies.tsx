@@ -1,5 +1,4 @@
-import { faUserFriends } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Users } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import React, { useState, useEffect } from "react";
 import { Badge } from "../components/ui/badge";
@@ -320,7 +319,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): JSX.Eleme
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="sm" variant="outline" id="dropdown-basic">
-                      <FontAwesomeIcon icon={faUserFriends} />
+                      <Users className="h-4 w-4" />
                       &nbsp;{state.selectedOwner}
                     </Button>
                   </DropdownMenuTrigger>

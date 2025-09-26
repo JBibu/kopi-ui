@@ -8,8 +8,7 @@ import { Label } from "../components/ui/label";
 import { SetupRepository } from "../components/SetupRepository";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { cancelTask } from "../utils/taskutil";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faChevronCircleDown, faChevronCircleUp, faWindowClose } from "@fortawesome/free-solid-svg-icons";
+import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
 import { Logs } from "../components/Logs";
 import { AppContext } from "../contexts/AppContext";
 
@@ -168,7 +167,7 @@ export function Repository(): JSX.Element {
                 aria-expanded="true"
                 aria-controls="init-logs"
               >
-                <FontAwesomeIcon icon={faChevronCircleUp} className="mr-2" />
+                <ChevronUp className="h-4 w-4 mr-2" />
                 Hide Log
               </Button>
             ) : (
@@ -179,7 +178,7 @@ export function Repository(): JSX.Element {
                 aria-expanded="false"
                 aria-controls="init-logs"
               >
-                <FontAwesomeIcon icon={faChevronCircleDown} className="mr-2" />
+                <ChevronDown className="h-4 w-4 mr-2" />
                 Show Log
               </Button>
             )}
@@ -191,7 +190,7 @@ export function Repository(): JSX.Element {
               onClick={() => cancelTask(status.initTaskID!)}
               aria-label="Cancel repository initialization"
             >
-              <FontAwesomeIcon icon={faWindowClose} className="mr-2" />
+              <X className="h-4 w-4 mr-2" />
               Cancel Connection
             </Button>
           </div>
@@ -213,7 +212,7 @@ export function Repository(): JSX.Element {
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">Repository Status</h1>
           <div className="flex items-center gap-2 text-green-600">
-            <FontAwesomeIcon icon={faCheck} />
+            <Check className="h-4 w-4" />
             <span>Connected To Repository</span>
           </div>
         </div>

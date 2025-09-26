@@ -1,5 +1,4 @@
-import { faStopCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { StopCircle } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import React, { useState, useEffect, useContext, useCallback, useMemo, ReactElement } from "react";
 import { Alert } from "../components/ui/alert";
@@ -240,7 +239,7 @@ function TaskInternal(props: TaskInternalProps): JSX.Element {
                   onClick={handleCancel}
                   aria-label="Stop running task"
                 >
-                  <FontAwesomeIcon icon={faStopCircle} className="mr-1" />
+                  <StopCircle className="h-4 w-4 mr-1" />
                   Stop
                 </Button>
               )}
