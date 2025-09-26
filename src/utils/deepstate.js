@@ -42,7 +42,7 @@ export function getDeepStateProperty(component, name, defaultValue = "") {
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i];
 
-    if (part in st) {
+    if (st && typeof st === 'object' && part in st) {
       st = st[part];
     } else {
       return defaultValue;

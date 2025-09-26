@@ -40,21 +40,6 @@
     "prettier:check": "prettier --check .",
     "lint": "eslint src"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
     "@testing-library/jest-dom": "^6.6.3",
