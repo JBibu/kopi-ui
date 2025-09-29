@@ -1,4 +1,5 @@
 import React from 'react';
+import { ResolvedPolicy, PolicyComponentWithState } from '../../../types/policy';
 import { Clock } from 'lucide-react';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion';
 import { OptionalNumberField } from '../../../forms/OptionalNumberField';
@@ -12,9 +13,9 @@ import { EffectiveTimesOfDayValue } from '../EffectiveTimesOfDayValue';
 import { UpcomingSnapshotTimes } from '../UpcomingSnapshotTimes';
 
 interface SchedulingSectionProps {
-  componentRef: any;
-  resolved: any;
-  policyDefinitionPoint: (p: any) => React.ReactNode;
+  componentRef: React.RefObject<PolicyComponentWithState>;
+  resolved: ResolvedPolicy;
+  policyDefinitionPoint: (p: unknown) => React.ReactNode;
 }
 
 export const SchedulingSection: React.FC<SchedulingSectionProps> = ({

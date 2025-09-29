@@ -61,7 +61,7 @@ const getAlertClassName = (type: NotificationType): string => {
 };
 
 interface Notification {
-  id: string | number;
+  id: number;
   type: NotificationType;
   title?: string;
   message: string;
@@ -70,7 +70,7 @@ interface Notification {
 
 interface NotificationItemProps {
   notification: Notification;
-  onDismiss: (id: string | number) => void;
+  onDismiss: (id: number) => void;
 }
 
 const NotificationItem = ({ notification, onDismiss }: NotificationItemProps): React.JSX.Element => (

@@ -67,7 +67,7 @@ export const usePolicyEditor = (props: PolicyEditorProps) => {
       }));
 
       form.reset({ policy });
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error.response && error.response.data.code !== 'NOT_FOUND') {
         setState(prev => ({
           ...prev,

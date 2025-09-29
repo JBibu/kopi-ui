@@ -1,9 +1,15 @@
 import { defineConfig } from "vite";
 import { coverageConfigDefaults } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig(() => {
   return {
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
     build: {
       outDir: "build",
       chunkSizeWarningLimit: 1000,

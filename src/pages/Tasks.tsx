@@ -11,10 +11,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
-import KopiaTable from "../components/KopiaTable";
+import { KopiaTable } from "../components/KopiaTable";
 import { redirect } from "../utils/uiutil";
 import { taskStatusSymbol } from "../utils/taskutil";
-import { Task, TasksResponse, KopiaTableColumn } from "../types";
+import { Task, TasksResponse } from "../types";
+import { ColumnDef } from "@tanstack/react-table";
 
 export function Tasks(): React.JSX.Element {
   const [items, setItems] = useState<Task[]>([]);
@@ -77,7 +78,7 @@ export function Tasks(): React.JSX.Element {
   }, [items, taskMatches]);
 
   // Memoized columns configuration
-  const columns: KopiaTableColumn<Task>[] = useMemo(() => [
+  const columns: ColumnDef<Task>[] = useMemo(() => [
     {
       header: "Start Time",
       width: 160,

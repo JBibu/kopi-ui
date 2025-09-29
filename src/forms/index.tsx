@@ -2,12 +2,12 @@ import { getDeepStateProperty, setDeepStateProperty } from "../utils/deepstate";
 
 // Form validation and state management utilities
 interface ComponentWithState {
-  state: Record<string, any>;
-  setState: (update: Record<string, any>) => void;
+  state: Record<string, unknown>;
+  setState: (update: Record<string, unknown>) => void;
 }
 
 export function validateRequiredFields(component: ComponentWithState, fields: string[]): boolean {
-  const updateState: Record<string, any> = {};
+  const updateState: Record<string, unknown> = {};
   let failed = false;
 
   for (let i = 0; i < fields.length; i++) {
@@ -28,17 +28,17 @@ export function validateRequiredFields(component: ComponentWithState, fields: st
   return true;
 }
 
-type ValueGetter<T> = (target: T) => any;
+type ValueGetter<T> = (target: T) => unknown;
 
 export function handleChange<T = HTMLInputElement>(
   this: ComponentWithState,
   event: React.ChangeEvent<T>,
-  valueGetter: ValueGetter<T> = (x: any) => x.value
+  valueGetter: ValueGetter<T> = (x: unknown) => x.value
 ): void {
-  setDeepStateProperty(this, (event.target as any).name, valueGetter(event.target));
+  setDeepStateProperty(this, (event.target as HTMLInputElement).name, valueGetter(event.target));
 }
 
-export function stateProperty(component: ComponentWithState, name: string, defaultValue: any = ""): any {
+export function stateProperty(component: ComponentWithState, name: string, defaultValue: unknown = ""): unknown {
   const value = getDeepStateProperty(component, name);
   return value === undefined ? defaultValue : value;
 }
@@ -60,7 +60,7 @@ export function valueToNumber(t: NumberTarget): number | string | undefined {
   return v;
 }
 
-export function isInvalidNumber(v: any): boolean {
+export function isInvalidNumber(v: unknown): boolean {
   if (v === undefined || v === "") {
     return false;
   }

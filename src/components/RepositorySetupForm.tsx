@@ -130,7 +130,7 @@ const FilesystemFields: React.FC<FilesystemFieldsProps> = ({ formState, onDirect
       <Input
         id="path"
         name="path"
-        value={formState.state.path || ""}
+        value={typeof formState.state.path === 'string' ? formState.state.path : ""}
         data-testid="control-path"
         onChange={(e) => formState.handleChange("path", e.target.value)}
         className={formState.errors.path && formState.touched.path ? "border-red-500 focus:border-red-500 flex-1" : "flex-1"}
@@ -142,7 +142,7 @@ const FilesystemFields: React.FC<FilesystemFieldsProps> = ({ formState, onDirect
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => window.kopiaUI.selectDirectory(onDirectorySelected)}
+          onClick={() => window.kopiaUI?.selectDirectory(onDirectorySelected)}
         >
           <FolderOpen className="h-4 w-4" />
         </Button>
@@ -230,7 +230,7 @@ export const RepositorySetupForm = forwardRef<RepositorySetupFormHandle, Reposit
               const FieldComponent = field.component;
               return (
                 <div key={`${groupIndex}-${fieldIndex}`}>
-                  {FieldComponent(componentRef, field.label, field.name, field.props || {})}
+                  {FieldComponent(componentRef.current, field.label, field.name, field.props)}
                 </div>
               );
             })}

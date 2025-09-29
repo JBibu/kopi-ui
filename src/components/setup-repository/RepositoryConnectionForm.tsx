@@ -6,15 +6,24 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { AdvancedOptions } from './AdvancedOptions';
+import { RepositoryState } from './types';
+
+interface RepositoryConnectionFormData {
+  password: string;
+  description: string;
+  readonly: boolean;
+  username: string;
+  hostname: string;
+}
 
 interface RepositoryConnectionFormProps {
-  state: any;
+  state: RepositoryState;
   isLoading: boolean;
   connectError: string | null;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: RepositoryConnectionFormData) => void;
   onBack: () => void;
   onToggleAdvanced: () => void;
-  onFieldChange: (field: string, value: any) => void;
+  onFieldChange: (field: string, value: unknown) => void;
 }
 
 export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> = ({
@@ -31,7 +40,7 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<RepositoryConnectionFormData>({
     defaultValues: {
       password: '',
       description: 'My Repository',
@@ -77,7 +86,7 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
                 readOnly
               />
               <p className="text-sm text-muted-foreground mt-1">
-                To override, click 'Show Advanced Options'
+                To override, click &apos;Show Advanced Options&apos;
               </p>
             </div>
 
@@ -98,7 +107,7 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
                     <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
                   )}
                   <p className="text-sm text-muted-foreground mt-1">
-                    Used to encrypt the repository's contents
+                    Used to encrypt the repository&apos;s contents
                   </p>
                 </div>
               )}

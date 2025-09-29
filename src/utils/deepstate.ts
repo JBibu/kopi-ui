@@ -21,7 +21,7 @@ export function setDeepStateProperty(component: { state: Record<string, unknown>
       st[part] = { ...st[part] };
     }
 
-    st = st[part];
+    st = st[part] as Record<string, unknown>;
   }
 
   const part = parts[parts.length - 1];
@@ -43,7 +43,7 @@ export function getDeepStateProperty(component: { state: Record<string, unknown>
     const part = parts[i];
 
     if (st && typeof st === 'object' && part in st) {
-      st = st[part];
+      st = (st as Record<string, unknown>)[part];
     } else {
       return defaultValue;
     }

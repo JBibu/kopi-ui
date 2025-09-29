@@ -1,5 +1,5 @@
 import React from 'react';
-import { Control, Controller, FieldError, FieldValues, Path } from 'react-hook-form';
+import { Control, Controller, FieldError, FieldValues, Path, RegisterOptions } from 'react-hook-form';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
@@ -20,7 +20,7 @@ interface FormFieldProps<T extends FieldValues> {
   placeholder?: string;
   description?: string;
   required?: boolean;
-  rules?: any;
+  rules?: RegisterOptions<T>;
   error?: FieldError;
   options?: Array<{ value: string; label: string }>;
   className?: string;

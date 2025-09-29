@@ -4,12 +4,12 @@ import { stateProperty } from ".";
 
 // Component with state interface for form handling
 interface ComponentWithState {
-  state: Record<string, any>;
-  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>, valueGetter?: (target: any) => any) => void;
+  state: Record<string, unknown>;
+  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>, valueGetter?: (target: unknown) => string[] | undefined) => void;
 }
 
 interface StringListProps {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface ValueTarget {

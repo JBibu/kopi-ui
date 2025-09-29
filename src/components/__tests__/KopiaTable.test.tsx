@@ -1,8 +1,14 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { KopiaTableNew } from '../KopiaTableNew';
-import { UIPreferenceProvider } from '../../contexts/UIPreferencesContext';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom';
+import { KopiaTable } from '../KopiaTable';
 import { ColumnDef } from '@tanstack/react-table';
+import {
+  renderWithProviders,
+  setupDefaultMocks,
+  cleanupMocks,
+} from '../../../tests/testutils/test-setup';
 
 interface TestData {
   id: number;
@@ -11,11 +17,14 @@ interface TestData {
   status: string;
 }
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <UIPreferenceProvider>{children}</UIPreferenceProvider>
-);
+describe('KopiaTable', () => {
+  beforeEach(() => {
+    setupDefaultMocks();
+  });
 
-describe('KopiaTableNew', () => {
+  afterEach(() => {
+    cleanupMocks();
+  });
   const mockData: TestData[] = [
     { id: 1, name: 'John Doe', email: 'john@example.com', status: 'active' },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'inactive' },
@@ -30,9 +39,8 @@ describe('KopiaTableNew', () => {
   ];
 
   it('should render table with data', () => {
-    render(
-      <KopiaTableNew columns={columns} data={mockData} />,
-      { wrapper }
+    renderWithProviders(
+      <KopiaTable columns={columns} data={mockData} />
     );
 
     expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -41,14 +49,13 @@ describe('KopiaTableNew', () => {
   });
 
   it('should render title and description when provided', () => {
-    render(
-      <KopiaTableNew
+    renderWithProviders(
+      <KopiaTable
         columns={columns}
         data={mockData}
         title="Test Table"
         description="This is a test table"
-      />,
-      { wrapper }
+      />
     );
 
     expect(screen.getByText('Test Table')).toBeInTheDocument();
@@ -56,22 +63,20 @@ describe('KopiaTableNew', () => {
   });
 
   it('should handle empty data', () => {
-    render(
-      <KopiaTableNew columns={columns} data={[]} />,
-      { wrapper }
+    renderWithProviders(
+      <KopiaTable columns={columns} data={[]} />
     );
 
     expect(screen.getByText('No results.')).toBeInTheDocument();
   });
 
   it('should handle global filter when enabled', async () => {
-    render(
-      <KopiaTableNew
+    renderWithProviders(
+      <KopiaTable
         columns={columns}
         data={mockData}
         enableGlobalFilter
-      />,
-      { wrapper }
+      />
     );
 
     const searchInput = screen.getByPlaceholderText('Search all columns...');
@@ -86,13 +91,12 @@ describe('KopiaTableNew', () => {
   });
 
   it('should clear global filter', async () => {
-    render(
-      <KopiaTableNew
+    renderWithProviders(
+      <KopiaTable
         columns={columns}
         data={mockData}
         enableGlobalFilter
-      />,
-      { wrapper }
+      />
     );
 
     const searchInput = screen.getByPlaceholderText('Search all columns...');
@@ -111,15 +115,14 @@ describe('KopiaTableNew', () => {
   });
 
   it('should handle row selection when enabled', () => {
-    const onSelectionChange = jest.fn();
-    render(
-      <KopiaTableNew
+    const onSelectionChange = vi.fn();
+    renderWithProviders(
+      <KopiaTable
         columns={columns}
         data={mockData}
         enableRowSelection
         onSelectionChange={onSelectionChange}
-      />,
-      { wrapper }
+      />
     );
 
     const checkboxes = screen.getAllByRole('checkbox');
@@ -131,13 +134,12 @@ describe('KopiaTableNew', () => {
   });
 
   it('should handle column visibility when enabled', () => {
-    render(
-      <KopiaTableNew
+    renderWithProviders(
+      <KopiaTable
         columns={columns}
         data={mockData}
         enableColumnVisibility
-      />,
-      { wrapper }
+      />
     );
 
     const columnsButton = screen.getByRole('button', { name: /columns/i });
@@ -149,8 +151,8 @@ describe('KopiaTableNew', () => {
   });
 
   it('should handle sorting', () => {
-    render(
-      <KopiaTableNew columns={columns} data={mockData} />,
+    renderWithProviders(
+      <KopiaTable columns={columns} data={mockData} />,
       { wrapper }
     );
 
@@ -169,8 +171,8 @@ describe('KopiaTableNew', () => {
       status: i % 2 === 0 ? 'active' : 'inactive',
     }));
 
-    render(
-      <KopiaTableNew columns={columns} data={largeData} />,
+    renderWithProviders(
+      <KopiaTable columns={columns} data={largeData} />,
       { wrapper }
     );
 
@@ -190,8 +192,8 @@ describe('KopiaTableNew', () => {
       status: i % 2 === 0 ? 'active' : 'inactive',
     }));
 
-    render(
-      <KopiaTableNew columns={columns} data={largeData} />,
+    renderWithProviders(
+      <KopiaTable columns={columns} data={largeData} />,
       { wrapper }
     );
 
@@ -205,13 +207,12 @@ describe('KopiaTableNew', () => {
   });
 
   it('should apply custom className', () => {
-    const { container } = render(
-      <KopiaTableNew
+    const { container } = renderWithProviders(
+      <KopiaTable
         columns={columns}
         data={mockData}
         className="custom-class"
-      />,
-      { wrapper }
+      />
     );
 
     const tableWrapper = container.querySelector('.custom-class');
@@ -219,13 +220,12 @@ describe('KopiaTableNew', () => {
   });
 
   it('should select all rows on page', () => {
-    render(
-      <KopiaTableNew
+    renderWithProviders(
+      <KopiaTable
         columns={columns}
         data={mockData}
         enableRowSelection
-      />,
-      { wrapper }
+      />
     );
 
     const selectAllCheckbox = screen.getAllByRole('checkbox')[0];
@@ -242,8 +242,8 @@ describe('KopiaTableNew', () => {
       status: i % 2 === 0 ? 'active' : 'inactive',
     }));
 
-    render(
-      <KopiaTableNew columns={columns} data={largeData} />,
+    renderWithProviders(
+      <KopiaTable columns={columns} data={largeData} />,
       { wrapper }
     );
 

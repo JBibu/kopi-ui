@@ -6,18 +6,18 @@ import { RequiredBoolean } from "../forms/RequiredBoolean";
 import { RequiredField } from "../forms/RequiredField";
 
 interface SetupRepositorySFTPProps {
-  initial?: Record<string, any>;
+  initial?: Record<string, unknown>;
 }
 
 interface ComponentRef {
-  state: Record<string, any>;
-  setState: React.Dispatch<React.SetStateAction<Record<string, any>>>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, valueGetter?: (x: any) => any) => void;
+  state: Record<string, unknown>;
+  setState: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => void;
 }
 
 export interface SetupRepositorySFTPHandle {
   validate: () => boolean;
-  state: Record<string, any>;
+  state: Record<string, unknown>;
 }
 
 function hasExactlyOneOf(component: ComponentRef, names: string[]): boolean {
@@ -34,16 +34,16 @@ function hasExactlyOneOf(component: ComponentRef, names: string[]): boolean {
 
 export const SetupRepositorySFTP = forwardRef<SetupRepositorySFTPHandle, SetupRepositorySFTPProps>(
   function SetupRepositorySFTP(props, ref) {
-    const [state, setState] = useState<Record<string, any>>({
+    const [state, setState] = useState<Record<string, unknown>>({
       port: 22,
       validated: false,
       ...props.initial,
     });
 
     // Create handleChange function that works with the form system
-    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, valueGetter = (x: any) => x.value) => {
+    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, valueGetter = (x: { value: unknown }) => x.value) => {
       const fieldName = event.target.name;
-      const fieldValue = valueGetter(event.target);
+      const fieldValue = valueGetter ? valueGetter(event.target as EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) : (event.target as HTMLInputElement).value;
       setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));
     }, []);
 

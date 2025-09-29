@@ -6,9 +6,9 @@ import { ProviderInfo } from './types';
 
 interface ProviderConfigurationProps {
   provider: string;
-  providerSettings: Record<string, any>;
+  providerSettings: Record<string, unknown>;
   providers: ProviderInfo[];
-  optionsEditorRef: MutableRefObject<any>;
+  optionsEditorRef: MutableRefObject<unknown>;
   isLoading: boolean;
   connectError: string | null;
   onVerifyStorage: (e: React.FormEvent) => void;

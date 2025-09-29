@@ -3,11 +3,10 @@ import { validateRequiredFields } from "../../forms";
 import { RequiredField } from "../../forms/RequiredField";
 import { NotificationFormatSelector } from "./NotificationFormatSelector";
 
-interface PushoverNotificationState {
-  appToken?: string;
-  userKey?: string;
-  format?: string;
-  [key: string]: any;
+import { PushoverNotificationConfig, NotificationComponentWithState } from "../../types/notifications";
+
+interface PushoverNotificationState extends PushoverNotificationConfig {
+  [key: string]: unknown;
 }
 
 interface PushoverNotificationMethodProps {
@@ -20,11 +19,7 @@ interface PushoverNotificationMethodRef {
 }
 
 // Component interface for form compatibility
-interface ComponentWithState {
-  state: PushoverNotificationState;
-  setState: React.Dispatch<React.SetStateAction<PushoverNotificationState>>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: any } }, valueGetter?: (target: any) => any) => void;
-}
+type ComponentWithState = NotificationComponentWithState<PushoverNotificationState>;
 
 export const PushoverNotificationMethod = forwardRef<PushoverNotificationMethodRef, PushoverNotificationMethodProps>(
   function PushoverNotificationMethod(props, ref) {
@@ -34,7 +29,7 @@ export const PushoverNotificationMethod = forwardRef<PushoverNotificationMethodR
     });
 
     // Create handleChange function that works with the form system
-    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: any } }, valueGetter = (x: any) => x.value) => {
+    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: unknown } }, valueGetter = (x: { value: unknown }) => x.value) => {
       const fieldName = event.target.name;
       const fieldValue = valueGetter(event.target);
       setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));

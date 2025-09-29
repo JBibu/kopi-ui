@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import React, { useState, useEffect, useRef, useCallback, MutableRefObject } from "react";
 import { Button } from "../components/ui/button";
 import { useNavigate, useLocation, NavigateFunction, Location } from "react-router-dom";
-import { PolicyEditorNew } from "../components/policy-editor/PolicyEditorNew";
+import { PolicyEditor } from "../components/policy-editor/PolicyEditor";
 import { SnapshotEstimation } from "../components/SnapshotEstimation";
 import { RequiredDirectory } from "../forms/RequiredDirectory";
 import { CLIEquivalent } from "../components/CLIEquivalent";
@@ -267,7 +267,7 @@ function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreat
               <h2 className="text-lg font-semibold mb-2">Snapshot Policy Settings</h2>
               <p className="text-sm text-muted-foreground mb-4">{state.resolvedSource ? state.resolvedSource.path : state.path}</p>
             </div>
-            <PolicyEditorNew
+            <PolicyEditor
               ref={policyEditorRef}
               embedded
               host={state.resolvedSource.host}

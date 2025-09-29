@@ -8,5 +8,10 @@ interface _PolicyEditorLinkProps {
 }
 
 export function PolicyEditorLink(s: Source): React.JSX.Element {
-  return <Link to={policyEditorURL(s)}>{PolicyTypeName(s)}</Link>;
+  const sourceInfo = {
+    host: s.source.host,
+    userName: s.source.userName,
+    path: s.source.path,
+  };
+  return <Link to={policyEditorURL(sourceInfo)}>{PolicyTypeName(sourceInfo)}</Link>;
 }

@@ -1,20 +1,19 @@
 import React from "react";
 
-// Helper function to safely access nested properties
-const getNestedProperty = (obj: any, path: string): any => {
-  if (!obj || !path) return undefined;
-  return path.split('.').reduce((current: any, key: string) => current && current[key], obj);
-};
+import { ResolvedPolicy } from "../../types/policy";
 
-interface ResolvedPolicy {
-  effective?: Record<string, any>;
-  definition?: Record<string, any>;
-}
+// Helper function to safely access nested properties
+const getNestedProperty = (obj: unknown, path: string): unknown => {
+  if (!obj || !path) return undefined;
+  return path.split('.').reduce((current: unknown, key: string) =>
+    current && typeof current === 'object' && current !== null ?
+    (current as Record<string, unknown>)[key] : undefined, obj);
+};
 
 export function EffectiveValue(
   policyField: string,
   resolved?: ResolvedPolicy | null,
-  policyDefinitionPoint?: (value: any) => string
+  policyDefinitionPoint?: (value: unknown) => string
 ): React.JSX.Element {
   const effectiveValue = getNestedProperty(resolved?.effective, policyField);
   const definitionValue = getNestedProperty(resolved?.definition, policyField);

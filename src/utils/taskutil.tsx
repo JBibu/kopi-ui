@@ -23,7 +23,7 @@ export function taskStatusSymbol(task: Task): React.ReactElement | string {
         <>
           <Spinner className="w-4 h-4 mr-2" /> Running for {dur}
           <Button variant="ghost" size="sm" onClick={() => cancelTask(task.id)}>
-            <X className="h-4 w-4 text-red-600" title="Cancel task" />
+            <X className="h-4 w-4 text-red-600" />
           </Button>
         </>
       );

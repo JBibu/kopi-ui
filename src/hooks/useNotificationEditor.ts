@@ -7,14 +7,14 @@ export interface NotificationProfile {
   profile: string;
   method: {
     type: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
   };
   minSeverity: number;
 }
 
 export interface NotificationMethod {
   displayName: string;
-  editor: React.ForwardRefExoticComponent<any>;
+  editor: React.ForwardRefExoticComponent<Record<string, unknown>>;
 }
 
 export interface SeverityOption {
@@ -69,9 +69,12 @@ export function useNotificationEditor(): UseNotificationEditorReturn {
       const response = await axios.get<NotificationProfile[]>('/api/v1/notificationProfiles');
       setProfiles(response.data || []);
     } catch (err) {
-      const error = err as Error;
+      const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
+      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
+      const error = new Error(`Failed to fetch notification profiles (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
       setError(error);
-      setGlobalError('Failed to fetch notification profiles', error.message);
+      setGlobalError('Failed to fetch notification profiles', errorMessage);
+      console.error('Notification profiles fetch error:', axiosError);
     } finally {
       setIsLoading(false);
     }
@@ -106,11 +109,10 @@ export function useNotificationEditor(): UseNotificationEditorReturn {
       handleSetEditedProfile(null, false);
       await fetchProfiles();
     } catch (err) {
-      const error = err as any;
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      }
-      throw err;
+      const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
+      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
+      console.error('Save notification profile error:', axiosError);
+      throw new Error(`Failed to save profile (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -123,11 +125,9 @@ export function useNotificationEditor(): UseNotificationEditorReturn {
       handleSetEditedProfile(null, false);
       await fetchProfiles();
     } catch (err) {
-      const error = err as any;
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      }
-      throw err;
+      const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
+      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
+      throw new Error(`Failed to update profile (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -143,11 +143,9 @@ export function useNotificationEditor(): UseNotificationEditorReturn {
       await axios.delete(`/api/v1/notificationProfiles/${profileName}`);
       await fetchProfiles();
     } catch (err) {
-      const error = err as any;
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      }
-      throw err;
+      const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
+      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
+      throw new Error(`Failed to delete profile (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -159,11 +157,9 @@ export function useNotificationEditor(): UseNotificationEditorReturn {
       await axios.post('/api/v1/testNotificationProfile', profile);
       alert('Notification sent, please make sure you have received it.');
     } catch (err) {
-      const error = err as any;
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
-      }
-      throw err;
+      const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
+      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
+      throw new Error(`Failed to send test notification (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
     } finally {
       setLoading(false);
     }

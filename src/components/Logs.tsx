@@ -15,9 +15,9 @@ interface LogsResponse {
 interface LogEntry extends TaskLog {
   msg: string;
   ts: number;
-  level: string;
+  level: 'info' | 'error' | 'warning' | 'debug';
   mod?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export function Logs({ taskID }: LogsProps): React.JSX.Element | null {

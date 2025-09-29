@@ -10,7 +10,7 @@ import { useFormValidation } from "../hooks/useFormValidation";
 interface SetupRepositoryFilesystemProps {
   initial?: {
     path?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 

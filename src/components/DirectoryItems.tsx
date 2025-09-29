@@ -1,13 +1,14 @@
 import React, { useContext, useMemo } from "react";
 import { Link } from "react-router-dom";
 
-import KopiaTable from "./KopiaTable";
+import { KopiaTable } from "./KopiaTable";
 
-import { objectLink, rfc3339TimestampForDisplay } from "../utils/formatutils";
-import { sizeWithFailures } from "../utils/uiutil";
+import { objectLink, rfc3339TimestampForDisplay, sizeDisplayName } from "../utils/formatutils";
+import { AlertTriangle } from "lucide-react";
 
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
-import { DirectoryEntry, KopiaTableColumn } from "../types";
+import { DirectoryEntry } from "../types";
+import { ColumnDef } from "@tanstack/react-table";
 
 interface BreadcrumbState {
   label: string;
@@ -61,7 +62,7 @@ export function DirectoryItems({ historyState, items }: DirectoryItemsProps): Re
   const { bytesStringBase2 } = useContext(UIPreferencesContext);
 
   // Memoized columns definition
-  const columns: KopiaTableColumn<DirectoryItemWithObj>[] = useMemo(() => [
+  const columns: ColumnDef<DirectoryItemWithObj>[] = useMemo(() => [
     {
       id: "name",
       header: "Name",
@@ -80,7 +81,21 @@ export function DirectoryItems({ historyState, items }: DirectoryItemsProps): Re
       accessorFn: (x) => sizeInfo(x),
       header: "Size",
       width: 100,
-      cell: (x) => sizeWithFailures(x.cell.getValue() as number, x.row.original.summ, bytesStringBase2),
+      cell: (x) => {
+        const size = x.cell.getValue() as number;
+        const summ = x.row.original.summ;
+        // DirectoryEntry.summ has a different structure than ErrorSummary
+        // It only has a numeric errors count, not detailed error messages
+        if (summ?.errors && summ.errors > 0) {
+          return (
+            <span>
+              {sizeDisplayName(size, bytesStringBase2)}&nbsp;
+              <AlertTriangle className="h-4 w-4 inline text-red-500" />
+            </span>
+          );
+        }
+        return <span>{sizeDisplayName(size, bytesStringBase2)}</span>;
+      },
     },
     {
       id: "files",

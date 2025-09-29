@@ -4,12 +4,12 @@ import { stateProperty } from ".";
 
 // Component with state interface for form handling
 interface ComponentWithState {
-  state: Record<string, any>;
+  state: Record<string, unknown>;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 interface OptionalFieldNoLabelProps {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export function OptionalFieldNoLabel(

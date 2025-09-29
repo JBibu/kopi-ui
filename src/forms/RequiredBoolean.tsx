@@ -5,8 +5,8 @@ import { stateProperty } from ".";
 
 // Component with state interface for form handling
 interface ComponentWithState {
-  state: Record<string, any>;
-  handleChange: (event: any, valueGetter?: (target: any) => any) => void;
+  state: Record<string, unknown>;
+  handleChange: (event: unknown, valueGetter?: (target: unknown) => boolean) => void;
 }
 
 interface CheckedTarget {

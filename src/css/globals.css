@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@reference;
 
 /*
  * Optimized CSS for Tailwind v4 with shadcn/ui compatibility
@@ -84,62 +83,6 @@
   }
 }
 
-/* Custom Utility Classes for shadcn/ui */
-@layer utilities {
-  /* Text Color Utilities */
-  .text-primary { color: hsl(var(--primary)); }
-  .text-primary-foreground { color: hsl(var(--primary-foreground)); }
-  .text-secondary { color: hsl(var(--secondary)); }
-  .text-secondary-foreground { color: hsl(var(--secondary-foreground)); }
-  .text-muted { color: hsl(var(--muted)); }
-  .text-muted-foreground { color: hsl(var(--muted-foreground)); }
-  .text-accent { color: hsl(var(--accent)); }
-  .text-accent-foreground { color: hsl(var(--accent-foreground)); }
-  .text-destructive { color: hsl(var(--destructive)); }
-  .text-destructive-foreground { color: hsl(var(--destructive-foreground)); }
-  .text-popover { color: hsl(var(--popover)); }
-  .text-popover-foreground { color: hsl(var(--popover-foreground)); }
-  .text-card { color: hsl(var(--card)); }
-  .text-card-foreground { color: hsl(var(--card-foreground)); }
-
-  /* Background Color Utilities */
-  .bg-primary { background-color: hsl(var(--primary)); }
-  .bg-primary-foreground { background-color: hsl(var(--primary-foreground)); }
-  .bg-secondary { background-color: hsl(var(--secondary)); }
-  .bg-secondary-foreground { background-color: hsl(var(--secondary-foreground)); }
-  .bg-muted { background-color: hsl(var(--muted)); }
-  .bg-muted-foreground { background-color: hsl(var(--muted-foreground)); }
-  .bg-accent { background-color: hsl(var(--accent)); }
-  .bg-accent-foreground { background-color: hsl(var(--accent-foreground)); }
-  .bg-destructive { background-color: hsl(var(--destructive)); }
-  .bg-destructive-foreground { background-color: hsl(var(--destructive-foreground)); }
-  .bg-popover { background-color: hsl(var(--popover)); }
-  .bg-popover-foreground { background-color: hsl(var(--popover-foreground)); }
-  .bg-card { background-color: hsl(var(--card)); }
-  .bg-card-foreground { background-color: hsl(var(--card-foreground)); }
-
-  /* Border Color Utilities */
-  .border-primary { border-color: hsl(var(--primary)); }
-  .border-secondary { border-color: hsl(var(--secondary)); }
-  .border-muted { border-color: hsl(var(--muted)); }
-  .border-accent { border-color: hsl(var(--accent)); }
-  .border-destructive { border-color: hsl(var(--destructive)); }
-  .border-popover { border-color: hsl(var(--popover)); }
-  .border-card { border-color: hsl(var(--card)); }
-  .border-input { border-color: hsl(var(--input)); }
-  .border-border { border-color: hsl(var(--border)); }
-
-  /* Ring Color Utilities */
-  .ring-primary { --tw-ring-color: hsl(var(--primary)); }
-  .ring-secondary { --tw-ring-color: hsl(var(--secondary)); }
-  .ring-muted { --tw-ring-color: hsl(var(--muted)); }
-  .ring-accent { --tw-ring-color: hsl(var(--accent)); }
-  .ring-destructive { --tw-ring-color: hsl(var(--destructive)); }
-  .ring-ring { --tw-ring-color: hsl(var(--ring)); }
-
-  /* Ring Offset Utilities */
-  .ring-offset-background { --tw-ring-offset-color: hsl(var(--background)); }
-}
 
 /* Component-specific enhancements */
 @layer components {
@@ -147,6 +90,10 @@
   .bg-primary {
     color: hsl(var(--primary-foreground));
   }
+}
+
+/* Generate utilities that Tailwind might miss */
+@layer utilities {
 
   .bg-secondary {
     color: hsl(var(--secondary-foreground));

@@ -17,7 +17,7 @@ interface SetupRepositoryS3Props {
     prefix?: string;
     doNotUseTLS?: boolean;
     doNotVerifyTLS?: boolean;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 

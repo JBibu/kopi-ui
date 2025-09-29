@@ -40,7 +40,7 @@ export const ProfileList: React.FC<ProfileListProps> = ({
           <div className="flex items-start gap-3">
             <Badge variant="secondary" className="mt-0.5">Important</Badge>
             <div className="space-y-2">
-              <p className="text-sm">You don't have any notification profiles defined.</p>
+              <p className="text-sm">You don&apos;t have any notification profiles defined.</p>
               <p className="text-sm text-muted-foreground">
                 Click the button below to add a new profile to receive notifications from Kopia.
               </p>

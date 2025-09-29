@@ -1,12 +1,8 @@
 import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { valueToNumber, stateProperty } from ".";
+import { ComponentWithState } from "../types/forms";
 
-// Component with state interface for form handling
-interface ComponentWithState {
-  state: Record<string, any>;
-  handleChange: (event: any, valueGetter?: (target: any) => any) => void;
-}
 
 interface LogOption {
   value: string;

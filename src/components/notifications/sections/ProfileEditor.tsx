@@ -25,7 +25,7 @@ interface ProfileEditorProps {
 interface ProfileFormData {
   profileName: string;
   minSeverity: number;
-  methodConfig: Record<string, any>;
+  methodConfig: Record<string, unknown>;
 }
 
 export const ProfileEditor: React.FC<ProfileEditorProps> = ({
@@ -79,7 +79,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
     await onSendTest(testProfile);
   };
 
-  const updateMethodConfig = (config: Record<string, any>) => {
+  const updateMethodConfig = (config: Record<string, unknown>) => {
     setValue('methodConfig', config);
   };
 

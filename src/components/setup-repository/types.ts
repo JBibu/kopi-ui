@@ -3,7 +3,7 @@ import { Algorithms } from "../../types/api";
 export interface ProviderInfo {
   provider: string;
   description: string;
-  component: React.ComponentType<any>;
+  component: React.ComponentType<Record<string, unknown>>;
 }
 
 export interface RepositoryState {
@@ -11,7 +11,7 @@ export interface RepositoryState {
   isLoading: boolean;
   showAdvanced: boolean;
   storageVerified: boolean;
-  providerSettings: Record<string, any>;
+  providerSettings: Record<string, unknown>;
   description: string;
   formatVersion: string;
   provider: string | null;
@@ -37,13 +37,13 @@ export interface RepositoryState {
 export type RepositoryAction =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_PROVIDER'; payload: string | null }
-  | { type: 'SET_PROVIDER_SETTINGS'; payload: Record<string, any> }
+  | { type: 'SET_PROVIDER_SETTINGS'; payload: Record<string, unknown> }
   | { type: 'SET_STORAGE_VERIFIED'; payload: boolean }
   | { type: 'SET_CONFIRM_CREATE'; payload: boolean }
   | { type: 'SET_CONNECT_ERROR'; payload: string | null }
   | { type: 'SET_ADVANCED'; payload: boolean }
   | { type: 'SET_ALGORITHMS'; payload: Algorithms }
   | { type: 'SET_USER_INFO'; payload: { username: string; hostname: string } }
-  | { type: 'UPDATE_FIELD'; payload: { field: string; value: any } }
+  | { type: 'UPDATE_FIELD'; payload: { field: string; value: unknown } }
   | { type: 'RESET_PROVIDER' }
   | { type: 'RESET_STORAGE' };

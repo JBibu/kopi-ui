@@ -3,11 +3,15 @@ import { getDeepStateProperty } from "../../utils/deepstate";
 import { EffectiveValueColumn } from "./EffectiveValueColumn";
 import { TimesOfDayList } from "../../forms/TimesOfDayList";
 
+// Types are available for future use if needed
+// import { ResolvedPolicy, PolicyDefinitionPoint } from "../../types/policy";
+import { TimeOfDay } from "../../forms/TimesOfDayList";
+
 // Component with state interface and policy definition point method
 interface ComponentWithState {
-  state: Record<string, any>;
-  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>, valueGetter?: (target: any) => any) => void;
-  PolicyDefinitionPoint: (value: any) => string;
+  state: Record<string, unknown>;
+  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>, valueGetter?: (target: unknown) => (TimeOfDay | string)[] | undefined) => void;
+  PolicyDefinitionPoint: (value: unknown) => string;
 }
 
 export function EffectiveTimesOfDayValue(

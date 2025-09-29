@@ -9,6 +9,9 @@ export interface FormComponentRef {
   handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => void;
 }
 
+// Alias for backward compatibility
+export type ComponentWithState = FormComponentRef;
+
 // Field component props
 export interface BaseFieldProps {
   autoFocus?: boolean;
@@ -19,17 +22,11 @@ export interface BaseFieldProps {
   type?: string;
 }
 
-export interface RequiredFieldProps extends BaseFieldProps {
-  // Props are passed as the fourth parameter in the legacy pattern
-}
+export type RequiredFieldProps = BaseFieldProps;
 
-export interface OptionalFieldProps extends BaseFieldProps {
-  // Props are passed as the fourth parameter in the legacy pattern
-}
+export type OptionalFieldProps = BaseFieldProps;
 
-export interface RequiredBooleanProps extends BaseFieldProps {
-  // Props are passed as the fourth parameter in the legacy pattern
-}
+export type RequiredBooleanProps = BaseFieldProps;
 
 export interface NumberFieldProps extends BaseFieldProps {
   min?: number;
@@ -45,9 +42,7 @@ export interface StringListProps extends BaseFieldProps {
   placeholder?: string;
 }
 
-export interface TimesOfDayProps extends BaseFieldProps {
-  // Specific props for times of day component
-}
+export type TimesOfDayProps = BaseFieldProps;
 
 // Repository provider configuration types
 export interface RepositoryProviderField {

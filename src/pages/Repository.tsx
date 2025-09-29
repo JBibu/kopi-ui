@@ -1,119 +1,27 @@
-import axios, { AxiosError } from "axios";
-import React, { useState, useEffect, useCallback, useContext, useRef, MutableRefObject } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Spinner } from "../components/ui/spinner";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { SetupRepositoryNew } from "../components/SetupRepositoryNew";
+import { SetupRepository } from "../components/SetupRepository";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { cancelTask } from "../utils/taskutil";
 import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
 import { Logs } from "../components/Logs";
-import { AppContext } from "../contexts/AppContext";
-
-interface RepositoryStatus {
-  connected?: boolean;
-  description?: string;
-  initTaskID?: string;
-  readonly?: boolean;
-  apiServerURL?: string;
-  configFile?: string;
-  storage?: string;
-  encryption?: string;
-  hash?: string;
-  splitter?: string;
-  formatVersion?: string;
-  eccOverheadPercent?: number;
-  ecc?: string;
-  supportsContentCompression?: boolean;
-  username?: string;
-  hostname?: string;
-}
+import { useRepositoryStatus } from "../hooks/useRepositoryStatus";
 
 export function Repository(): React.JSX.Element {
-  const appContext = useContext(AppContext);
-  const isMounted: MutableRefObject<boolean> = useRef(true);
-
-  const [status, setStatus] = useState<RepositoryStatus>({});
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  const {
+    status,
+    isLoading,
+    error,
+    fetchStatus,
+    disconnect,
+    updateDescription,
+    setStatus,
+  } = useRepositoryStatus();
   const [showLog, setShowLog] = useState<boolean>(false);
-
-  // Setup mounted ref for cleanup
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-  // Memoized fetch functions
-  const fetchStatusWithoutSpinner = useCallback(async (): Promise<void> => {
-    const result = await axios.get<RepositoryStatus>("/api/v1/repo/status").catch((error: AxiosError) => {
-      if (isMounted.current) {
-        setError(error as Error);
-        setIsLoading(false);
-      }
-      return null;
-    });
-
-    if (result?.data && isMounted.current) {
-      setStatus(result.data);
-      setIsLoading(false);
-
-      // Update the app context to reflect the successfully-loaded description
-      if (appContext.repositoryDescriptionUpdated) {
-        appContext.repositoryDescriptionUpdated(result.data.description);
-      }
-
-      if (result.data.initTaskID) {
-        setTimeout(() => {
-          fetchStatusWithoutSpinner();
-        }, 1000);
-      }
-    }
-  }, [appContext]);
-
-  const fetchStatus = useCallback((): void => {
-    if (isMounted.current) {
-      setIsLoading(true);
-    }
-    fetchStatusWithoutSpinner();
-  }, [fetchStatusWithoutSpinner]);
-
-  // Memoized action handlers
-  const disconnect = useCallback(async (): Promise<void> => {
-    setIsLoading(true);
-    const result = await axios.post("/api/v1/repo/disconnect", {}).catch((error: AxiosError) => {
-      setError(error as Error);
-      setIsLoading(false);
-      return null;
-    });
-
-    if (result && appContext.repositoryUpdated) {
-      appContext.repositoryUpdated(false);
-    }
-  }, [appContext]);
-
-  const updateDescription = useCallback(async (): Promise<void> => {
-    setIsLoading(true);
-
-    const result = await axios
-      .post<{ description: string }>("/api/v1/repo/description", {
-        description: status.description,
-      })
-      .catch(() => {
-        setIsLoading(false);
-        return null;
-      });
-
-    if (result && appContext.repositoryDescriptionUpdated) {
-      // Update the app context to reflect the successfully-saved description
-      appContext.repositoryDescriptionUpdated(result.data.description);
-    }
-    setIsLoading(false);
-  }, [status.description, appContext]);
 
   // Setup effect on mount
   useEffect(() => {
@@ -236,7 +144,7 @@ export function Repository(): React.JSX.Element {
                 <Button
                   data-testid="update-description"
                   size="sm"
-                  onClick={updateDescription}
+                  onClick={() => updateDescription(status.description || '')}
                   type="button"
                   disabled={!status.description}
                   aria-label="Update repository description"
@@ -348,5 +256,5 @@ export function Repository(): React.JSX.Element {
   }
 
   // Default case: show repository setup
-  return <SetupRepositoryNew />;
+  return <SetupRepository />;
 }

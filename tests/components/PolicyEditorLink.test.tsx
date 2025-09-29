@@ -1,55 +1,86 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
-import { vi } from "vitest";
+import { screen } from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "@testing-library/jest-dom";
-
-// Mock react-router-dom using unified helper
-vi.mock("react-router-dom", async () => {
-  const { createRouterMock } = await import("../testutils/react-router-mock.jsx");
-  return createRouterMock()();
-});
-
 import { PolicyEditorLink } from "../../src/components/PolicyEditorLink";
+import { renderWithProviders, setupDefaultMocks, cleanupMocks } from "../testutils/test-setup";
 
-// Helper to render components with router
-const renderWithRouter = (component) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>);
-};
+// Mock the policyutil module
+vi.mock("../../src/utils/policyutil", () => ({
+  PolicyTypeName: (source: any) => {
+    if (!source.host && !source.userName && !source.path) {
+      return "Global Policy";
+    }
+    if (source.path) {
+      return `Directory: ${source.userName || ''}@${source.host || ''}:${source.path}`;
+    }
+    if (source.userName) {
+      return `User: ${source.userName}@${source.host || ''}`;
+    }
+    if (source.host) {
+      return `Host: ${source.host}`;
+    }
+    return "Global Policy";
+  },
+  policyEditorURL: (source: any) => {
+    const params = new URLSearchParams();
+    if (source.userName) params.set('userName', source.userName);
+    if (source.host) params.set('host', source.host);
+    if (source.path) params.set('path', source.path);
+    return `/policies/edit?${params.toString()}`;
+  }
+}));
 
 describe("PolicyEditorLink", () => {
-  it("renders link with correct URL and text", () => {
+  beforeEach(() => {
+    setupDefaultMocks();
+  });
+
+  afterEach(() => {
+    cleanupMocks();
+  });
+
+  it("renders link with correct URL and text for directory policy", () => {
     const source = {
-      userName: "john",
-      host: "example.com",
-      path: "/home/john",
+      source: {
+        userName: "john",
+        host: "example.com",
+        path: "/home/john",
+      }
     };
 
-    renderWithRouter(<PolicyEditorLink {...source} />);
+    renderWithProviders(<PolicyEditorLink {...source} />);
 
     const link = screen.getByRole("link");
     expect(link).toBeInTheDocument();
     expect(link).toHaveTextContent("Directory: john@example.com:/home/john");
     expect(link).toHaveAttribute("href", expect.stringContaining("/policies/edit"));
     expect(link).toHaveAttribute("href", expect.stringContaining("userName=john"));
+    expect(link).toHaveAttribute("href", expect.stringContaining("host=example.com"));
+    expect(link).toHaveAttribute("href", expect.stringContaining("path=%2Fhome%2Fjohn"));
   });
 
   it("renders global policy link", () => {
-    const source = {};
+    const source = {
+      source: {}
+    };
 
-    renderWithRouter(<PolicyEditorLink {...source} />);
+    renderWithProviders(<PolicyEditorLink {...source} />);
 
     const link = screen.getByRole("link");
     expect(link).toHaveTextContent("Global Policy");
+    expect(link).toHaveAttribute("href", "/policies/edit?");
   });
 
   it("renders user policy link", () => {
     const source = {
-      userName: "alice",
-      host: "server.com",
+      source: {
+        userName: "alice",
+        host: "server.com",
+      }
     };
 
-    renderWithRouter(<PolicyEditorLink {...source} />);
+    renderWithProviders(<PolicyEditorLink {...source} />);
 
     const link = screen.getByRole("link");
     expect(link).toHaveTextContent("User: alice@server.com");
@@ -59,10 +90,12 @@ describe("PolicyEditorLink", () => {
 
   it("renders host policy link", () => {
     const source = {
-      host: "backup-server",
+      source: {
+        host: "backup-server",
+      }
     };
 
-    renderWithRouter(<PolicyEditorLink {...source} />);
+    renderWithProviders(<PolicyEditorLink {...source} />);
 
     const link = screen.getByRole("link");
     expect(link).toHaveTextContent("Host: backup-server");
@@ -71,12 +104,14 @@ describe("PolicyEditorLink", () => {
 
   it("encodes special characters in URL parameters", () => {
     const source = {
-      userName: "user@domain",
-      host: "host-with-special-chars",
-      path: "/path with spaces/special@chars",
+      source: {
+        userName: "user@domain",
+        host: "host-with-special-chars",
+        path: "/path with spaces/special@chars",
+      }
     };
 
-    renderWithRouter(<PolicyEditorLink {...source} />);
+    renderWithProviders(<PolicyEditorLink {...source} />);
 
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", expect.stringContaining("userName=user%40domain"));

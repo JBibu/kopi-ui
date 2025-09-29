@@ -5,17 +5,10 @@ import { RequiredNumberField } from "../../forms/RequiredNumberField";
 import { OptionalField } from "../../forms/OptionalField";
 import { NotificationFormatSelector } from "./NotificationFormatSelector";
 
-interface EmailNotificationState {
-  smtpServer?: string;
-  smtpPort?: number;
-  smtpUsername?: string;
-  smtpPassword?: string;
-  smtpIdentity?: string;
-  from?: string;
-  to?: string;
-  cc?: string;
-  format?: string;
-  [key: string]: any;
+import { EmailNotificationConfig, NotificationComponentWithState } from "../../types/notifications";
+
+interface EmailNotificationState extends EmailNotificationConfig {
+  [key: string]: unknown;
 }
 
 interface EmailNotificationMethodProps {
@@ -28,11 +21,7 @@ interface EmailNotificationMethodRef {
 }
 
 // Component interface for form compatibility
-interface ComponentWithState {
-  state: EmailNotificationState;
-  setState: React.Dispatch<React.SetStateAction<EmailNotificationState>>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: any } }, valueGetter?: (target: any) => any) => void;
-}
+type ComponentWithState = NotificationComponentWithState<EmailNotificationState>;
 
 export const EmailNotificationMethod = forwardRef<EmailNotificationMethodRef, EmailNotificationMethodProps>(
   function EmailNotificationMethod(props, ref) {
@@ -43,7 +32,7 @@ export const EmailNotificationMethod = forwardRef<EmailNotificationMethodRef, Em
     });
 
     // Create handleChange function that works with the form system
-    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: any } }, valueGetter = (x: any) => x.value) => {
+    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: unknown } }, valueGetter = (x: { value: unknown }) => x.value) => {
       const fieldName = event.target.name;
       const fieldValue = valueGetter(event.target);
       setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));

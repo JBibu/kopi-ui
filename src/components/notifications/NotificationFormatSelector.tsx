@@ -5,7 +5,7 @@ import { stateProperty } from "../../forms";
 
 // Component with state interface for form handling
 interface ComponentWithState {
-  state: Record<string, any>;
+  state: Record<string, unknown>;
   handleChange: (event: { target: { name: string; value: string } }) => void;
 }
 

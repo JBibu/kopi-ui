@@ -4,11 +4,10 @@ import { LabelColumn } from "./LabelColumn";
 import { WideValueColumn } from "./WideValueColumn";
 import { EffectiveValue } from "./EffectiveValue";
 
+import { PolicyComponentWithState } from "../../types/policy";
+
 // Component with state interface for form handling
-interface ComponentWithState {
-  state: Record<string, any>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>, valueGetter?: (target: any) => any) => void;
-}
+type ComponentWithState = PolicyComponentWithState;
 
 export function ActionRowTimeout(
   component: ComponentWithState,

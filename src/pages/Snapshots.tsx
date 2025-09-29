@@ -16,13 +16,14 @@ import {
 } from "../components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import KopiaTable from "../components/KopiaTable";
+import { KopiaTable } from "../components/KopiaTable";
 import { compare, formatOwnerName, sizeDisplayName } from "../utils/formatutils";
 import { errorAlert, redirect, sizeWithFailures } from "../utils/uiutil";
 import { policyEditorURL, sourceQueryStringParams } from "../utils/policyutil";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
-import { Source, SourcesResponse, KopiaTableColumn } from "../types";
+import { Source, SourcesResponse } from "../types";
+import { ColumnDef } from "@tanstack/react-table";
 
 const localSnapshots = "Local Snapshots";
 const allSnapshots = "All Snapshots";
@@ -277,7 +278,7 @@ export function Snapshots(): React.JSX.Element {
     }
   }, [sources, selectedOwner, localSourceName]);
 
-  const columns: KopiaTableColumn<SourceWithUpload>[] = useMemo(() => [
+  const columns: ColumnDef<SourceWithUpload>[] = useMemo(() => [
     {
       id: "path",
       header: "Path",

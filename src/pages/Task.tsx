@@ -101,28 +101,28 @@ function TaskInternal(props: TaskInternalProps): React.JSX.Element {
     const dur = formatDuration(task.startTime, task.endTime, true);
 
     switch (task.status) {
-      case "SUCCESS":
+      case "success":
         return (
           <Alert className="border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400">
             Task succeeded after {dur}.
           </Alert>
         );
 
-      case "FAILED":
+      case "failed":
         return (
           <Alert variant="destructive">
             <strong>Error:</strong> {task.errorMessage}.
           </Alert>
         );
 
-      case "CANCELED":
+      case "cancelled":
         return (
           <Alert className="border-yellow-200 bg-yellow-50 text-yellow-800 dark:border-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">
             Task canceled.
           </Alert>
         );
 
-      case "CANCELING":
+      case "running":
         return (
           <Alert className="border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
             <Spinner size="sm" className="inline mr-2" /> Canceling {dur}: {task.progressInfo}.
@@ -307,5 +307,5 @@ export function Task(): React.JSX.Element {
   const location = useLocation();
   const params = useParams<{ tid?: string }>();
 
-  return <TaskInternal navigate={navigate} location={location} params={params} {...props} />;
+  return <TaskInternal navigate={navigate} location={location} params={params} />;
 }

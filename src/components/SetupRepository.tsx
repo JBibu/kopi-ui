@@ -69,7 +69,7 @@ const supportedProviders: ProviderInfo[] = [
   },
 ];
 
-export const SetupRepositoryNew: React.FC = () => {
+export const SetupRepository: React.FC = () => {
   const {
     state,
     dispatch,

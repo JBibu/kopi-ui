@@ -26,7 +26,20 @@ export default defineConfig([
   {
     rules: {
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+      "react/prop-types": "off",
     },
   },
-  pluginReact.configs.flat.recommended,
+  {
+    files: ["src/components/ui/**/*.{ts,tsx}"],
+    rules: {
+      "react/prop-types": "off",
+    },
+  },
+  {
+    ...pluginReact.configs.flat.recommended,
+    rules: {
+      ...pluginReact.configs.flat.recommended.rules,
+      "react/prop-types": "off",
+    },
+  },
 ]);

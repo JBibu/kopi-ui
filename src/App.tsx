@@ -1,23 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios, { AxiosResponse } from "axios";
-import { BrowserRouter as Router, NavLink, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, useNavigate } from "react-router-dom";
 
-import { Navbar, NavbarBrand, NavbarLink } from "./components/ui/navbar";
-import { ThemeSelector } from "./components/ThemeSelector";
+import { AppNavbar } from "./components/AppNavbar";
+import { AppRoutes } from "./components/AppRoutes";
 import { NotificationDisplay } from "./components/NotificationDisplay";
-
-import { Policy } from "./pages/Policy";
-import { Preferences } from "./pages/Preferences";
-import { Policies } from "./pages/Policies";
-import { Repository } from "./pages/Repository";
-import { Task } from "./pages/Task";
-import { Tasks } from "./pages/Tasks";
-import { Snapshots } from "./pages/Snapshots";
-import { SnapshotCreate } from "./pages/SnapshotCreate";
-import { SnapshotDirectory } from "./pages/SnapshotDirectory";
-import { SnapshotHistory } from "./pages/SnapshotHistory";
-import { SnapshotRestore } from "./pages/SnapshotRestore";
-import { ComponentsDemo } from "./pages/ComponentsDemo";
 
 import { AppContext } from "./contexts/AppContext";
 import { UIPreferenceProvider } from "./contexts/UIPreferencesContext";
@@ -25,18 +12,12 @@ import { ThemeProvider } from "./components/theme-provider";
 import { ErrorProvider } from "./contexts/ErrorContext";
 import { LoadingProvider } from "./contexts/LoadingContext";
 
-import { RepositoryStatus } from "./types";
+import { RepositoryStatus } from "./types/api";
 
 import "./css/globals.css";
 import "./css/App.css";
 
-// API Response Types specific to App component
-interface TasksSummaryResponse {
-  RUNNING?: number;
-  SUCCESS?: number;
-  FAILED?: number;
-  CANCELED?: number;
-}
+import { TasksSummaryResponse } from "./types/api";
 
 // App Context Value Interface
 interface AppContextValue {
@@ -50,7 +31,9 @@ interface AppContextValue {
   fetchInitialRepositoryDescription: () => Promise<void>;
 }
 
-export default function App(): React.JSX.Element {
+// Main App Content Component that uses useNavigate
+function AppContent(): React.JSX.Element {
+  const navigate = useNavigate();
   const [runningTaskCount, setRunningTaskCount] = useState<number>(0);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [repoDescription, setRepoDescription] = useState<string>("");
@@ -119,19 +102,23 @@ export default function App(): React.JSX.Element {
   // Context methods - these are called via AppContext
   const repositoryUpdated = useCallback((isConnected: boolean): void => {
     setIsRepositoryConnected(isConnected);
-    if (isConnected) {
-      window.location.replace("/snapshots");
-    } else {
-      window.location.replace("/repo");
-    }
-  }, []);
+
+    // Use a small delay to prevent rapid navigation calls
+    setTimeout(() => {
+      if (isConnected) {
+        navigate("/snapshots");
+      } else {
+        navigate("/repo");
+      }
+    }, 100);
+  }, [navigate]);
 
   const repositoryDescriptionUpdated = useCallback((desc: string): void => {
     setRepoDescription(desc);
   }, []);
 
-  // Create context value with memoized object
-  const contextValue: AppContextValue = {
+  // Create context value with memoized object to prevent unnecessary re-renders
+  const contextValue: AppContextValue = useMemo(() => ({
     runningTaskCount,
     isFetching,
     repoDescription,
@@ -140,113 +127,39 @@ export default function App(): React.JSX.Element {
     repositoryUpdated,
     repositoryDescriptionUpdated,
     fetchInitialRepositoryDescription,
-  };
+  }), [
+    runningTaskCount,
+    isFetching,
+    repoDescription,
+    isRepositoryConnected,
+    fetchTaskSummary,
+    repositoryUpdated,
+    repositoryDescriptionUpdated,
+    fetchInitialRepositoryDescription,
+  ]);
 
   return (
-    <Router>
-      <ThemeProvider>
-        <ErrorProvider>
-          <LoadingProvider>
-            <AppContext.Provider value={contextValue}>
-              <UIPreferenceProvider>
-            <Navbar>
-              <NavbarBrand to="/">
-                <img src="/kopia-flat.svg" className="h-8 w-8" alt="Kopia logo" />
-                <span className="text-lg font-semibold">Kopia</span>
-              </NavbarBrand>
-
-              {/* Left-aligned Navigation Links */}
-              <div className="flex items-center space-x-1 ml-8">
-                <NavbarLink
-                  testId="tab-snapshots"
-                  to="/snapshots"
-                  disabled={!isRepositoryConnected}
-                  title={!isRepositoryConnected ? "Repository is not connected" : ""}
-                  className="font-bold"
-                  aria-label="Snapshots page"
-                >
-                  Snapshots
-                </NavbarLink>
-                <NavbarLink
-                  testId="tab-policies"
-                  to="/policies"
-                  disabled={!isRepositoryConnected}
-                  title={!isRepositoryConnected ? "Repository is not connected" : ""}
-                  className="font-bold"
-                  aria-label="Policies page"
-                >
-                  Policies
-                </NavbarLink>
-                <NavbarLink
-                  testId="tab-tasks"
-                  to="/tasks"
-                  disabled={!isRepositoryConnected}
-                  title={!isRepositoryConnected ? "Repository is not connected" : ""}
-                  className="font-bold"
-                  aria-label={`Tasks page${runningTaskCount > 0 ? ` (${runningTaskCount} running)` : ''}`}
-                >
-                  Tasks
-                  {runningTaskCount > 0 && (
-                    <span className="ml-1 px-2 py-1 text-xs bg-primary text-primary-foreground rounded-full" aria-hidden="true">
-                      {runningTaskCount}
-                    </span>
-                  )}
-                </NavbarLink>
-                <NavbarLink testId="tab-repo" to="/repo" className="font-bold" aria-label="Repository page">
-                  Repository
-                </NavbarLink>
-                <NavbarLink testId="tab-preferences" to="/preferences" className="font-bold" aria-label="Preferences page">
-                  Preferences
-                </NavbarLink>
-              </div>
-
-              {/* Spacer to push right section to the right */}
-              <div className="flex-1"></div>
-
-              {/* Right Section: Repository Status + Theme Selector */}
-              <div className="flex items-center gap-3">
-                {repoDescription && (
-                  <NavLink
-                    to="/repo"
-                    className="inline-flex items-center gap-2 px-2 py-1 rounded-md bg-background/50 border border-border/50 text-inherit no-underline hover:border-primary/50 hover:bg-accent/50"
-                    aria-label={`Repository status: ${repoDescription}`}
-                  >
-                    <div
-                      className="w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0"
-                      aria-hidden="true"
-                    ></div>
-                    <span className="text-xs font-bold text-foreground">
-                      {repoDescription}
-                    </span>
-                  </NavLink>
-                )}
-                <ThemeSelector />
-              </div>
-            </Navbar>
-
-            <main className="container mx-auto px-4 py-6 min-h-screen bg-background">
-              <Routes>
-                <Route path="snapshots" element={<Snapshots />} />
-                <Route path="snapshots/new" element={<SnapshotCreate />} />
-                <Route path="snapshots/single-source/" element={<SnapshotHistory />} />
-                <Route path="snapshots/dir/:oid/restore" element={<SnapshotRestore />} />
-                <Route path="snapshots/dir/:oid" element={<SnapshotDirectory />} />
-                <Route path="policies/edit/" element={<Policy />} />
-                <Route path="policies" element={<Policies />} />
-                <Route path="tasks/:tid" element={<Task />} />
-                <Route path="tasks" element={<Tasks />} />
-                <Route path="repo" element={<Repository />} />
-                <Route path="preferences" element={<Preferences />} />
-                <Route path="components-demo" element={<ComponentsDemo />} />
-                <Route path="/" element={<Navigate to="/snapshots" />} />
-              </Routes>
-            </main>
+    <ThemeProvider>
+      <ErrorProvider>
+        <LoadingProvider>
+          <AppContext.Provider value={contextValue}>
+            <UIPreferenceProvider>
+            <AppNavbar />
+            <AppRoutes />
             <NotificationDisplay position="top-right" />
             </UIPreferenceProvider>
           </AppContext.Provider>
-          </LoadingProvider>
-        </ErrorProvider>
-      </ThemeProvider>
+        </LoadingProvider>
+      </ErrorProvider>
+    </ThemeProvider>
+  );
+}
+
+// Main App component with Router wrapper
+export default function App(): React.JSX.Element {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

@@ -6,12 +6,12 @@ import { RequiredField } from "../../forms/RequiredField";
 import { OptionalField } from "../../forms/OptionalField";
 import { NotificationFormatSelector } from "./NotificationFormatSelector";
 
-interface WebHookNotificationState {
-  endpoint?: string;
+import { WebhookNotificationConfig, NotificationComponentWithState } from "../../types/notifications";
+
+interface WebHookNotificationState extends WebhookNotificationConfig {
   method?: string;
-  format?: string;
   headers?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface WebHookNotificationMethodProps {
@@ -24,10 +24,7 @@ interface WebHookNotificationMethodRef {
 }
 
 // Component interface for form compatibility
-interface ComponentWithState {
-  state: WebHookNotificationState;
-  setState: React.Dispatch<React.SetStateAction<WebHookNotificationState>>;
-}
+type ComponentWithState = Pick<NotificationComponentWithState<WebHookNotificationState>, 'state' | 'setState'>;
 
 export const WebHookNotificationMethod = forwardRef<WebHookNotificationMethodRef, WebHookNotificationMethodProps>(
   function WebHookNotificationMethod(props, ref) {

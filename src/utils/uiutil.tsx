@@ -30,12 +30,12 @@ export function sizeWithFailures(
     prefix = "";
   }
 
-  caption += summ.errors.map((x) => prefix + x.path + ": " + x.error).join("\n");
+  caption += summ.errors.map((x: { path: string; error: string }) => prefix + x.path + ": " + x.error).join("\n");
 
   return (
-    <span>
+    <span title={caption}>
       {sizeDisplayName(size, bytesStringBase2)}&nbsp;
-      <AlertTriangle className="h-4 w-4 inline text-red-500" title={caption} />
+      <AlertTriangle className="h-4 w-4 inline text-red-500" />
     </span>
   );
 }
@@ -65,7 +65,7 @@ type ShowAlertFunction = (title: string, message: string, variant: string) => vo
 // This function is used to display error alerts
 // For the modern alert system, use the AlertContext instead
 export function errorAlert(
-  err: ErrorResponse | Error | any,
+  err: ErrorResponse | Error | unknown,
   prefix?: string,
   showAlert?: ShowAlertFunction
 ): void {
@@ -74,8 +74,9 @@ export function errorAlert(
   }
 
   let message = "";
-  if (err.response && err.response.data && err.response.data.error) {
-    message = err.response.data.error;
+  const errorResponse = err as ErrorResponse;
+  if (errorResponse.response && errorResponse.response.data && errorResponse.response.data.error) {
+    message = errorResponse.response.data.error;
   } else if (err instanceof Error) {
     message = err.message || err.toString();
   } else {

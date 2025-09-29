@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { SetupRepositoryNew } from '../components/SetupRepositoryNew';
-import { PolicyEditorNew } from '../components/policy-editor/PolicyEditorNew';
-import { NotificationEditorNew } from '../components/notifications/NotificationEditorNew';
-import { KopiaTableNew } from '../components/KopiaTableNew';
-import KopiaTable from '../components/KopiaTable';
+import { SetupRepository } from '../components/SetupRepository';
+import { PolicyEditor } from '../components/policy-editor/PolicyEditor';
+import { NotificationEditor } from '../components/notifications/NotificationEditor';
+import { KopiaTable } from '../components/KopiaTable';
 
 export const ComponentsDemo: React.FC = () => {
   const [activeTab, setActiveTab] = useState('setup-new');
@@ -74,7 +73,7 @@ export const ComponentsDemo: React.FC = () => {
                     <li>Improved TypeScript typing with dedicated types file</li>
                   </ul>
                 </div>
-                <SetupRepositoryNew />
+                <SetupRepository />
               </div>
             </CardContent>
           </Card>
@@ -110,7 +109,7 @@ export const ComponentsDemo: React.FC = () => {
                     <li>Full TypeScript support with proper interfaces</li>
                   </ul>
                 </div>
-                <PolicyEditorNew />
+                <PolicyEditor />
               </div>
             </CardContent>
           </Card>
@@ -146,7 +145,7 @@ export const ComponentsDemo: React.FC = () => {
                     <li>Full TypeScript support</li>
                   </ul>
                 </div>
-                <NotificationEditorNew />
+                <NotificationEditor />
               </div>
             </CardContent>
           </Card>
@@ -184,7 +183,7 @@ export const ComponentsDemo: React.FC = () => {
                 </div>
                 <div className="space-y-4">
                   <h4 className="font-semibold">Enhanced Version with Advanced Features:</h4>
-                  <KopiaTableNew
+                  <KopiaTable
                     columns={tableColumns}
                     data={sampleTableData}
                     enableGlobalFilter

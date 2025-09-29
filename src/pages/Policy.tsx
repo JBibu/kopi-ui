@@ -1,6 +1,6 @@
 import React, { createRef, RefObject } from "react";
 import { useNavigate, useLocation, NavigateFunction, Location } from "react-router-dom";
-import { PolicyEditorNew } from "../components/policy-editor/PolicyEditorNew";
+import { PolicyEditor } from "../components/policy-editor/PolicyEditor";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { parseQuery } from "../utils/formatutils";
@@ -39,7 +39,7 @@ export function Policy(): React.JSX.Element {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <PolicyEditorNew ref={editorRef} userName={userName} host={host} path={path} close={() => navigate(-1)} />
+          <PolicyEditor ref={editorRef} userName={userName} host={host} path={path} close={() => navigate(-1)} />
           <div className="mt-6">
             <CLIEquivalent command={`policy set "${userName}@${host}:${path}"`} />
           </div>

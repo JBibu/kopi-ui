@@ -78,8 +78,9 @@ export const useRepositorySetup = () => {
           dispatch({ type: 'SET_PROVIDER_SETTINGS', payload: ed.state });
         }
       } catch (error: unknown) {
-        if (error.response?.data) {
-          if (error.response.data.code === 'NOT_INITIALIZED') {
+        const axiosError = error as { response?: { data?: { code?: string; error?: string } }; message?: string };
+        if (axiosError.response?.data) {
+          if (axiosError.response.data.code === 'NOT_INITIALIZED') {
             dispatch({ type: 'SET_CONFIRM_CREATE', payload: true });
             dispatch({ type: 'SET_STORAGE_VERIFIED', payload: true });
             if (ed) {
@@ -89,11 +90,11 @@ export const useRepositorySetup = () => {
           } else {
             dispatch({
               type: 'SET_CONNECT_ERROR',
-              payload: error.response.data.code + ': ' + error.response.data.error,
+              payload: (axiosError.response.data.code || 'Error') + ': ' + (axiosError.response.data.error || 'Unknown error'),
             });
           }
         } else {
-          dispatch({ type: 'SET_CONNECT_ERROR', payload: error.message });
+          dispatch({ type: 'SET_CONNECT_ERROR', payload: axiosError.message || 'Unknown error occurred' });
         }
       }
     },
@@ -135,11 +136,14 @@ export const useRepositorySetup = () => {
           context.repositoryUpdated(true);
         }
       } catch (error: unknown) {
-        if (error.response?.data) {
+        const axiosError = error as { response?: { data?: { code?: string; error?: string } }; message?: string };
+        if (axiosError.response?.data) {
           dispatch({
             type: 'SET_CONNECT_ERROR',
-            payload: error.response.data.code + ': ' + error.response.data.error,
+            payload: (axiosError.response.data.code || 'Error') + ': ' + (axiosError.response.data.error || 'Unknown error'),
           });
+        } else {
+          dispatch({ type: 'SET_CONNECT_ERROR', payload: axiosError.message || 'Unknown error occurred' });
         }
       }
     },
@@ -200,12 +204,15 @@ export const useRepositorySetup = () => {
           context.repositoryUpdated(true);
         }
       } catch (error: unknown) {
-        if (error.response?.data) {
+        const axiosError = error as { response?: { data?: { code?: string; error?: string } }; message?: string };
+        if (axiosError.response?.data) {
           dispatch({ type: 'SET_CONFIRM_CREATE', payload: false });
           dispatch({
             type: 'SET_CONNECT_ERROR',
-            payload: error.response.data.code + ': ' + error.response.data.error,
+            payload: (axiosError.response.data.code || 'Error') + ': ' + (axiosError.response.data.error || 'Unknown error'),
           });
+        } else {
+          dispatch({ type: 'SET_CONNECT_ERROR', payload: axiosError.message || 'Unknown error occurred' });
         }
       }
     },

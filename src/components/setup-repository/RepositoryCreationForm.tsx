@@ -6,15 +6,25 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { AdvancedOptions } from './AdvancedOptions';
+import { RepositoryState } from './types';
+
+interface RepositoryCreationFormData {
+  password: string;
+  confirmPassword: string;
+  description: string;
+  readonly: boolean;
+  username: string;
+  hostname: string;
+}
 
 interface RepositoryCreationFormProps {
-  state: any;
+  state: RepositoryState;
   isLoading: boolean;
   connectError: string | null;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: RepositoryCreationFormData) => void;
   onBack: () => void;
   onToggleAdvanced: () => void;
-  onFieldChange: (field: string, value: any) => void;
+  onFieldChange: (field: string, value: unknown) => void;
   overrideUsernameHostname: React.ReactNode;
 }
 
@@ -33,7 +43,7 @@ export const RepositoryCreationForm: React.FC<RepositoryCreationFormProps> = ({
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<RepositoryCreationFormData>({
     defaultValues: {
       password: '',
       confirmPassword: '',
@@ -72,7 +82,7 @@ export const RepositoryCreationForm: React.FC<RepositoryCreationFormProps> = ({
                   <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
                 )}
                 <p className="text-sm text-muted-foreground mt-1">
-                  Used to encrypt the repository's contents
+                  Used to encrypt the repository&apos;s contents
                 </p>
               </div>
 
@@ -83,7 +93,7 @@ export const RepositoryCreationForm: React.FC<RepositoryCreationFormProps> = ({
                 <Input
                   {...register('confirmPassword', {
                     required: 'Please confirm the password',
-                    validate: (value) => value === watch('password') || "Passwords don't match",
+                    validate: (value) => value === watch('password') || "Passwords don&apos;t match",
                   })}
                   id="confirmPassword"
                   type="password"

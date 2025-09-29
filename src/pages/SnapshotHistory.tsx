@@ -27,7 +27,7 @@ import {
 import { Spinner } from "../components/ui/spinner";
 import { Badge } from "../components/ui/badge";
 import { Link, useNavigate, useLocation, Location, NavigateFunction } from "react-router-dom";
-import KopiaTable from "../components/KopiaTable";
+import { KopiaTable } from "../components/KopiaTable";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { compare, objectLink, parseQuery, rfc3339TimestampForDisplay } from "../utils/formatutils";
 import { errorAlert, redirect, sizeWithFailures } from "../utils/uiutil";
@@ -36,7 +36,7 @@ import { GoBackButton } from "../components/GoBackButton";
 import { RefreshCw, Pin, File } from "lucide-react";
 import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
 import { Snapshot, SnapshotsResponse } from "../types";
-import { KopiaTableColumn } from "../types/props";
+import { ColumnDef } from "@tanstack/react-table";
 
 // Types for the pill variant function
 type PillVariant = "success" | "info" | "danger" | "secondary" | "warning" | "primary";
@@ -387,7 +387,7 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
 
   snapshots.sort((a, b) => -compare(a.startTime, b.startTime));
 
-  const columns: KopiaTableColumn<Snapshot>[] = [
+  const columns: ColumnDef<Snapshot>[] = [
     {
       id: "selected",
       header: "Selected",

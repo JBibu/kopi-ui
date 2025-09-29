@@ -10,7 +10,7 @@ interface AdvancedOptionsProps {
   state: RepositoryState;
   showAdvanced: boolean;
   onToggleAdvanced: () => void;
-  onFieldChange: (field: string, value: any) => void;
+  onFieldChange: (field: string, value: unknown) => void;
   overrideUsernameHostname?: React.ReactNode;
 }
 

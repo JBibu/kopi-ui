@@ -28,7 +28,7 @@ interface PolicyEditorProps {
   path?: string;
 }
 
-export const PolicyEditorNew: React.FC<PolicyEditorProps> = (props) => {
+export const PolicyEditor: React.FC<PolicyEditorProps> = (props) => {
   const {
     state,
     isGlobal,

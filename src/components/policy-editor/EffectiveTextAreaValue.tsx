@@ -2,10 +2,13 @@ import React from "react";
 import { getDeepStateProperty } from "../../utils/deepstate";
 import { EffectiveValueColumn } from "./EffectiveValueColumn";
 
+// Types are available for future use if needed
+// import { ResolvedPolicy, PolicyDefinitionPoint } from "../../types/policy";
+
 // Component with state interface and policy definition point method
 interface ComponentWithState {
-  state: Record<string, any>;
-  PolicyDefinitionPoint: (value: any) => string;
+  state: Record<string, unknown>;
+  PolicyDefinitionPoint: (value: unknown) => string;
 }
 
 export function EffectiveTextAreaValue(

@@ -4,15 +4,15 @@ import { stateProperty } from ".";
 
 // Component with state interface for form handling
 interface ComponentWithState {
-  state: Record<string, any>;
-  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>, valueGetter?: (target: any) => any) => void;
+  state: Record<string, unknown>;
+  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>, valueGetter?: (target: unknown) => (TimeOfDay | string)[] | undefined) => void;
 }
 
 interface TimesOfDayListProps {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
-interface TimeOfDay {
+export interface TimeOfDay {
   hour: number;
   min: number;
 }

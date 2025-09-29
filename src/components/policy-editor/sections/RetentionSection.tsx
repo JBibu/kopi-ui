@@ -1,4 +1,5 @@
 import React from 'react';
+import { ResolvedPolicy, PolicyComponentWithState } from '../../../types/policy';
 import { CalendarDays } from 'lucide-react';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion';
 import { OptionalNumberField } from '../../../forms/OptionalNumberField';
@@ -9,9 +10,9 @@ import { EffectiveValue } from '../EffectiveValue';
 import { SectionHeaderRow } from '../SectionHeaderRow';
 
 interface RetentionSectionProps {
-  componentRef: any;
-  resolved: any;
-  policyDefinitionPoint: (p: any) => React.ReactNode;
+  componentRef: React.RefObject<PolicyComponentWithState>;
+  resolved: ResolvedPolicy;
+  policyDefinitionPoint: (p: unknown) => React.ReactNode;
 }
 
 export const RetentionSection: React.FC<RetentionSectionProps> = ({

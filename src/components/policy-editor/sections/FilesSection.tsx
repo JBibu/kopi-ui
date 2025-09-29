@@ -1,4 +1,5 @@
 import React from 'react';
+import { ResolvedPolicy, PolicyComponentWithState } from '../../../types/policy';
 import { File } from 'lucide-react';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion';
 import { RequiredBoolean } from '../../../forms/RequiredBoolean';
@@ -11,9 +12,9 @@ import { EffectiveBooleanValue } from '../EffectiveBooleanValue';
 import { EffectiveListValue } from '../EffectiveListValue';
 
 interface FilesSectionProps {
-  componentRef: any;
-  resolved: any;
-  policyDefinitionPoint: (p: any) => React.ReactNode;
+  componentRef: React.RefObject<PolicyComponentWithState>;
+  resolved: ResolvedPolicy;
+  policyDefinitionPoint: (p: unknown) => React.ReactNode;
 }
 
 export const FilesSection: React.FC<FilesSectionProps> = ({

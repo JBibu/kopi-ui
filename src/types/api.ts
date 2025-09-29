@@ -49,11 +49,22 @@ export interface Repository {
 }
 
 export interface RepositoryStatus {
-  connected: boolean;
+  connected?: boolean;
   description?: string;
+  initTaskID?: string;
+  readonly?: boolean;
   apiServerURL?: string;
   configFile?: string;
-  readonly?: boolean;
+  storage?: string;
+  encryption?: string;
+  hash?: string;
+  splitter?: string;
+  formatVersion?: string;
+  eccOverheadPercent?: number;
+  ecc?: string;
+  supportsContentCompression?: boolean;
+  username?: string;
+  hostname?: string;
 }
 
 // Policy Types
@@ -233,6 +244,14 @@ export interface MountInfo {
   path: string;
   controller?: string;
   mounted?: MountedSnapshot[];
+}
+
+// Task Summary Types
+export interface TasksSummaryResponse {
+  RUNNING?: number;
+  SUCCESS?: number;
+  FAILED?: number;
+  CANCELED?: number;
 }
 
 // Estimation Types

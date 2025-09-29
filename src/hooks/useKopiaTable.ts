@@ -1,4 +1,4 @@
-import { useState, useMemo, useContext } from 'react';
+import { useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -16,7 +16,9 @@ import {
   RowSelectionState,
   Table,
 } from '@tanstack/react-table';
-import { UIPreferencesContext } from '../contexts/UIPreferencesContext';
+import { useTablePagination } from './useTablePagination';
+import { useTableSelection } from './useTableSelection';
+import { useTableFiltering } from './useTableFiltering';
 
 interface UseKopiaTableOptions<T> {
   data: T[];
@@ -72,53 +74,33 @@ export function useKopiaTable<T>(options: UseKopiaTableOptions<T>): UseKopiaTabl
     onRowSelectionChange,
   } = options;
 
-  const { pageSize, setPageSize } = useContext(UIPreferencesContext);
-
-  const [sorting, setSorting] = useState<SortingState>(initialSorting);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialColumnFilters);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialColumnVisibility);
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: pageSize,
+
+  // Use separate hooks for different concerns
+  const { pagination, setPagination, handlePaginationChange } = useTablePagination({
+    onPaginationChange,
   });
 
-  const handlePaginationChange = (updater: any) => {
-    setPagination(updater);
-    if (onPaginationChange) {
-      const newPagination = typeof updater === 'function' ? updater(pagination) : updater;
-      onPaginationChange(newPagination);
+  const { rowSelection, setRowSelection, selectedRows, handleRowSelectionChange } = useTableSelection({
+    data,
+    onSelectionChange: onRowSelectionChange,
+  });
 
-      if (newPagination.pageSize !== pagination.pageSize) {
-        setPageSize(newPagination.pageSize);
-      }
-    }
-  };
-
-  const handleSortingChange = (updater: any) => {
-    setSorting(updater);
-    if (onSortingChange) {
-      const newSorting = typeof updater === 'function' ? updater(sorting) : updater;
-      onSortingChange(newSorting);
-    }
-  };
-
-  const handleColumnFiltersChange = (updater: any) => {
-    setColumnFilters(updater);
-    if (onColumnFiltersChange) {
-      const newFilters = typeof updater === 'function' ? updater(columnFilters) : updater;
-      onColumnFiltersChange(newFilters);
-    }
-  };
-
-  const handleRowSelectionChange = (updater: any) => {
-    setRowSelection(updater);
-    if (onRowSelectionChange) {
-      const newSelection = typeof updater === 'function' ? updater(rowSelection) : updater;
-      onRowSelectionChange(newSelection);
-    }
-  };
+  const {
+    sorting,
+    setSorting,
+    columnFilters,
+    setColumnFilters,
+    globalFilter,
+    setGlobalFilter,
+    handleSortingChange,
+    handleColumnFiltersChange,
+  } = useTableFiltering({
+    initialSorting,
+    initialColumnFilters,
+    onSortingChange,
+    onColumnFiltersChange,
+  });
 
   const table = useReactTable({
     data,
@@ -153,11 +135,6 @@ export function useKopiaTable<T>(options: UseKopiaTableOptions<T>): UseKopiaTabl
     onRowSelectionChange: handleRowSelectionChange,
     onGlobalFilterChange: setGlobalFilter,
   });
-
-  const selectedRows = useMemo(() => {
-    const selectedIndices = Object.keys(rowSelection).map(Number);
-    return selectedIndices.map(index => data[index]).filter(Boolean);
-  }, [rowSelection, data]);
 
   if (pagination.pageIndex >= table.getPageCount() && pagination.pageIndex !== 0) {
     table.resetPageIndex();

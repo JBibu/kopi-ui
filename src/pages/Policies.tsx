@@ -6,12 +6,13 @@ import { Button } from "../components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
 import { Link, useNavigate, NavigateFunction } from "react-router-dom";
 import { OptionalDirectory } from "../forms/OptionalDirectory";
-import KopiaTable from "../components/KopiaTable";
+import { KopiaTable } from "../components/KopiaTable";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { compare, formatOwnerName } from "../utils/formatutils";
 import { redirect } from "../utils/uiutil";
 import { checkPolicyPath, policyEditorURL } from "../utils/policyutil";
-import { Policy, Source, SourcesResponse, KopiaTableColumn } from "../types";
+import { Policy, Source, SourcesResponse } from "../types";
+import { ColumnDef } from "@tanstack/react-table";
 
 const applicablePolicies = "Applicable Policies";
 const localPolicies = "Local Path Policies";
@@ -24,7 +25,7 @@ interface PoliciesState {
   policies: Policy[];
   isLoading: boolean;
   error: Error | null;
-  editorTarget: any;
+  editorTarget: unknown;
   selectedOwner: string;
   policyPath: string;
   sources: Source[];
@@ -157,7 +158,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
   const policySummary = (policies: Policy): React.JSX.Element[] => {
     const bits: React.JSX.Element[] = [];
 
-    function isEmptyObject(obj: any): boolean {
+    function isEmptyObject(obj: unknown): boolean {
       return (
         Object.getPrototypeOf(obj) === Object.prototype &&
         Object.getOwnPropertyNames(obj).length === 0 &&
@@ -165,16 +166,21 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
       );
     }
 
-    function isEmpty(obj: any): boolean {
-      for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) return isEmptyObject(obj[key]);
+    function isEmpty(obj: unknown): boolean {
+      if (obj && typeof obj === 'object') {
+        for (const key in obj as Record<string, unknown>) {
+          if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            return isEmptyObject((obj as Record<string, unknown>)[key]);
+          }
+        }
       }
       return true;
     }
 
     if (policies && typeof policies === 'object') {
-      for (const pol in policies) {
-        if (pol !== 'id' && pol !== 'target' && !isEmpty((policies as any)[pol])) {
+      const policyRecord = policies as Record<string, unknown>;
+      for (const pol in policyRecord) {
+        if (pol !== 'id' && pol !== 'target' && !isEmpty(policyRecord[pol])) {
           bits.push(
             <Badge variant="secondary" key={pol}>
               {pol}
@@ -262,7 +268,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
     return compare(l.target?.path, r.target?.path);
   });
 
-  const columns: KopiaTableColumn<Policy>[] = [
+  const columns: ColumnDef<Policy>[] = [
     {
       header: "Username",
       width: 120,
@@ -359,7 +365,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
                       disabled={!state.policyPath}
                       size="sm"
                       type="submit"
-                      onClick={editPolicyForPath as any}
+                      onClick={editPolicyForPath}
                     >
                       Set Policy
                     </Button>
@@ -393,7 +399,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
   );
 }
 
-export function Policies(props: any): React.JSX.Element {
+export function Policies(props: unknown): React.JSX.Element {
   const navigate = useNavigate();
 
   return <PoliciesInternal navigate={navigate} {...props} />;

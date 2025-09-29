@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Button } from "./button";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode;
