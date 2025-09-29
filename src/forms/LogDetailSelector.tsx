@@ -3,16 +3,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { valueToNumber, stateProperty } from ".";
 import { ComponentWithState } from "../types/forms";
 
-
 interface LogOption {
   value: string;
   label: string;
 }
 
-export function LogDetailSelector(
-  component: ComponentWithState,
-  name: string
-): React.JSX.Element {
+export function LogDetailSelector(component: ComponentWithState, name: string): React.JSX.Element {
   const options: LogOption[] = [
     { value: "inherit", label: "(inherit from parent)" },
     { value: "0", label: "0 - no output" },
@@ -25,7 +21,7 @@ export function LogDetailSelector(
     { value: "7", label: "7" },
     { value: "8", label: "8" },
     { value: "9", label: "9" },
-    { value: "10", label: "10 - maximum details" }
+    { value: "10", label: "10 - maximum details" },
   ];
 
   const currentValue = stateProperty(component, name);

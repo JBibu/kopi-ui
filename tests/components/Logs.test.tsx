@@ -3,12 +3,7 @@ import React from "react";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "@testing-library/jest-dom";
 import { Logs } from "../../src/components/Logs";
-import {
-  renderWithProviders,
-  setupDefaultMocks,
-  cleanupMocks,
-  axiosMock
-} from "../testutils/test-setup";
+import { renderWithProviders, setupDefaultMocks, cleanupMocks, axiosMock } from "../testutils/test-setup";
 
 describe("Logs Component", () => {
   beforeEach(() => {
@@ -117,17 +112,17 @@ describe("Logs Component", () => {
     });
 
     // Check for log level specific classes
-    const infoLog = screen.getByText(/First log message/).closest('tr');
-    const warningLog = screen.getByText(/Second log message/).closest('tr');
-    const errorLog = screen.getByText(/Third log message with params/).closest('tr');
+    const infoLog = screen.getByText(/First log message/).closest("tr");
+    const warningLog = screen.getByText(/Second log message/).closest("tr");
+    const errorLog = screen.getByText(/Third log message with params/).closest("tr");
 
-    expect(infoLog).toHaveClass('log-info');
-    expect(warningLog).toHaveClass('log-warning');
-    expect(errorLog).toHaveClass('log-error');
+    expect(infoLog).toHaveClass("log-info");
+    expect(warningLog).toHaveClass("log-warning");
+    expect(errorLog).toHaveClass("log-error");
   });
 
   it("handles API errors gracefully", async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     axiosMock.onGet("/api/v1/tasks/test-task-123/logs").reply(500, { error: "Server error" });
 
     renderWithProviders(<Logs taskID="test-task-123" />);
@@ -178,16 +173,14 @@ describe("Logs Component", () => {
     Element.prototype.scrollIntoView = scrollIntoViewMock;
 
     const initialLogs = {
-      logs: [
-        { ts: 1672531200, msg: "Initial log", level: "info" }
-      ]
+      logs: [{ ts: 1672531200, msg: "Initial log", level: "info" }],
     };
 
     const updatedLogs = {
       logs: [
         { ts: 1672531200, msg: "Initial log", level: "info" },
-        { ts: 1672531260, msg: "New log", level: "info" }
-      ]
+        { ts: 1672531260, msg: "New log", level: "info" },
+      ],
     };
 
     let responseCount = 0;
@@ -218,7 +211,7 @@ describe("Logs Component", () => {
     Element.prototype.scrollIntoView = scrollIntoViewMock;
 
     axiosMock.onGet("/api/v1/tasks/test-task-123/logs").reply(200, {
-      logs: [{ ts: 1672531200, msg: "Same log", level: "info" }]
+      logs: [{ ts: 1672531200, msg: "Same log", level: "info" }],
     });
 
     renderWithProviders(<Logs taskID="test-task-123" />);
@@ -240,7 +233,7 @@ describe("Logs Component", () => {
   });
 
   it("clears interval on unmount", async () => {
-    const clearIntervalSpy = vi.spyOn(global, 'clearInterval');
+    const clearIntervalSpy = vi.spyOn(global, "clearInterval");
 
     axiosMock.onGet("/api/v1/tasks/test-task-123/logs").reply(200, mockLogsResponse);
 

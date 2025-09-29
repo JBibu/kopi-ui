@@ -9,7 +9,10 @@ interface SetupRepositoryTokenProps {
 interface ComponentRef {
   state: Record<string, unknown>;
   setState: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown,
+  ) => void;
 }
 
 export interface SetupRepositoryTokenHandle {
@@ -24,11 +27,19 @@ export const SetupRepositoryToken = forwardRef<SetupRepositoryTokenHandle, Setup
     });
 
     // Create handleChange function that works with the form system
-    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => {
-      const fieldName = event.target.name;
-      const fieldValue = valueGetter ? valueGetter(event.target as EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) : (event.target as HTMLInputElement).value;
-      setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));
-    }, []);
+    const handleChange = useCallback(
+      (
+        event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+        valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown,
+      ) => {
+        const fieldName = event.target.name;
+        const fieldValue = valueGetter
+          ? valueGetter(event.target as EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement))
+          : (event.target as HTMLInputElement).value;
+        setState((prevState) => ({ ...prevState, [fieldName]: fieldValue }));
+      },
+      [],
+    );
 
     // Create a component-like object for forms compatibility
     const componentRef: MutableRefObject<ComponentRef> = useRef({
@@ -49,7 +60,7 @@ export const SetupRepositoryToken = forwardRef<SetupRepositoryTokenHandle, Setup
     // Expose methods to parent via ref
     useImperativeHandle(ref, () => ({
       validate,
-      state
+      state,
     }));
 
     return (
@@ -63,5 +74,5 @@ export const SetupRepositoryToken = forwardRef<SetupRepositoryTokenHandle, Setup
         </div>
       </>
     );
-  }
+  },
 );

@@ -62,54 +62,57 @@ export function DirectoryItems({ historyState, items }: DirectoryItemsProps): Re
   const { bytesStringBase2 } = useContext(UIPreferencesContext);
 
   // Memoized columns definition
-  const columns: ColumnDef<DirectoryItemWithObj>[] = useMemo(() => [
-    {
-      id: "name",
-      header: "Name",
-      width: "",
-      cell: (x) => directoryLinkOrDownload(x.row.original, historyState),
-    },
-    {
-      id: "mtime",
-      accessorFn: (x) => x.mtime,
-      header: "Last Modification",
-      width: 200,
-      cell: (x) => rfc3339TimestampForDisplay(x.cell.getValue() as string),
-    },
-    {
-      id: "size",
-      accessorFn: (x) => sizeInfo(x),
-      header: "Size",
-      width: 100,
-      cell: (x) => {
-        const size = x.cell.getValue() as number;
-        const summ = x.row.original.summ;
-        // DirectoryEntry.summ has a different structure than ErrorSummary
-        // It only has a numeric errors count, not detailed error messages
-        if (summ?.errors && summ.errors > 0) {
-          return (
-            <span>
-              {sizeDisplayName(size, bytesStringBase2)}&nbsp;
-              <AlertTriangle className="h-4 w-4 inline text-red-500" />
-            </span>
-          );
-        }
-        return <span>{sizeDisplayName(size, bytesStringBase2)}</span>;
+  const columns: ColumnDef<DirectoryItemWithObj>[] = useMemo(
+    () => [
+      {
+        id: "name",
+        header: "Name",
+        width: "",
+        cell: (x) => directoryLinkOrDownload(x.row.original, historyState),
       },
-    },
-    {
-      id: "files",
-      accessorFn: (x) => (x.summ ? x.summ.files : undefined),
-      header: "Files",
-      width: 100,
-    },
-    {
-      id: "dirs",
-      accessorFn: (x) => (x.summ ? x.summ.dirs : undefined),
-      header: "Directories",
-      width: 100,
-    },
-  ], [bytesStringBase2, historyState]);
+      {
+        id: "mtime",
+        accessorFn: (x) => x.mtime,
+        header: "Last Modification",
+        width: 200,
+        cell: (x) => rfc3339TimestampForDisplay(x.cell.getValue() as string),
+      },
+      {
+        id: "size",
+        accessorFn: (x) => sizeInfo(x),
+        header: "Size",
+        width: 100,
+        cell: (x) => {
+          const size = x.cell.getValue() as number;
+          const summ = x.row.original.summ;
+          // DirectoryEntry.summ has a different structure than ErrorSummary
+          // It only has a numeric errors count, not detailed error messages
+          if (summ?.errors && summ.errors > 0) {
+            return (
+              <span>
+                {sizeDisplayName(size, bytesStringBase2)}&nbsp;
+                <AlertTriangle className="h-4 w-4 inline text-red-500" />
+              </span>
+            );
+          }
+          return <span>{sizeDisplayName(size, bytesStringBase2)}</span>;
+        },
+      },
+      {
+        id: "files",
+        accessorFn: (x) => (x.summ ? x.summ.files : undefined),
+        header: "Files",
+        width: 100,
+      },
+      {
+        id: "dirs",
+        accessorFn: (x) => (x.summ ? x.summ.dirs : undefined),
+        header: "Directories",
+        width: 100,
+      },
+    ],
+    [bytesStringBase2, historyState],
+  );
 
   return <KopiaTable data={items} columns={columns} />;
 }

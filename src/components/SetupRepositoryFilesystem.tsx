@@ -38,7 +38,7 @@ export const SetupRepositoryFilesystem = forwardRef<SetupRepositoryFilesystemRef
         path: "",
         ...props.initial,
       },
-      ["path"]
+      ["path"],
     );
 
     const handlePathChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -52,7 +52,7 @@ export const SetupRepositoryFilesystem = forwardRef<SetupRepositoryFilesystemRef
     // Expose methods to parent via ref
     useImperativeHandle(ref, () => ({
       validate: formState.validate,
-      state: formState.state
+      state: formState.state,
     }));
 
     const isInvalid = formState.errors.path && formState.touched.path;
@@ -88,5 +88,5 @@ export const SetupRepositoryFilesystem = forwardRef<SetupRepositoryFilesystemRef
         {isInvalid && <p className="text-sm text-red-500">{formState.errors.path}</p>}
       </div>
     );
-  }
+  },
 );

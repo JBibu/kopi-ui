@@ -1,12 +1,15 @@
 // Form Component Types for Kopia UI
 
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 // Base form component interface
 export interface FormComponentRef {
   state: Record<string, unknown>;
   setState: (updates: Record<string, unknown>) => void;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown,
+  ) => void;
 }
 
 // Alias for backward compatibility
@@ -46,7 +49,7 @@ export type TimesOfDayProps = BaseFieldProps;
 
 // Repository provider configuration types
 export interface RepositoryProviderField {
-  component: 'RequiredField' | 'OptionalField' | 'RequiredBoolean' | 'RequiredNumberField' | 'OptionalNumberField';
+  component: "RequiredField" | "OptionalField" | "RequiredBoolean" | "RequiredNumberField" | "OptionalNumberField";
   label: string;
   name: string;
   props?: BaseFieldProps | NumberFieldProps;
@@ -80,7 +83,7 @@ export type FormFieldRenderer = (
   label: string,
   name: string,
   props?: Record<string, unknown>,
-  helpText?: string | null
+  helpText?: string | null,
 ) => ReactNode;
 
 // Repository setup types

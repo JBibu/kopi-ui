@@ -1,14 +1,14 @@
-import React, { ReactNode, ReactElement } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import { vi } from 'vitest';
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
-import { UIPreferenceProvider } from '../../src/contexts/UIPreferencesContext';
-import { ThemeProvider } from '../../src/components/theme-provider';
-import { ErrorProvider } from '../../src/contexts/ErrorContext';
-import { LoadingProvider } from '../../src/contexts/LoadingContext';
-import { AppContext } from '../../src/contexts/AppContext';
+import { ReactNode, ReactElement } from "react";
+import { render, RenderOptions } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import { vi } from "vitest";
+import axios from "axios";
+import MockAdapter from "axios-mock-adapter";
+import { UIPreferenceProvider } from "../../src/contexts/UIPreferencesContext";
+import { ThemeProvider } from "../../src/components/theme-provider";
+import { ErrorProvider } from "../../src/contexts/ErrorContext";
+import { LoadingProvider } from "../../src/contexts/LoadingContext";
+import { AppContext } from "../../src/contexts/AppContext";
 
 // Create axios mock instance
 export const axiosMock = new MockAdapter(axios);
@@ -16,29 +16,29 @@ export const axiosMock = new MockAdapter(axios);
 // Setup default mocks
 export const setupDefaultMocks = () => {
   // Mock UI preferences endpoint
-  axiosMock.onGet('/api/v1/ui-preferences').reply(200, {
+  axiosMock.onGet("/api/v1/ui-preferences").reply(200, {
     pageSize: 10,
     bytesStringBase2: false,
     defaultSnapshotViewAll: false,
     preferWebDav: false,
-    fontSize: 'text-base'
+    fontSize: "text-base",
   });
 
-  axiosMock.onPut('/api/v1/ui-preferences').reply(200, {});
+  axiosMock.onPut("/api/v1/ui-preferences").reply(200, {});
 
   // Mock default CSRF token
-  const meta = document.createElement('meta');
-  meta.name = 'kopia-csrf-token';
-  meta.content = 'test-csrf-token';
+  const meta = document.createElement("meta");
+  meta.name = "kopia-csrf-token";
+  meta.content = "test-csrf-token";
   document.head.appendChild(meta);
 
   // Mock scrollIntoView
   Element.prototype.scrollIntoView = vi.fn();
 
   // Mock window.matchMedia for theme detection
-  Object.defineProperty(window, 'matchMedia', {
+  Object.defineProperty(window, "matchMedia", {
     writable: true,
-    value: vi.fn().mockImplementation(query => ({
+    value: vi.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
       onchange: null,
@@ -67,7 +67,7 @@ export const cleanupMocks = () => {
 const defaultAppContextValue = {
   runningTaskCount: 0,
   isFetching: false,
-  repoDescription: 'Test Repository',
+  repoDescription: "Test Repository",
   isRepositoryConnected: true,
   fetchTaskSummary: vi.fn(),
   repositoryUpdated: vi.fn(),
@@ -76,31 +76,29 @@ const defaultAppContextValue = {
 };
 
 // Custom render function with all providers
-interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
   withRouter?: boolean;
   appContextValue?: Partial<typeof defaultAppContextValue>;
   initialUIPreferences?: any;
 }
 
-export const AllTheProviders: React.FC<{
+export function AllTheProviders({
+  children,
+  withRouter = true,
+  appContextValue = defaultAppContextValue,
+  initialUIPreferences,
+}: {
   children: ReactNode;
   withRouter?: boolean;
   appContextValue?: any;
   initialUIPreferences?: any;
-}> = ({
-  children,
-  withRouter = true,
-  appContextValue = defaultAppContextValue,
-  initialUIPreferences
-}) => {
+}) {
   const providers = (
     <ThemeProvider>
       <ErrorProvider>
         <LoadingProvider>
           <AppContext.Provider value={{ ...defaultAppContextValue, ...appContextValue }}>
-            <UIPreferenceProvider initalValue={initialUIPreferences}>
-              {children}
-            </UIPreferenceProvider>
+            <UIPreferenceProvider initalValue={initialUIPreferences}>{children}</UIPreferenceProvider>
           </AppContext.Provider>
         </LoadingProvider>
       </ErrorProvider>
@@ -112,16 +110,11 @@ export const AllTheProviders: React.FC<{
   }
 
   return providers;
-};
+}
 
 export const renderWithProviders = (
   ui: ReactElement,
-  {
-    withRouter = true,
-    appContextValue,
-    initialUIPreferences,
-    ...renderOptions
-  }: CustomRenderOptions = {}
+  { withRouter = true, appContextValue, initialUIPreferences, ...renderOptions }: CustomRenderOptions = {},
 ): ReturnType<typeof render> => {
   return render(ui, {
     wrapper: ({ children }) => (
@@ -133,10 +126,10 @@ export const renderWithProviders = (
         {children}
       </AllTheProviders>
     ),
-    ...renderOptions
+    ...renderOptions,
   });
 };
 
 // Export everything from @testing-library/react
-export * from '@testing-library/react';
+export * from "@testing-library/react";
 export { axiosMock };

@@ -85,7 +85,7 @@ export function SnapshotRestoreInternal({ params }: SnapshotRestoreInternalProps
   });
 
   const handleChange = (field: keyof SnapshotRestoreState, value: unknown): void => {
-    setState(prev => ({ ...prev, [field]: value }));
+    setState((prev) => ({ ...prev, [field]: value }));
   };
 
   const start = (e: React.FormEvent): void => {
@@ -132,7 +132,7 @@ export function SnapshotRestoreInternal({ params }: SnapshotRestoreInternalProps
     axios
       .post<{ id: string }>("/api/v1/restore", req)
       .then((result) => {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           restoreTask: result.data.id,
         }));

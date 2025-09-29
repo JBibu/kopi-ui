@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { RowSelectionState } from '@tanstack/react-table';
+import { useState, useMemo } from "react";
+import { RowSelectionState } from "@tanstack/react-table";
 
 interface UseTableSelectionOptions<T> {
   data: T[];
@@ -22,16 +22,16 @@ export function useTableSelection<T>(options: UseTableSelectionOptions<T>): UseT
 
   const selectedRows = useMemo(() => {
     const selectedIndices = Object.keys(rowSelection).map(Number);
-    return selectedIndices.map(index => data[index]).filter(Boolean);
+    return selectedIndices.map((index) => data[index]).filter(Boolean);
   }, [rowSelection, data]);
 
   const handleRowSelectionChange = (updater: unknown) => {
     setRowSelection(updater);
     if (onSelectionChange) {
-      const newSelection = typeof updater === 'function' ? updater(rowSelection) : updater;
+      const newSelection = typeof updater === "function" ? updater(rowSelection) : updater;
       // Calculate the new selected rows based on the new selection
       const newSelectedIndices = Object.keys(newSelection).map(Number);
-      const newSelectedRows = newSelectedIndices.map(index => data[index]).filter(Boolean);
+      const newSelectedRows = newSelectedIndices.map((index) => data[index]).filter(Boolean);
       onSelectionChange(newSelectedRows);
     }
   };

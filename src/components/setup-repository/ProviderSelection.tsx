@@ -1,15 +1,14 @@
-import React from 'react';
-import { Card, CardContent } from '../ui/card';
-import { ProviderInfo } from './types';
+import { Card, CardContent } from "../ui/card";
+import { ProviderInfo } from "./types";
 
 interface ProviderSelectionProps {
   providers: ProviderInfo[];
   onProviderSelect: (provider: string) => void;
 }
 
-export const ProviderSelection: React.FC<ProviderSelectionProps> = ({ providers, onProviderSelect }) => {
-  const storageProviders = providers.filter(x => !x.provider.startsWith("_"));
-  const connectionMethods = providers.filter(x => x.provider.startsWith("_"));
+export function ProviderSelection({ providers, onProviderSelect }: ProviderSelectionProps) {
+  const storageProviders = providers.filter((x) => !x.provider.startsWith("_"));
+  const connectionMethods = providers.filter((x) => x.provider.startsWith("_"));
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -53,4 +52,4 @@ export const ProviderSelection: React.FC<ProviderSelectionProps> = ({ providers,
       </div>
     </div>
   );
-};
+}

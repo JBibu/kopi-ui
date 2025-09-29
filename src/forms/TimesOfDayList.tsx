@@ -5,7 +5,10 @@ import { stateProperty } from ".";
 // Component with state interface for form handling
 interface ComponentWithState {
   state: Record<string, unknown>;
-  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>, valueGetter?: (target: unknown) => (TimeOfDay | string)[] | undefined) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+    valueGetter?: (target: unknown) => (TimeOfDay | string)[] | undefined,
+  ) => void;
 }
 
 interface TimesOfDayListProps {
@@ -24,7 +27,7 @@ interface ValueTarget {
 export function TimesOfDayList(
   component: ComponentWithState,
   name: string,
-  props: TimesOfDayListProps = {}
+  props: TimesOfDayListProps = {},
 ): React.JSX.Element {
   function parseTimeOfDay(v: string): TimeOfDay | string {
     const re = /(\d+):(\d+)/;

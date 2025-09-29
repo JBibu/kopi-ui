@@ -1,21 +1,18 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
-import { useNotificationEditor, NotificationProfile } from '../useNotificationEditor';
-import { ErrorProvider } from '../../contexts/ErrorContext';
-import { LoadingProvider } from '../../contexts/LoadingContext';
-import React from 'react';
+import { renderHook, act, waitFor } from "@testing-library/react";
+import { vi } from "vitest";
+import axios from "axios";
+import MockAdapter from "axios-mock-adapter";
+import { useNotificationEditor, NotificationProfile } from "../useNotificationEditor";
+import { ErrorProvider } from "../../contexts/ErrorContext";
+import { LoadingProvider } from "../../contexts/LoadingContext";
+import React from "react";
 
 const mock = new MockAdapter(axios);
 
 const wrapper = ({ children }: { children: React.ReactNode }) =>
-  React.createElement(
-    ErrorProvider,
-    {},
-    React.createElement(LoadingProvider, {}, children)
-  );
+  React.createElement(ErrorProvider, {}, React.createElement(LoadingProvider, {}, children));
 
-describe('useNotificationEditor', () => {
+describe("useNotificationEditor", () => {
   beforeEach(() => {
     mock.reset();
   });
@@ -26,19 +23,19 @@ describe('useNotificationEditor', () => {
 
   const mockProfiles: NotificationProfile[] = [
     {
-      profile: 'email-1',
-      method: { type: 'email', config: {} },
+      profile: "email-1",
+      method: { type: "email", config: {} },
       minSeverity: 0,
     },
     {
-      profile: 'webhook-1',
-      method: { type: 'webhook', config: {} },
+      profile: "webhook-1",
+      method: { type: "webhook", config: {} },
       minSeverity: 10,
     },
   ];
 
-  it('should fetch profiles on mount', async () => {
-    mock.onGet('/api/v1/notificationProfiles').reply(200, mockProfiles);
+  it("should fetch profiles on mount", async () => {
+    mock.onGet("/api/v1/notificationProfiles").reply(200, mockProfiles);
 
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
@@ -48,8 +45,8 @@ describe('useNotificationEditor', () => {
     });
   });
 
-  it('should handle fetch error gracefully', async () => {
-    mock.onGet('/api/v1/notificationProfiles').reply(500);
+  it("should handle fetch error gracefully", async () => {
+    mock.onGet("/api/v1/notificationProfiles").reply(500);
 
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
@@ -59,7 +56,7 @@ describe('useNotificationEditor', () => {
     });
   });
 
-  it('should set edited profile', () => {
+  it("should set edited profile", () => {
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
     act(() => {
@@ -70,8 +67,8 @@ describe('useNotificationEditor', () => {
     expect(result.current.isNewProfile).toBe(false);
   });
 
-  it('should duplicate profile with new name', async () => {
-    mock.onGet('/api/v1/notificationProfiles').reply(200, mockProfiles);
+  it("should duplicate profile with new name", async () => {
+    mock.onGet("/api/v1/notificationProfiles").reply(200, mockProfiles);
 
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
@@ -83,19 +80,19 @@ describe('useNotificationEditor', () => {
       result.current.duplicateProfile(mockProfiles[0]);
     });
 
-    expect(result.current.editedProfile?.profile).toBe('email-2');
+    expect(result.current.editedProfile?.profile).toBe("email-2");
     expect(result.current.isNewProfile).toBe(true);
   });
 
-  it('should save new profile successfully', async () => {
-    mock.onGet('/api/v1/notificationProfiles').reply(200, mockProfiles);
-    mock.onPost('/api/v1/notificationProfiles').reply(200);
+  it("should save new profile successfully", async () => {
+    mock.onGet("/api/v1/notificationProfiles").reply(200, mockProfiles);
+    mock.onPost("/api/v1/notificationProfiles").reply(200);
 
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
     const newProfile: NotificationProfile = {
-      profile: 'test-profile',
-      method: { type: 'email', config: {} },
+      profile: "test-profile",
+      method: { type: "email", config: {} },
       minSeverity: 0,
     };
 
@@ -107,58 +104,56 @@ describe('useNotificationEditor', () => {
     expect(result.current.isNewProfile).toBe(false);
   });
 
-  it('should handle save error with error message', async () => {
-    mock.onPost('/api/v1/notificationProfiles').reply(400, {
-      error: 'Invalid profile configuration',
+  it("should handle save error with error message", async () => {
+    mock.onPost("/api/v1/notificationProfiles").reply(400, {
+      error: "Invalid profile configuration",
     });
 
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
     const newProfile: NotificationProfile = {
-      profile: 'test-profile',
-      method: { type: 'email', config: {} },
+      profile: "test-profile",
+      method: { type: "email", config: {} },
       minSeverity: 0,
     };
 
-    await expect(result.current.saveProfile(newProfile)).rejects.toThrow(
-      'Invalid profile configuration'
-    );
+    await act(async () => {
+      await expect(result.current.saveProfile(newProfile)).rejects.toThrow("Invalid profile configuration");
+    });
   });
 
-  it('should delete profile with confirmation', async () => {
-    const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
-    mock.onGet('/api/v1/notificationProfiles').reply(200, mockProfiles);
-    mock.onDelete('/api/v1/notificationProfiles/email-1').reply(200);
+  it("should delete profile with confirmation", async () => {
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+    mock.onGet("/api/v1/notificationProfiles").reply(200, mockProfiles);
+    mock.onDelete("/api/v1/notificationProfiles/email-1").reply(200);
 
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
     await act(async () => {
-      await result.current.deleteProfile('email-1');
+      await result.current.deleteProfile("email-1");
     });
 
-    expect(confirmSpy).toHaveBeenCalledWith(
-      'Are you sure you want to delete the profile: email-1?'
-    );
+    expect(confirmSpy).toHaveBeenCalledWith("Are you sure you want to delete the profile: email-1?");
     confirmSpy.mockRestore();
   });
 
-  it('should not delete profile without confirmation', async () => {
-    const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(false);
-    mock.onDelete('/api/v1/notificationProfiles/email-1').reply(200);
+  it("should not delete profile without confirmation", async () => {
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+    mock.onDelete("/api/v1/notificationProfiles/email-1").reply(200);
 
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
     await act(async () => {
-      await result.current.deleteProfile('email-1');
+      await result.current.deleteProfile("email-1");
     });
 
     expect(mock.history.delete.length).toBe(0);
     confirmSpy.mockRestore();
   });
 
-  it('should send test notification', async () => {
-    const alertSpy = jest.spyOn(window, 'alert').mockImplementation();
-    mock.onPost('/api/v1/testNotificationProfile').reply(200);
+  it("should send test notification", async () => {
+    const alertSpy = jest.spyOn(window, "alert").mockImplementation();
+    mock.onPost("/api/v1/testNotificationProfile").reply(200);
 
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
@@ -166,14 +161,12 @@ describe('useNotificationEditor', () => {
       await result.current.sendTestNotification(mockProfiles[0]);
     });
 
-    expect(alertSpy).toHaveBeenCalledWith(
-      'Notification sent, please make sure you have received it.'
-    );
+    expect(alertSpy).toHaveBeenCalledWith("Notification sent, please make sure you have received it.");
     alertSpy.mockRestore();
   });
 
-  it('should generate unique profile name', async () => {
-    mock.onGet('/api/v1/notificationProfiles').reply(200, mockProfiles);
+  it("should generate unique profile name", async () => {
+    mock.onGet("/api/v1/notificationProfiles").reply(200, mockProfiles);
 
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
@@ -181,17 +174,17 @@ describe('useNotificationEditor', () => {
       expect(result.current.profiles).toEqual(mockProfiles);
     });
 
-    const newName = result.current.generateNewProfileName('email');
-    expect(newName).toBe('email-2');
+    const newName = result.current.generateNewProfileName("email");
+    expect(newName).toBe("email-2");
 
-    const webhookName = result.current.generateNewProfileName('webhook');
-    expect(webhookName).toBe('webhook-2');
+    const webhookName = result.current.generateNewProfileName("webhook");
+    expect(webhookName).toBe("webhook-2");
 
-    const pushoverName = result.current.generateNewProfileName('pushover');
-    expect(pushoverName).toBe('pushover-1');
+    const pushoverName = result.current.generateNewProfileName("pushover");
+    expect(pushoverName).toBe("pushover-1");
   });
 
-  it('should cancel edit', () => {
+  it("should cancel edit", () => {
     const { result } = renderHook(() => useNotificationEditor(), { wrapper });
 
     act(() => {

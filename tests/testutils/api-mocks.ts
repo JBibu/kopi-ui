@@ -1,8 +1,8 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 
-export function setupAPIMock() {
-  let axiosMock = new MockAdapter(axios);
+export function setupAPIMock(): MockAdapter {
+  const axiosMock = new MockAdapter(axios);
   axiosMock.reset();
 
   axiosMock.onGet("/api/v1/repo/algorithms").reply(200, {

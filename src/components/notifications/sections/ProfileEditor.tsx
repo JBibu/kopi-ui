@@ -1,17 +1,11 @@
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { NotificationProfile, SEVERITY_OPTIONS } from '../../../hooks/useNotificationEditor';
-import { Button } from '../../ui/button';
-import { Label } from '../../ui/label';
-import { Input } from '../../ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
+import { cloneElement } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { NotificationProfile, SEVERITY_OPTIONS } from "../../../hooks/useNotificationEditor";
+import { Button } from "../../ui/button";
+import { Label } from "../../ui/label";
+import { Input } from "../../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 
 interface ProfileEditorProps {
   profile: NotificationProfile;
@@ -28,14 +22,7 @@ interface ProfileFormData {
   methodConfig: Record<string, unknown>;
 }
 
-export const ProfileEditor: React.FC<ProfileEditorProps> = ({
-  profile,
-  isNew,
-  onSave,
-  onCancel,
-  onSendTest,
-  children,
-}) => {
+export function ProfileEditor({ profile, isNew, onSave, onCancel, onSendTest, children }: ProfileEditorProps) {
   const {
     control,
     handleSubmit,
@@ -62,7 +49,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
       };
       await onSave(updatedProfile);
     } catch (error) {
-      console.error('Failed to save profile:', error);
+      console.error("Failed to save profile:", error);
     }
   };
 
@@ -80,16 +67,14 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
   };
 
   const updateMethodConfig = (config: Record<string, unknown>) => {
-    setValue('methodConfig', config);
+    setValue("methodConfig", config);
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{isNew ? 'New Notification Profile' : 'Edit Notification Profile'}</CardTitle>
-        <CardDescription>
-          Configure how and when you receive notifications from Kopia
-        </CardDescription>
+        <CardTitle>{isNew ? "New Notification Profile" : "Edit Notification Profile"}</CardTitle>
+        <CardDescription>Configure how and when you receive notifications from Kopia</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -101,8 +86,8 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
               name="profileName"
               control={control}
               rules={{
-                required: 'Profile name is required',
-                minLength: { value: 1, message: 'Profile name cannot be empty' },
+                required: "Profile name is required",
+                minLength: { value: 1, message: "Profile name cannot be empty" },
               }}
               render={({ field }) => (
                 <Input
@@ -110,16 +95,12 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
                   id="profileName"
                   placeholder="Enter profile name"
                   readOnly={!isNew}
-                  className={errors.profileName ? 'border-destructive' : ''}
+                  className={errors.profileName ? "border-destructive" : ""}
                 />
               )}
             />
-            {errors.profileName && (
-              <p className="text-sm text-destructive">{errors.profileName.message}</p>
-            )}
-            <p className="text-sm text-muted-foreground">
-              Unique name for this notification profile
-            </p>
+            {errors.profileName && <p className="text-sm text-destructive">{errors.profileName.message}</p>}
+            <p className="text-sm text-muted-foreground">Unique name for this notification profile</p>
           </div>
 
           <div className="space-y-2">
@@ -129,12 +110,9 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             <Controller
               name="minSeverity"
               control={control}
-              rules={{ required: 'Minimum severity is required' }}
+              rules={{ required: "Minimum severity is required" }}
               render={({ field }) => (
-                <Select
-                  value={field.value?.toString()}
-                  onValueChange={(value) => field.onChange(parseInt(value, 10))}
-                >
+                <Select value={field.value?.toString()} onValueChange={(value) => field.onChange(parseInt(value, 10))}>
                   <SelectTrigger id="minSeverity" className="h-9">
                     <SelectValue placeholder="Select severity" />
                   </SelectTrigger>
@@ -148,18 +126,14 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
                 </Select>
               )}
             />
-            {errors.minSeverity && (
-              <p className="text-sm text-destructive">{errors.minSeverity.message}</p>
-            )}
-            <p className="text-sm text-muted-foreground">
-              Minimum severity required to use this notification profile
-            </p>
+            {errors.minSeverity && <p className="text-sm text-destructive">{errors.minSeverity.message}</p>}
+            <p className="text-sm text-muted-foreground">Minimum severity required to use this notification profile</p>
           </div>
 
           <div className="space-y-4">
             <Label>Notification Method Configuration</Label>
             <div className="p-4 border border-border rounded-lg bg-muted/20">
-              {React.cloneElement(children as React.ReactElement, {
+              {cloneElement(children as React.ReactElement, {
                 config: profile.method.config,
                 onConfigChange: updateMethodConfig,
               })}
@@ -168,7 +142,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
 
           <div className="flex items-center gap-2 pt-4 border-t">
             <Button type="submit" size="sm" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : isNew ? 'Create Profile' : 'Update Profile'}
+              {isSubmitting ? "Saving..." : isNew ? "Create Profile" : "Update Profile"}
             </Button>
             <Button
               type="button"
@@ -179,13 +153,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
             >
               Send Test Notification
             </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="destructive"
-              onClick={onCancel}
-              disabled={isSubmitting}
-            >
+            <Button type="button" size="sm" variant="destructive" onClick={onCancel} disabled={isSubmitting}>
               Cancel
             </Button>
           </div>
@@ -193,4 +161,4 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({
       </CardContent>
     </Card>
   );
-};
+}

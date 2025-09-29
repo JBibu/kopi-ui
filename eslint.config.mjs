@@ -20,6 +20,7 @@ export default defineConfig([
     settings: {
       react: {
         version: "detect",
+        runtime: "automatic",
       },
     },
   },
@@ -27,6 +28,7 @@ export default defineConfig([
     rules: {
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off",
     },
   },
   {
@@ -40,6 +42,7 @@ export default defineConfig([
     rules: {
       ...pluginReact.configs.flat.recommended.rules,
       "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off",
     },
   },
 ]);

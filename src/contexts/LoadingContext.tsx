@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 
 interface LoadingState {
   [key: string]: boolean;
@@ -12,21 +12,21 @@ interface LoadingContextValue {
 
 const LoadingContext = createContext<LoadingContextValue | undefined>(undefined);
 
-export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export function LoadingProvider({ children }: { children: ReactNode }) {
   const [loadingStates, setLoadingStates] = useState<LoadingState>({});
 
   const isLoading = useCallback(
     (key?: string): boolean => {
       if (!key) {
-        return Object.values(loadingStates).some(state => state);
+        return Object.values(loadingStates).some((state) => state);
       }
       return loadingStates[key] || false;
     },
-    [loadingStates]
+    [loadingStates],
   );
 
   const setLoading = useCallback((key: string, value: boolean): void => {
-    setLoadingStates(prev => ({
+    setLoadingStates((prev) => ({
       ...prev,
       [key]: value,
     }));
@@ -42,7 +42,7 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
         setLoading(key, false);
       }
     },
-    [setLoading]
+    [setLoading],
   );
 
   const value: LoadingContextValue = {
@@ -52,12 +52,12 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   return <LoadingContext.Provider value={value}>{children}</LoadingContext.Provider>;
-};
+}
 
 export const useLoading = (): LoadingContextValue => {
   const context = useContext(LoadingContext);
   if (!context) {
-    throw new Error('useLoading must be used within a LoadingProvider');
+    throw new Error("useLoading must be used within a LoadingProvider");
   }
   return context;
 };

@@ -1,6 +1,5 @@
-import React from 'react';
-import { Button } from '../ui/button';
-import { Loader2 } from 'lucide-react';
+import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 
 interface FormActionsProps {
   primaryLabel?: string;
@@ -14,16 +13,16 @@ interface FormActionsProps {
   isPrimaryDisabled?: boolean;
   isSecondaryDisabled?: boolean;
   isCancelDisabled?: boolean;
-  variant?: 'default' | 'destructive' | 'success';
-  align?: 'left' | 'center' | 'right' | 'between';
+  variant?: "default" | "destructive" | "success";
+  align?: "left" | "center" | "right" | "between";
   className?: string;
   children?: React.ReactNode;
 }
 
-export const FormActions: React.FC<FormActionsProps> = ({
-  primaryLabel = 'Submit',
+export function FormActions({
+  primaryLabel = "Submit",
   secondaryLabel,
-  cancelLabel = 'Cancel',
+  cancelLabel = "Cancel",
   onPrimary,
   onSecondary,
   onCancel,
@@ -32,42 +31,38 @@ export const FormActions: React.FC<FormActionsProps> = ({
   isPrimaryDisabled = false,
   isSecondaryDisabled = false,
   isCancelDisabled = false,
-  variant = 'default',
-  align = 'left',
-  className = '',
+  variant = "default",
+  align = "left",
+  className = "",
   children,
-}) => {
+}: FormActionsProps) {
   const alignmentClasses = {
-    left: 'justify-start',
-    center: 'justify-center',
-    right: 'justify-end',
-    between: 'justify-between',
+    left: "justify-start",
+    center: "justify-center",
+    right: "justify-end",
+    between: "justify-between",
   };
 
   const variantMap = {
-    default: 'default',
-    destructive: 'destructive',
-    success: 'default',
+    default: "default",
+    destructive: "destructive",
+    success: "default",
   } as const;
 
   return (
-    <div
-      className={`flex items-center gap-2 ${alignmentClasses[align]} ${className}`}
-    >
+    <div className={`flex items-center gap-2 ${alignmentClasses[align]} ${className}`}>
       {children || (
         <>
           <div className="flex gap-2">
             {onPrimary && (
               <Button
-                type={onPrimary ? 'button' : 'submit'}
+                type={onPrimary ? "button" : "submit"}
                 variant={variantMap[variant]}
                 onClick={onPrimary}
                 disabled={isPrimaryDisabled || isPrimaryLoading}
-                className={variant === 'success' ? 'bg-green-600 hover:bg-green-700' : ''}
+                className={variant === "success" ? "bg-green-600 hover:bg-green-700" : ""}
               >
-                {isPrimaryLoading && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
+                {isPrimaryLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {primaryLabel}
               </Button>
             )}
@@ -78,9 +73,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
                 onClick={onSecondary}
                 disabled={isSecondaryDisabled || isSecondaryLoading}
               >
-                {isSecondaryLoading && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
+                {isSecondaryLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {secondaryLabel}
               </Button>
             )}
@@ -91,7 +84,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
               variant="outline"
               onClick={onCancel}
               disabled={isCancelDisabled}
-              className={align === 'between' ? '' : 'ml-auto'}
+              className={align === "between" ? "" : "ml-auto"}
             >
               {cancelLabel}
             </Button>
@@ -100,4 +93,4 @@ export const FormActions: React.FC<FormActionsProps> = ({
       )}
     </div>
   );
-};
+}

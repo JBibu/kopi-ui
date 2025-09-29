@@ -12,10 +12,10 @@ vi.mock("../../src/utils/policyutil", () => ({
       return "Global Policy";
     }
     if (source.path) {
-      return `Directory: ${source.userName || ''}@${source.host || ''}:${source.path}`;
+      return `Directory: ${source.userName || ""}@${source.host || ""}:${source.path}`;
     }
     if (source.userName) {
-      return `User: ${source.userName}@${source.host || ''}`;
+      return `User: ${source.userName}@${source.host || ""}`;
     }
     if (source.host) {
       return `Host: ${source.host}`;
@@ -24,11 +24,11 @@ vi.mock("../../src/utils/policyutil", () => ({
   },
   policyEditorURL: (source: any) => {
     const params = new URLSearchParams();
-    if (source.userName) params.set('userName', source.userName);
-    if (source.host) params.set('host', source.host);
-    if (source.path) params.set('path', source.path);
+    if (source.userName) params.set("userName", source.userName);
+    if (source.host) params.set("host", source.host);
+    if (source.path) params.set("path", source.path);
     return `/policies/edit?${params.toString()}`;
-  }
+  },
 }));
 
 describe("PolicyEditorLink", () => {
@@ -46,7 +46,7 @@ describe("PolicyEditorLink", () => {
         userName: "john",
         host: "example.com",
         path: "/home/john",
-      }
+      },
     };
 
     renderWithProviders(<PolicyEditorLink {...source} />);
@@ -62,7 +62,7 @@ describe("PolicyEditorLink", () => {
 
   it("renders global policy link", () => {
     const source = {
-      source: {}
+      source: {},
     };
 
     renderWithProviders(<PolicyEditorLink {...source} />);
@@ -77,7 +77,7 @@ describe("PolicyEditorLink", () => {
       source: {
         userName: "alice",
         host: "server.com",
-      }
+      },
     };
 
     renderWithProviders(<PolicyEditorLink {...source} />);
@@ -92,7 +92,7 @@ describe("PolicyEditorLink", () => {
     const source = {
       source: {
         host: "backup-server",
-      }
+      },
     };
 
     renderWithProviders(<PolicyEditorLink {...source} />);
@@ -108,7 +108,7 @@ describe("PolicyEditorLink", () => {
         userName: "user@domain",
         host: "host-with-special-chars",
         path: "/path with spaces/special@chars",
-      }
+      },
     };
 
     renderWithProviders(<PolicyEditorLink {...source} />);

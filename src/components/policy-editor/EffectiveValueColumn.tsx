@@ -5,9 +5,5 @@ interface EffectiveValueColumnProps {
 }
 
 export function EffectiveValueColumn(props: EffectiveValueColumnProps): React.JSX.Element {
-  return (
-    <div className="flex-1 sm:w-1/3 policyEffectiveValue">
-      {props.children}
-    </div>
-  );
+  return <div className="flex-1 sm:w-1/3 policyEffectiveValue">{props.children}</div>;
 }

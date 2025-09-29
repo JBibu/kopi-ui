@@ -1,15 +1,14 @@
-import React from 'react';
-import { ResolvedPolicy, PolicyComponentWithState } from '../../../types/policy';
-import { File } from 'lucide-react';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion';
-import { RequiredBoolean } from '../../../forms/RequiredBoolean';
-import { StringList } from '../../../forms/StringList';
-import { LabelColumn } from '../LabelColumn';
-import { ValueColumn } from '../ValueColumn';
-import { WideValueColumn } from '../WideValueColumn';
-import { EffectiveValueColumn } from '../EffectiveValueColumn';
-import { EffectiveBooleanValue } from '../EffectiveBooleanValue';
-import { EffectiveListValue } from '../EffectiveListValue';
+import { ResolvedPolicy, PolicyComponentWithState } from "../../../types/policy";
+import { File } from "lucide-react";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "../../ui/accordion";
+import { RequiredBoolean } from "../../../forms/RequiredBoolean";
+import { StringList } from "../../../forms/StringList";
+import { LabelColumn } from "../LabelColumn";
+import { ValueColumn } from "../ValueColumn";
+import { WideValueColumn } from "../WideValueColumn";
+import { EffectiveValueColumn } from "../EffectiveValueColumn";
+import { EffectiveBooleanValue } from "../EffectiveBooleanValue";
+import { EffectiveListValue } from "../EffectiveListValue";
 
 interface FilesSectionProps {
   componentRef: React.RefObject<PolicyComponentWithState>;
@@ -17,11 +16,7 @@ interface FilesSectionProps {
   policyDefinitionPoint: (p: unknown) => React.ReactNode;
 }
 
-export const FilesSection: React.FC<FilesSectionProps> = ({
-  componentRef,
-  resolved,
-  policyDefinitionPoint,
-}) => {
+export function FilesSection({ componentRef, resolved, policyDefinitionPoint }: FilesSectionProps) {
   return (
     <AccordionItem value="files">
       <AccordionTrigger>
@@ -46,4 +41,4 @@ export const FilesSection: React.FC<FilesSectionProps> = ({
       </AccordionContent>
     </AccordionItem>
   );
-};
+}

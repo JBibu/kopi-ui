@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export interface FormValidationState {
   state: Record<string, unknown>;
@@ -6,7 +6,10 @@ export interface FormValidationState {
   errors: Record<string, string | null>;
   touched: Record<string, boolean>;
   handleChange: (name: string, value: unknown) => void;
-  handleChangeEvent: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => void;
+  handleChangeEvent: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown,
+  ) => void;
   setFieldTouched: (name: string) => void;
   validate: () => boolean;
   clearErrors: () => void;
@@ -18,7 +21,10 @@ export interface FormValidationState {
 export interface LegacyFormRef {
   state: Record<string, unknown>;
   setState: (updates: Record<string, unknown>) => void;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown,
+  ) => void;
 }
 
 /**
@@ -26,41 +32,49 @@ export interface LegacyFormRef {
  */
 export const useFormValidation = (
   initialState: Record<string, unknown> = {},
-  requiredFields: string[] = []
+  requiredFields: string[] = [],
 ): FormValidationState => {
   const [state, setState] = useState<Record<string, unknown>>(initialState);
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const handleChange = useCallback((name: string, value: unknown) => {
-    setState(prev => ({ ...prev, [name]: value }));
+  const handleChange = useCallback(
+    (name: string, value: unknown) => {
+      setState((prev) => ({ ...prev, [name]: value }));
 
-    // Clear error when field is modified
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: null }));
-    }
-  }, [errors]);
+      // Clear error when field is modified
+      if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: null }));
+      }
+    },
+    [errors],
+  );
 
-  const handleChangeEvent = useCallback((
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-    valueGetter: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown = (x) => x.value
-  ) => {
-    const fieldName = event.target.name;
-    const fieldValue = valueGetter(event.target);
-    handleChange(fieldName, fieldValue);
-  }, [handleChange]);
+  const handleChangeEvent = useCallback(
+    (
+      event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+      valueGetter: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown = (
+        x,
+      ) => x.value,
+    ) => {
+      const fieldName = event.target.name;
+      const fieldValue = valueGetter(event.target);
+      handleChange(fieldName, fieldValue);
+    },
+    [handleChange],
+  );
 
   const setFieldTouched = useCallback((name: string) => {
-    setTouched(prev => ({ ...prev, [name]: true }));
+    setTouched((prev) => ({ ...prev, [name]: true }));
   }, []);
 
   const validate = useCallback(() => {
     const newErrors: Record<string, string> = {};
     let isValid = true;
 
-    requiredFields.forEach(field => {
-      if (!state[field] || state[field] === '') {
-        newErrors[field] = 'This field is required';
+    requiredFields.forEach((field) => {
+      if (!state[field] || state[field] === "") {
+        newErrors[field] = "This field is required";
         isValid = false;
       }
     });
@@ -69,7 +83,7 @@ export const useFormValidation = (
 
     // Mark all fields as touched when validating
     const allTouched: Record<string, boolean> = {};
-    Object.keys(state).forEach(key => {
+    Object.keys(state).forEach((key) => {
       allTouched[key] = true;
     });
     setTouched(allTouched);
@@ -89,7 +103,7 @@ export const useFormValidation = (
   }, [initialState]);
 
   const updateState = useCallback((updates: Record<string, unknown>) => {
-    setState(prev => ({ ...prev, ...updates }));
+    setState((prev) => ({ ...prev, ...updates }));
   }, []);
 
   return {
@@ -104,7 +118,7 @@ export const useFormValidation = (
     clearErrors,
     resetForm,
     isValid: Object.keys(errors).length === 0,
-    hasErrors: Object.keys(errors).length > 0
+    hasErrors: Object.keys(errors).length > 0,
   };
 };
 
@@ -116,6 +130,6 @@ export const createLegacyFormRef = (formState: FormValidationState): LegacyFormR
   return {
     state: formState.state,
     setState: formState.setState,
-    handleChange: formState.handleChangeEvent
+    handleChange: formState.handleChangeEvent,
   };
 };

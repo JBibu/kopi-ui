@@ -24,7 +24,7 @@ interface WebHookNotificationMethodRef {
 }
 
 // Component interface for form compatibility
-type ComponentWithState = Pick<NotificationComponentWithState<WebHookNotificationState>, 'state' | 'setState'>;
+type ComponentWithState = Pick<NotificationComponentWithState<WebHookNotificationState>, "state" | "setState">;
 
 export const WebHookNotificationMethod = forwardRef<WebHookNotificationMethodRef, WebHookNotificationMethodProps>(
   function WebHookNotificationMethod(props, ref) {
@@ -55,16 +55,16 @@ export const WebHookNotificationMethod = forwardRef<WebHookNotificationMethodRef
 
     const handleChange = (event: { target: { name: string; value: string } }): void => {
       const { name, value } = event.target;
-      setState(prevState => ({
+      setState((prevState) => ({
         ...prevState,
-        [name]: value
+        [name]: value,
       }));
     };
 
     // Expose methods to parent via ref
     useImperativeHandle(ref, () => ({
       validate,
-      state
+      state,
     }));
 
     return (
@@ -75,9 +75,11 @@ export const WebHookNotificationMethod = forwardRef<WebHookNotificationMethodRef
             <Label className="required">HTTP Method</Label>
             <Select
               value={stateProperty(componentRef.current, "method")}
-              onValueChange={(value) => handleChange({
-                target: { name: "method", value: value }
-              })}
+              onValueChange={(value) =>
+                handleChange({
+                  target: { name: "method", value: value },
+                })
+              }
             >
               <SelectTrigger className="h-9">
                 <SelectValue placeholder="Select method" />
@@ -101,5 +103,5 @@ export const WebHookNotificationMethod = forwardRef<WebHookNotificationMethodRef
         </div>
       </>
     );
-  }
+  },
 );

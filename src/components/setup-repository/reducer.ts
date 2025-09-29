@@ -1,4 +1,4 @@
-import { RepositoryState, RepositoryAction } from './types';
+import { RepositoryState, RepositoryAction } from "./types";
 
 export const initialState: RepositoryState = {
   confirmCreate: false,
@@ -30,33 +30,33 @@ export const initialState: RepositoryState = {
 
 export function repositoryReducer(state: RepositoryState, action: RepositoryAction): RepositoryState {
   switch (action.type) {
-    case 'SET_LOADING':
+    case "SET_LOADING":
       return { ...state, isLoading: action.payload };
 
-    case 'SET_PROVIDER':
+    case "SET_PROVIDER":
       return {
         ...state,
         provider: action.payload,
         providerSettings: {},
-        connectError: null
+        connectError: null,
       };
 
-    case 'SET_PROVIDER_SETTINGS':
+    case "SET_PROVIDER_SETTINGS":
       return { ...state, providerSettings: action.payload };
 
-    case 'SET_STORAGE_VERIFIED':
+    case "SET_STORAGE_VERIFIED":
       return { ...state, storageVerified: action.payload };
 
-    case 'SET_CONFIRM_CREATE':
+    case "SET_CONFIRM_CREATE":
       return { ...state, confirmCreate: action.payload };
 
-    case 'SET_CONNECT_ERROR':
+    case "SET_CONNECT_ERROR":
       return { ...state, connectError: action.payload };
 
-    case 'SET_ADVANCED':
+    case "SET_ADVANCED":
       return { ...state, showAdvanced: action.payload };
 
-    case 'SET_ALGORITHMS':
+    case "SET_ALGORITHMS":
       return {
         ...state,
         algorithms: action.payload,
@@ -70,20 +70,20 @@ export function repositoryReducer(state: RepositoryState, action: RepositoryActi
         splitter: action.payload.defaultSplitter || "",
       };
 
-    case 'SET_USER_INFO':
+    case "SET_USER_INFO":
       return {
         ...state,
         username: action.payload.username,
         hostname: action.payload.hostname,
       };
 
-    case 'UPDATE_FIELD':
+    case "UPDATE_FIELD":
       return {
         ...state,
         [action.payload.field]: action.payload.value,
       };
 
-    case 'RESET_PROVIDER':
+    case "RESET_PROVIDER":
       return {
         ...state,
         provider: null,
@@ -91,7 +91,7 @@ export function repositoryReducer(state: RepositoryState, action: RepositoryActi
         connectError: null,
       };
 
-    case 'RESET_STORAGE':
+    case "RESET_STORAGE":
       return {
         ...state,
         providerSettings: {},

@@ -5,15 +5,21 @@ import { ResolvedPolicy } from "../../types/policy";
 // Helper function to safely access nested properties
 const getNestedProperty = (obj: unknown, path: string): unknown => {
   if (!obj || !path) return undefined;
-  return path.split('.').reduce((current: unknown, key: string) =>
-    current && typeof current === 'object' && current !== null ?
-    (current as Record<string, unknown>)[key] : undefined, obj);
+  return path
+    .split(".")
+    .reduce(
+      (current: unknown, key: string) =>
+        current && typeof current === "object" && current !== null
+          ? (current as Record<string, unknown>)[key]
+          : undefined,
+      obj,
+    );
 };
 
 export function EffectiveValue(
   policyField: string,
   resolved?: ResolvedPolicy | null,
-  policyDefinitionPoint?: (value: unknown) => string
+  policyDefinitionPoint?: (value: unknown) => string,
 ): React.JSX.Element {
   const effectiveValue = getNestedProperty(resolved?.effective, policyField);
   const definitionValue = getNestedProperty(resolved?.definition, policyField);

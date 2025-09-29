@@ -1,22 +1,16 @@
-import React, { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Input } from '../../ui/input';
-import { Label } from '../../ui/label';
-import { Textarea } from '../../ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../ui/select';
+import { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
+import { Textarea } from "../../ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 
 interface WebhookConfig {
   endpoint: string;
-  method: 'GET' | 'POST' | 'PUT';
+  method: "GET" | "POST" | "PUT";
   headers?: string;
   payload?: string;
-  format: 'json' | 'form';
+  format: "json" | "form";
 }
 
 interface WebhookMethodFormProps {
@@ -24,21 +18,18 @@ interface WebhookMethodFormProps {
   onConfigChange: (config: WebhookConfig) => void;
 }
 
-export const WebhookMethodForm: React.FC<WebhookMethodFormProps> = ({
-  config,
-  onConfigChange,
-}) => {
+export function WebhookMethodForm({ config, onConfigChange }: WebhookMethodFormProps) {
   const {
     control,
     watch,
     formState: { errors },
   } = useForm<WebhookConfig>({
     defaultValues: {
-      endpoint: config.endpoint || '',
-      method: config.method || 'POST',
-      headers: config.headers || '',
-      payload: config.payload || '',
-      format: config.format || 'json',
+      endpoint: config.endpoint || "",
+      method: config.method || "POST",
+      headers: config.headers || "",
+      payload: config.payload || "",
+      format: config.format || "json",
     },
   });
 
@@ -58,10 +49,10 @@ export const WebhookMethodForm: React.FC<WebhookMethodFormProps> = ({
           name="endpoint"
           control={control}
           rules={{
-            required: 'Webhook URL is required',
+            required: "Webhook URL is required",
             pattern: {
               value: /^https?:\/\/.+/,
-              message: 'Please enter a valid URL starting with http:// or https://',
+              message: "Please enter a valid URL starting with http:// or https://",
             },
           }}
           render={({ field }) => (
@@ -70,20 +61,16 @@ export const WebhookMethodForm: React.FC<WebhookMethodFormProps> = ({
               id="endpoint"
               type="url"
               placeholder="https://example.com/webhook"
-              className={errors.endpoint ? 'border-destructive' : ''}
+              className={errors.endpoint ? "border-destructive" : ""}
             />
           )}
         />
-        {errors.endpoint && (
-          <p className="text-sm text-destructive">{errors.endpoint.message}</p>
-        )}
+        {errors.endpoint && <p className="text-sm text-destructive">{errors.endpoint.message}</p>}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="method">
-            HTTP Method
-          </Label>
+          <Label htmlFor="method">HTTP Method</Label>
           <Controller
             name="method"
             control={control}
@@ -103,9 +90,7 @@ export const WebhookMethodForm: React.FC<WebhookMethodFormProps> = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="format">
-            Payload Format
-          </Label>
+          <Label htmlFor="format">Payload Format</Label>
           <Controller
             name="format"
             control={control}
@@ -125,9 +110,7 @@ export const WebhookMethodForm: React.FC<WebhookMethodFormProps> = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="headers">
-          Custom Headers (Optional)
-        </Label>
+        <Label htmlFor="headers">Custom Headers (Optional)</Label>
         <Controller
           name="headers"
           control={control}
@@ -141,15 +124,11 @@ export const WebhookMethodForm: React.FC<WebhookMethodFormProps> = ({
             />
           )}
         />
-        <p className="text-sm text-muted-foreground">
-          JSON object with custom headers to include in the request
-        </p>
+        <p className="text-sm text-muted-foreground">JSON object with custom headers to include in the request</p>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="payload">
-          Custom Payload Template (Optional)
-        </Label>
+        <Label htmlFor="payload">Custom Payload Template (Optional)</Label>
         <Controller
           name="payload"
           control={control}
@@ -164,10 +143,10 @@ export const WebhookMethodForm: React.FC<WebhookMethodFormProps> = ({
           )}
         />
         <p className="text-sm text-muted-foreground">
-          Custom payload template. Use {"{{variable}}"} for dynamic values.
-          Available variables: message, severity, profile, timestamp
+          Custom payload template. Use {"{{variable}}"} for dynamic values. Available variables: message, severity,
+          profile, timestamp
         </p>
       </div>
     </div>
   );
-};
+}

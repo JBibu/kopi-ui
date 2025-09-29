@@ -1,22 +1,11 @@
-import React from 'react';
-import { Sun, Moon, Monitor } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select';
-import { Button } from './ui/button';
-import { useTheme } from './theme-provider';
+import React from "react";
+import { Sun, Moon, Monitor } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Button } from "./ui/button";
+import { useTheme } from "./theme-provider";
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = "light" | "dark" | "system";
 
 interface ThemeIconProps {
   theme: string;
@@ -27,34 +16,34 @@ const ThemeIcon = ({ theme, size = 16 }: ThemeIconProps): React.JSX.Element => {
   const iconProps = { size };
 
   switch (theme) {
-    case 'light':
+    case "light":
       return <Sun {...iconProps} />;
-    case 'dark':
+    case "dark":
       return <Moon {...iconProps} />;
-    case 'system':
+    case "system":
       return <Monitor {...iconProps} />;
     default:
       return <Sun {...iconProps} />;
   }
 };
 
-type ThemeSelectorVariant = 'dropdown' | 'radio' | 'select';
+type ThemeSelectorVariant = "dropdown" | "radio" | "select";
 
 interface ThemeSelectorProps {
   variant?: ThemeSelectorVariant;
 }
 
-export const ThemeSelector = ({ variant = 'dropdown' }: ThemeSelectorProps): React.JSX.Element => {
+export const ThemeSelector = ({ variant = "dropdown" }: ThemeSelectorProps): React.JSX.Element => {
   const { theme, setTheme } = useTheme();
 
   const themes: Array<{ value: Theme; label: string }> = [
-    { value: 'light', label: 'Light' },
-    { value: 'dark', label: 'Dark' },
-    { value: 'system', label: 'System' }
+    { value: "light", label: "Light" },
+    { value: "dark", label: "Dark" },
+    { value: "system", label: "System" },
   ];
 
   // Clean dropdown for navbar - icon only button with dropdown
-  if (variant === 'dropdown') {
+  if (variant === "dropdown") {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -81,13 +70,13 @@ export const ThemeSelector = ({ variant = 'dropdown' }: ThemeSelectorProps): Rea
   }
 
   // Radio button group for preferences page
-  if (variant === 'radio') {
+  if (variant === "radio") {
     return (
       <div className="grid grid-cols-3 gap-4">
         {themes.map((themeOption) => (
           <Button
             key={themeOption.value}
-            variant={theme === themeOption.value ? 'default' : 'outline'}
+            variant={theme === themeOption.value ? "default" : "outline"}
             size="lg"
             onClick={() => setTheme(themeOption.value)}
             className="flex flex-col items-center gap-2 h-auto py-4"
@@ -107,7 +96,7 @@ export const ThemeSelector = ({ variant = 'dropdown' }: ThemeSelectorProps): Rea
         <SelectValue>
           <div className="flex items-center gap-2">
             <ThemeIcon theme={theme} />
-            {themes.find(t => t.value === theme)?.label}
+            {themes.find((t) => t.value === theme)?.label}
           </div>
         </SelectValue>
       </SelectTrigger>

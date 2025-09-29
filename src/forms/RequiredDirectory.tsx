@@ -40,7 +40,7 @@ export function RequiredDirectory(
   component: ComponentWithState,
   label: string,
   name: string,
-  props: RequiredDirectoryProps = {}
+  props: RequiredDirectoryProps = {},
 ): React.JSX.Element {
   /**
    * Saves the selected path as a deepstate variable within the component

@@ -25,7 +25,7 @@ export function RequiredBoolean(
   component: ComponentWithState,
   label: string,
   name: string,
-  helpText?: string
+  helpText?: string,
 ): React.JSX.Element {
   return (
     <div className="space-y-2">
@@ -38,8 +38,8 @@ export function RequiredBoolean(
             const event = {
               target: {
                 name: name,
-                checked: checked
-              }
+                checked: checked,
+              },
             };
             component.handleChange(event, checkedToBool);
           }}

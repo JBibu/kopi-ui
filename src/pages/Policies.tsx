@@ -3,7 +3,13 @@ import axios, { AxiosError } from "axios";
 import React, { useState, useEffect } from "react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 import { Link, useNavigate, NavigateFunction } from "react-router-dom";
 import { OptionalDirectory } from "../forms/OptionalDirectory";
 import { KopiaTable } from "../components/KopiaTable";
@@ -52,14 +58,14 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target;
-    setState(prev => ({ ...prev, [name]: value }));
+    setState((prev) => ({ ...prev, [name]: value }));
   };
 
   const fetchPolicies = (): void => {
     axios
       .get<{ policies: Policy[] }>("/api/v1/policies")
       .then((result) => {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           policies: result.data.policies,
           isLoading: false,
@@ -67,7 +73,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
       })
       .catch((error: AxiosError) => {
         redirect(error);
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           error: error as Error,
           isLoading: false,
@@ -79,7 +85,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
     axios
       .get<SourcesResponse>("/api/v1/sources")
       .then((result) => {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           localSourceName: result.data.localUsername + "@" + result.data.localHost,
           localUsername: result.data.localUsername,
@@ -91,7 +97,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
       })
       .catch((error: AxiosError) => {
         redirect(error);
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           error: error as Error,
           isLoading: false,
@@ -100,7 +106,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
   };
 
   useEffect(() => {
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState((prev) => ({ ...prev, isLoading: true }));
     fetchPolicies();
     fetchSourcesWithoutSpinner();
   }, []);
@@ -114,7 +120,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
         fetchSourcesWithoutSpinner();
       })
       .catch((error: AxiosError) => {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           error: error as Error,
           isLoading: false,
@@ -149,7 +155,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
   };
 
   const selectOwner = (h: string): void => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       selectedOwner: h,
     }));
@@ -167,7 +173,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
     }
 
     function isEmpty(obj: unknown): boolean {
-      if (obj && typeof obj === 'object') {
+      if (obj && typeof obj === "object") {
         for (const key in obj as Record<string, unknown>) {
           if (Object.prototype.hasOwnProperty.call(obj, key)) {
             return isEmptyObject((obj as Record<string, unknown>)[key]);
@@ -177,10 +183,10 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
       return true;
     }
 
-    if (policies && typeof policies === 'object') {
+    if (policies && typeof policies === "object") {
       const policyRecord = policies as Record<string, unknown>;
       for (const pol in policyRecord) {
-        if (pol !== 'id' && pol !== 'target' && !isEmpty(policyRecord[pol])) {
+        if (pol !== "id" && pol !== "target" && !isEmpty(policyRecord[pol])) {
           bits.push(
             <Badge variant="secondary" key={pol}>
               {pol}
@@ -238,9 +244,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
       break;
 
     case applicablePolicies:
-      policies = allPoliciesList.filter(
-        (x) => isLocalUserPolicy(x) || isLocalHostPolicy(x) || isGlobalPolicy(x),
-      );
+      policies = allPoliciesList.filter((x) => isLocalUserPolicy(x) || isLocalHostPolicy(x) || isGlobalPolicy(x));
       break;
 
     case perUserPolicies:
@@ -287,25 +291,15 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
     {
       header: "Policy Settings",
       width: 300,
-      cell: ({ row }) => (
-        <div className="flex flex-wrap gap-1">
-          {policySummary(row.original)}
-        </div>
-      ),
+      cell: ({ row }) => <div className="flex flex-wrap gap-1">{policySummary(row.original)}</div>,
     },
     {
       id: "edit",
       header: "Actions",
       width: 80,
       cell: ({ row }) => (
-        <Button
-          data-testid="edit-policy"
-          asChild
-          size="sm"
-        >
-          <Link to={policyEditorURL(row.original.target)}>
-            Edit
-          </Link>
+        <Button data-testid="edit-policy" asChild size="sm">
+          <Link to={policyEditorURL(row.original.target)}>Edit</Link>
         </Button>
       ),
     },
@@ -361,12 +355,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX
                     })}
                   </div>
                   <div>
-                    <Button
-                      disabled={!state.policyPath}
-                      size="sm"
-                      type="submit"
-                      onClick={editPolicyForPath}
-                    >
+                    <Button disabled={!state.policyPath} size="sm" type="submit" onClick={editPolicyForPath}>
                       Set Policy
                     </Button>
                   </div>

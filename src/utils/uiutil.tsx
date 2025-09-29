@@ -13,7 +13,7 @@ interface ErrorSummary {
 export function sizeWithFailures(
   size: number | undefined,
   summ: ErrorSummary | undefined,
-  bytesStringBase2: boolean
+  bytesStringBase2: boolean,
 ): React.ReactElement | string {
   if (size === undefined) {
     return "";
@@ -64,11 +64,7 @@ type ShowAlertFunction = (title: string, message: string, variant: string) => vo
 
 // This function is used to display error alerts
 // For the modern alert system, use the AlertContext instead
-export function errorAlert(
-  err: ErrorResponse | Error | unknown,
-  prefix?: string,
-  showAlert?: ShowAlertFunction
-): void {
+export function errorAlert(err: ErrorResponse | Error | unknown, prefix?: string, showAlert?: ShowAlertFunction): void {
   if (!prefix) {
     prefix = "Error";
   }
@@ -83,9 +79,9 @@ export function errorAlert(
     message = JSON.stringify(err);
   }
 
-  if (showAlert && typeof showAlert === 'function') {
+  if (showAlert && typeof showAlert === "function") {
     // Use the modern alert dialog
-    showAlert(prefix, message, 'error');
+    showAlert(prefix, message, "error");
   } else {
     // Fallback to native alert for compatibility
     alert(prefix + ": " + message);

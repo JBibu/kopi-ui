@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Navbar, NavbarBrand, NavbarLink } from './ui/navbar';
-import { ThemeSelector } from './ThemeSelector';
-import { AppContext } from '../contexts/AppContext';
+import React, { useContext } from "react";
+import { NavLink } from "react-router-dom";
+import { Navbar, NavbarBrand, NavbarLink } from "./ui/navbar";
+import { ThemeSelector } from "./ThemeSelector";
+import { AppContext } from "../contexts/AppContext";
 
 export function AppNavbar(): React.JSX.Element {
   const { runningTaskCount, repoDescription, isRepositoryConnected } = useContext(AppContext);
@@ -42,7 +42,7 @@ export function AppNavbar(): React.JSX.Element {
           disabled={!isRepositoryConnected}
           title={!isRepositoryConnected ? "Repository is not connected" : ""}
           className="font-bold"
-          aria-label={`Tasks page${runningTaskCount > 0 ? ` (${runningTaskCount} running)` : ''}`}
+          aria-label={`Tasks page${runningTaskCount > 0 ? ` (${runningTaskCount} running)` : ""}`}
         >
           Tasks
           {runningTaskCount > 0 && (
@@ -70,13 +70,8 @@ export function AppNavbar(): React.JSX.Element {
             className="inline-flex items-center gap-2 px-2 py-1 rounded-md bg-background/50 border border-border/50 text-inherit no-underline hover:border-primary/50 hover:bg-accent/50"
             aria-label={`Repository status: ${repoDescription}`}
           >
-            <div
-              className="w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0"
-              aria-hidden="true"
-            ></div>
-            <span className="text-xs font-bold text-foreground">
-              {repoDescription}
-            </span>
+            <div className="w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0" aria-hidden="true"></div>
+            <span className="text-xs font-bold text-foreground">{repoDescription}</span>
           </NavLink>
         )}
         <ThemeSelector />

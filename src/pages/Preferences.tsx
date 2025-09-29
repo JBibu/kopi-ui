@@ -12,8 +12,7 @@ import { Palette, Type, Binary, Info } from "lucide-react";
  * Preferences page with appearance and notification settings
  */
 export function Preferences(): React.JSX.Element {
-  const { bytesStringBase2, fontSize, setByteStringBase, setFontSize } =
-    useContext(UIPreferencesContext);
+  const { bytesStringBase2, fontSize, setByteStringBase, setFontSize } = useContext(UIPreferencesContext);
 
   return (
     <div className="container mx-auto p-6 max-w-6xl">
@@ -85,7 +84,6 @@ export function Preferences(): React.JSX.Element {
               </div>
             </CardContent>
           </Card>
-
         </TabsContent>
 
         <TabsContent value="notifications" className="mt-6">

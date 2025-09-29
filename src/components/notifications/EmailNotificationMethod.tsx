@@ -32,11 +32,17 @@ export const EmailNotificationMethod = forwardRef<EmailNotificationMethodRef, Em
     });
 
     // Create handleChange function that works with the form system
-    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: unknown } }, valueGetter = (x: { value: unknown }) => x.value) => {
-      const fieldName = event.target.name;
-      const fieldValue = valueGetter(event.target);
-      setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));
-    }, []);
+    const handleChange = useCallback(
+      (
+        event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: unknown } },
+        valueGetter = (x: { value: unknown }) => x.value,
+      ) => {
+        const fieldName = event.target.name;
+        const fieldValue = valueGetter(event.target);
+        setState((prevState) => ({ ...prevState, [fieldName]: fieldValue }));
+      },
+      [],
+    );
 
     // Create a component-like object for forms compatibility
     const componentRef = useRef<ComponentWithState>({
@@ -60,7 +66,7 @@ export const EmailNotificationMethod = forwardRef<EmailNotificationMethodRef, Em
     // Expose methods to parent via ref
     useImperativeHandle(ref, () => ({
       validate,
-      state
+      state,
     }));
 
     return (
@@ -98,5 +104,5 @@ export const EmailNotificationMethod = forwardRef<EmailNotificationMethodRef, Em
         </div>
       </>
     );
-  }
+  },
 );

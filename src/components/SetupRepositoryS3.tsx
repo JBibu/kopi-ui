@@ -53,7 +53,7 @@ export const SetupRepositoryS3 = forwardRef<SetupRepositoryS3Ref, SetupRepositor
         doNotVerifyTLS: false,
         ...props.initial,
       },
-      ["bucket", "endpoint", "accessKeyID", "secretAccessKey"]
+      ["bucket", "endpoint", "accessKeyID", "secretAccessKey"],
     );
 
     // Create legacy compatibility object for existing form components
@@ -62,7 +62,7 @@ export const SetupRepositoryS3 = forwardRef<SetupRepositoryS3Ref, SetupRepositor
     // Expose methods to parent via ref
     useImperativeHandle(ref, () => ({
       validate: formState.validate,
-      state: formState.state
+      state: formState.state,
     }));
 
     return (
@@ -103,5 +103,5 @@ export const SetupRepositoryS3 = forwardRef<SetupRepositoryS3Ref, SetupRepositor
         </div>
       </>
     );
-  }
+  },
 );

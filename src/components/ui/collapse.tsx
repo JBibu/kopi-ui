@@ -11,10 +11,7 @@ interface CollapseProps {
 export function Collapse({ in: isOpen, children, ...props }: CollapseProps) {
   return (
     <Collapsible open={isOpen} {...props}>
-      <CollapsibleContent>
-        {children}
-      </CollapsibleContent>
+      <CollapsibleContent>{children}</CollapsibleContent>
     </Collapsible>
   );
 }
-

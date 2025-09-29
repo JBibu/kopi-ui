@@ -1,21 +1,21 @@
-import React, { MutableRefObject } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Spinner } from '../ui/spinner';
-import { ProviderInfo } from './types';
+import { RefObject } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
+import { ProviderInfo } from "./types";
 
 interface ProviderConfigurationProps {
   provider: string;
   providerSettings: Record<string, unknown>;
   providers: ProviderInfo[];
-  optionsEditorRef: MutableRefObject<unknown>;
+  optionsEditorRef: RefObject<unknown>;
   isLoading: boolean;
   connectError: string | null;
   onVerifyStorage: (e: React.FormEvent) => void;
   onBack: () => void;
 }
 
-export const ProviderConfiguration: React.FC<ProviderConfigurationProps> = ({
+export function ProviderConfiguration({
   provider,
   providerSettings,
   providers,
@@ -24,8 +24,8 @@ export const ProviderConfiguration: React.FC<ProviderConfigurationProps> = ({
   connectError,
   onVerifyStorage,
   onBack,
-}) => {
-  const SelectedProvider = providers.find(p => p.provider === provider)?.component || null;
+}: ProviderConfigurationProps) {
+  const SelectedProvider = providers.find((p) => p.provider === provider)?.component || null;
 
   let title = "Storage Configuration";
   if (provider === "_token") {
@@ -42,9 +42,7 @@ export const ProviderConfiguration: React.FC<ProviderConfigurationProps> = ({
         </CardHeader>
         <CardContent>
           <form onSubmit={onVerifyStorage} className="space-y-6">
-            {SelectedProvider && (
-              <SelectedProvider ref={optionsEditorRef} initial={providerSettings} />
-            )}
+            {SelectedProvider && <SelectedProvider ref={optionsEditorRef} initial={providerSettings} />}
 
             {connectError && (
               <div className="space-y-4">
@@ -53,12 +51,7 @@ export const ProviderConfiguration: React.FC<ProviderConfigurationProps> = ({
             )}
 
             <div className="flex gap-4 pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                data-testid="back-button"
-                onClick={onBack}
-              >
+              <Button type="button" variant="outline" data-testid="back-button" onClick={onBack}>
                 Back
               </Button>
               <Button type="submit" data-testid="submit-button">
@@ -71,4 +64,4 @@ export const ProviderConfiguration: React.FC<ProviderConfigurationProps> = ({
       </Card>
     </div>
   );
-};
+}

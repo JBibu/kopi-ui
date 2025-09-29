@@ -9,18 +9,17 @@ interface ComponentWithState {
   handleChange: (event: { target: { name: string; value: string } }) => void;
 }
 
-export function NotificationFormatSelector(
-  component: ComponentWithState,
-  name: string
-): React.JSX.Element {
+export function NotificationFormatSelector(component: ComponentWithState, name: string): React.JSX.Element {
   return (
     <div className="space-y-2">
       <Label className="required">Notification Format</Label>
       <Select
         value={stateProperty(component, name)}
-        onValueChange={(value) => component.handleChange({
-          target: { name: name, value: value }
-        })}
+        onValueChange={(value) =>
+          component.handleChange({
+            target: { name: name, value: value },
+          })
+        }
       >
         <SelectTrigger className="h-9">
           <SelectValue placeholder="Select format" />

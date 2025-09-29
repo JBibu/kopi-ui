@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { Algorithms } from '../types/api';
+import axios from "axios";
+import { Algorithms } from "../types/api";
 
 export interface StorageConfig {
   type: string;
@@ -52,29 +52,29 @@ export interface UserInfo {
 
 class RepositoryService {
   async getAlgorithms(): Promise<Algorithms> {
-    const response = await axios.get<Algorithms>('/api/v1/repo/algorithms');
+    const response = await axios.get<Algorithms>("/api/v1/repo/algorithms");
     return response.data;
   }
 
   async getCurrentUser(): Promise<UserInfo> {
-    const response = await axios.get<UserInfo>('/api/v1/current-user');
+    const response = await axios.get<UserInfo>("/api/v1/current-user");
     return response.data;
   }
 
   async verifyStorage(request: VerifyStorageRequest): Promise<void> {
-    await axios.post('/api/v1/repo/exists', request);
+    await axios.post("/api/v1/repo/exists", request);
   }
 
   async createRepository(request: CreateRepositoryRequest): Promise<void> {
-    await axios.post('/api/v1/repo/create', request);
+    await axios.post("/api/v1/repo/create", request);
   }
 
   async connectRepository(request: ConnectRepositoryRequest): Promise<void> {
-    await axios.post('/api/v1/repo/connect', request);
+    await axios.post("/api/v1/repo/connect", request);
   }
 
   async getRepositoryStatus(): Promise<Record<string, unknown>> {
-    const response = await axios.get('/api/v1/repo/status');
+    const response = await axios.get("/api/v1/repo/status");
     return response.data;
   }
 }

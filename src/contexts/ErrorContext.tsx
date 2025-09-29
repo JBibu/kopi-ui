@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 
-type NotificationType = 'error' | 'success' | 'warning' | 'info';
+type NotificationType = "error" | "success" | "warning" | "info";
 
 interface Notification {
   id: number;
@@ -54,84 +54,96 @@ const ErrorContext = createContext<ErrorContextValue>({
 /**
  * Unified error handling context to replace scattered error alert patterns
  */
-export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
+export function ErrorProvider({ children }: ErrorProviderProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const addNotification = useCallback((notification: Omit<Notification, 'id' | 'timestamp'>): number => {
+  const addNotification = useCallback((notification: Omit<Notification, "id" | "timestamp">): number => {
     const id = Date.now() + Math.random();
     const newNotification: Notification = { ...notification, id, timestamp: new Date() };
 
-    setNotifications(prev => [...prev, newNotification]);
+    setNotifications((prev) => [...prev, newNotification]);
 
     // Auto-remove success messages after 5 seconds
-    if (notification.type === 'success') {
+    if (notification.type === "success") {
       setTimeout(() => {
-        setNotifications(prev => prev.filter(n => n.id !== id));
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
       }, 5000);
     }
 
     return id;
   }, []);
 
-  const showError = useCallback((error: string | Error | ApiError, prefix = 'Error'): number => {
-    let message = '';
+  const showError = useCallback(
+    (error: string | Error | ApiError, prefix = "Error"): number => {
+      let message = "";
 
-    // Handle different error formats
-    if (typeof error === 'string') {
-      message = error;
-    } else if ((error as ApiError)?.response?.data?.error) {
-      message = (error as ApiError).response!.data!.error!;
-    } else if ((error as Error)?.message) {
-      message = (error as Error).message;
-    } else {
-      message = 'An unexpected error occurred';
-    }
+      // Handle different error formats
+      if (typeof error === "string") {
+        message = error;
+      } else if ((error as ApiError)?.response?.data?.error) {
+        message = (error as ApiError).response!.data!.error!;
+      } else if ((error as Error)?.message) {
+        message = (error as Error).message;
+      } else {
+        message = "An unexpected error occurred";
+      }
 
-    // Handle repository connection errors
-    if ((error as ApiError)?.response?.data?.code === 'NOT_CONNECTED') {
-      window.location.replace('/repo');
-      return 0;
-    }
+      // Handle repository connection errors
+      if ((error as ApiError)?.response?.data?.code === "NOT_CONNECTED") {
+        window.location.replace("/repo");
+        return 0;
+      }
 
-    const fullMessage = prefix ? `${prefix}: ${message}` : message;
+      const fullMessage = prefix ? `${prefix}: ${message}` : message;
 
-    return addNotification({
-      type: 'error',
-      title: prefix,
-      message: fullMessage,
-      dismissible: true,
-    });
-  }, [addNotification]);
+      return addNotification({
+        type: "error",
+        title: prefix,
+        message: fullMessage,
+        dismissible: true,
+      });
+    },
+    [addNotification],
+  );
 
-  const showSuccess = useCallback((message: string, title = 'Success'): number => {
-    return addNotification({
-      type: 'success',
-      title,
-      message,
-      dismissible: true,
-    });
-  }, [addNotification]);
+  const showSuccess = useCallback(
+    (message: string, title = "Success"): number => {
+      return addNotification({
+        type: "success",
+        title,
+        message,
+        dismissible: true,
+      });
+    },
+    [addNotification],
+  );
 
-  const showWarning = useCallback((message: string, title = 'Warning'): number => {
-    return addNotification({
-      type: 'warning',
-      title,
-      message,
-      dismissible: true,
-    });
-  }, [addNotification]);
+  const showWarning = useCallback(
+    (message: string, title = "Warning"): number => {
+      return addNotification({
+        type: "warning",
+        title,
+        message,
+        dismissible: true,
+      });
+    },
+    [addNotification],
+  );
 
-  const showInfo = useCallback((message: string, title = 'Info'): number => {
-    return addNotification({
-      type: 'info',
-      title,
-      message,
-      dismissible: true,
-    });
-  }, [addNotification]);
+  const showInfo = useCallback(
+    (message: string, title = "Info"): number => {
+      return addNotification({
+        type: "info",
+        title,
+        message,
+        dismissible: true,
+      });
+    },
+    [addNotification],
+  );
 
   const clearError = useCallback((id: number): void => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
   const clearAll = useCallback((): void => {
@@ -140,23 +152,19 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
 
   const value: ErrorContextValue = {
     notifications,
-    errors: notifications.filter(n => n.type === 'error'),
+    errors: notifications.filter((n) => n.type === "error"),
     showError,
     showSuccess,
     showWarning,
     showInfo,
     clearError,
     clearAll,
-    hasErrors: notifications.some(n => n.type === 'error'),
+    hasErrors: notifications.some((n) => n.type === "error"),
     hasNotifications: notifications.length > 0,
   };
 
-  return (
-    <ErrorContext.Provider value={value}>
-      {children}
-    </ErrorContext.Provider>
-  );
-};
+  return <ErrorContext.Provider value={value}>{children}</ErrorContext.Provider>;
+}
 
 /**
  * Hook to access error handling functionality
@@ -165,7 +173,7 @@ export const useError = (): ErrorContextValue => {
   const context = useContext(ErrorContext);
 
   if (context === undefined) {
-    throw new Error('useError must be used within an ErrorProvider');
+    throw new Error("useError must be used within an ErrorProvider");
   }
 
   return context;

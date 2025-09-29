@@ -1,12 +1,11 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '../ui/button';
-import { Spinner } from '../ui/spinner';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { AdvancedOptions } from './AdvancedOptions';
-import { RepositoryState } from './types';
+import { useForm } from "react-hook-form";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { AdvancedOptions } from "./AdvancedOptions";
+import { RepositoryState } from "./types";
 
 interface RepositoryConnectionFormData {
   password: string;
@@ -26,7 +25,7 @@ interface RepositoryConnectionFormProps {
   onFieldChange: (field: string, value: unknown) => void;
 }
 
-export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> = ({
+export function RepositoryConnectionForm({
   state,
   isLoading,
   connectError,
@@ -34,7 +33,7 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
   onBack,
   onToggleAdvanced,
   onFieldChange,
-}) => {
+}: RepositoryConnectionFormProps) {
   const {
     register,
     handleSubmit,
@@ -42,11 +41,11 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
     formState: { errors },
   } = useForm<RepositoryConnectionFormData>({
     defaultValues: {
-      password: '',
-      description: 'My Repository',
+      password: "",
+      description: "My Repository",
       readonly: false,
-      username: state.username || '',
-      hostname: state.hostname || '',
+      username: state.username || "",
+      hostname: state.hostname || "",
     },
   });
 
@@ -55,7 +54,7 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
       <div>
         <Label htmlFor="username">Username</Label>
         <Input
-          {...register('username')}
+          {...register("username")}
           id="username"
           placeholder="Override this when restoring a snapshot taken by another user"
         />
@@ -63,7 +62,7 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
       <div>
         <Label htmlFor="hostname">Hostname</Label>
         <Input
-          {...register('hostname')}
+          {...register("hostname")}
           id="hostname"
           placeholder="Override this when restoring a snapshot taken on another machine"
         />
@@ -81,52 +80,41 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <Label className="required">Connect As</Label>
-              <Input
-                value={`${watch('username') || state.username}@${watch('hostname') || state.hostname}`}
-                readOnly
-              />
-              <p className="text-sm text-muted-foreground mt-1">
-                To override, click &apos;Show Advanced Options&apos;
-              </p>
+              <Input value={`${watch("username") || state.username}@${watch("hostname") || state.hostname}`} readOnly />
+              <p className="text-sm text-muted-foreground mt-1">To override, click &apos;Show Advanced Options&apos;</p>
             </div>
 
             <div className="space-y-4">
-              {state.provider !== '_token' && state.provider !== '_server' && (
+              {state.provider !== "_token" && state.provider !== "_server" && (
                 <div>
                   <Label htmlFor="password" className="required">
                     Repository Password
                   </Label>
                   <Input
-                    {...register('password', { required: 'Repository password is required' })}
+                    {...register("password", { required: "Repository password is required" })}
                     id="password"
                     type="password"
                     placeholder="enter repository password"
                     autoFocus
                   />
-                  {errors.password && (
-                    <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
-                  )}
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Used to encrypt the repository&apos;s contents
-                  </p>
+                  {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>}
+                  <p className="text-sm text-muted-foreground mt-1">Used to encrypt the repository&apos;s contents</p>
                 </div>
               )}
 
-              {state.provider === '_server' && (
+              {state.provider === "_server" && (
                 <div>
                   <Label htmlFor="password" className="required">
                     Server Password
                   </Label>
                   <Input
-                    {...register('password', { required: 'Server password is required' })}
+                    {...register("password", { required: "Server password is required" })}
                     id="password"
                     type="password"
                     placeholder="enter password to connect to server"
                     autoFocus
                   />
-                  {errors.password && (
-                    <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
-                  )}
+                  {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>}
                 </div>
               )}
             </div>
@@ -136,14 +124,12 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
                 Repository Description
               </Label>
               <Input
-                {...register('description', { required: 'Description is required' })}
+                {...register("description", { required: "Description is required" })}
                 id="description"
                 placeholder="enter repository description"
-                autoFocus={state.provider === '_token'}
+                autoFocus={state.provider === "_token"}
               />
-              {errors.description && (
-                <p className="text-sm text-red-600 mt-1">{errors.description.message}</p>
-              )}
+              {errors.description && <p className="text-sm text-red-600 mt-1">{errors.description.message}</p>}
               <p className="text-sm text-muted-foreground mt-1">
                 Helps to distinguish between multiple connected repositories
               </p>
@@ -158,12 +144,7 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
                 <>
                   <div>
                     <Label htmlFor="readonly">
-                      <input
-                        {...register('readonly')}
-                        id="readonly"
-                        type="checkbox"
-                        className="mr-2"
-                      />
+                      <input {...register("readonly")} id="readonly" type="checkbox" className="mr-2" />
                       Connect in read-only mode
                     </Label>
                     <p className="text-sm text-muted-foreground mt-1">
@@ -195,4 +176,4 @@ export const RepositoryConnectionForm: React.FC<RepositoryConnectionFormProps> =
       </Card>
     </div>
   );
-};
+}

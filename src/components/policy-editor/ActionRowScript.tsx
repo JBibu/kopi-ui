@@ -13,7 +13,7 @@ export function ActionRowScript(
   component: ComponentWithState,
   action: string,
   name: string,
-  help: string
+  help: string,
 ): React.JSX.Element {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">

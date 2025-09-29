@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from "react";
 
 interface UsePollingOptions {
   interval: number;
@@ -13,7 +13,7 @@ interface UsePollingOptions {
  */
 export function usePolling(
   callback: () => void | Promise<void>,
-  options: UsePollingOptions
+  options: UsePollingOptions,
 ): {
   start: () => void;
   stop: () => void;
@@ -43,7 +43,7 @@ export function usePolling(
       try {
         await callback();
       } catch (error) {
-        console.error('Polling callback error:', error);
+        console.error("Polling callback error:", error);
       }
 
       if (isMountedRef.current && isPollingRef.current) {

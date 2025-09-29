@@ -1,10 +1,9 @@
-import React from 'react';
-import { ChevronsDown, ChevronsUp } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Collapse } from '../ui/collapse';
-import { Label } from '../ui/label';
-import { RepositoryState } from './types';
-import { toAlgorithmOption } from '../../utils/uiutil';
+import { ChevronsDown, ChevronsUp } from "lucide-react";
+import { Button } from "../ui/button";
+import { Collapse } from "../ui/collapse";
+import { Label } from "../ui/label";
+import { RepositoryState } from "./types";
+import { toAlgorithmOption } from "../../utils/uiutil";
 
 interface AdvancedOptionsProps {
   state: RepositoryState;
@@ -14,13 +13,13 @@ interface AdvancedOptionsProps {
   overrideUsernameHostname?: React.ReactNode;
 }
 
-export const AdvancedOptions: React.FC<AdvancedOptionsProps> = ({
+export function AdvancedOptions({
   state,
   showAdvanced,
   onToggleAdvanced,
   onFieldChange,
   overrideUsernameHostname,
-}) => {
+}: AdvancedOptionsProps) {
   const IconComponent = showAdvanced ? ChevronsUp : ChevronsDown;
   const text = showAdvanced ? "Hide Advanced Options" : "Show Advanced Options";
 
@@ -128,16 +127,25 @@ export const AdvancedOptions: React.FC<AdvancedOptionsProps> = ({
                 value={state.eccOverheadPercent === "0" ? "-" : state.ecc}
               >
                 {state.eccOverheadPercent === "0"
-                  ? [<option key="empty" value="">-</option>]
+                  ? [
+                      <option key="empty" value="">
+                        -
+                      </option>,
+                    ]
                   : state.algorithms?.ecc?.map((x) => toAlgorithmOption(x, state.defaultEcc))}
               </select>
             </div>
           </div>
 
           <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-md">
-            <strong>[EXPERIMENTAL]</strong> Error correction can help protect from certain kinds of data corruption due to
-            spontaneous bit flips in the storage media.{" "}
-            <a href="https://kopia.io/docs/advanced/ecc/" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
+            <strong>[EXPERIMENTAL]</strong> Error correction can help protect from certain kinds of data corruption due
+            to spontaneous bit flips in the storage media.{" "}
+            <a
+              href="https://kopia.io/docs/advanced/ecc/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-600 hover:underline"
+            >
               Click here to learn more.
             </a>
           </div>
@@ -151,4 +159,4 @@ export const AdvancedOptions: React.FC<AdvancedOptionsProps> = ({
       </Collapse>
     </>
   );
-};
+}

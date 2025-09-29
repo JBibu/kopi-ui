@@ -38,7 +38,10 @@ interface SnapshotCreateInternalProps {
 interface ComponentRefType {
   state: SnapshotCreateState;
   setState: React.Dispatch<React.SetStateAction<SnapshotCreateState>>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>, valueGetter?: (target: HTMLInputElement) => string) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    valueGetter?: (target: HTMLInputElement) => string,
+  ) => void;
 }
 
 interface PolicyEditorRef {
@@ -60,11 +63,14 @@ function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreat
   const policyEditorRef: MutableRefObject<PolicyEditorRef | null> = useRef(null);
 
   // Create handleChange function that works with the form system
-  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, valueGetter = (x: HTMLInputElement) => x.value): void => {
-    const fieldName = event.target.name;
-    const fieldValue = valueGetter(event.target);
-    setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));
-  }, []);
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>, valueGetter = (x: HTMLInputElement) => x.value): void => {
+      const fieldName = event.target.name;
+      const fieldValue = valueGetter(event.target);
+      setState((prevState) => ({ ...prevState, [fieldName]: fieldValue }));
+    },
+    [],
+  );
 
   // Create a component-like object for forms compatibility
   const componentRef: MutableRefObject<ComponentRefType> = useRef({
@@ -83,7 +89,7 @@ function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreat
     axios
       .get<SourcesResponse>("/api/v1/sources")
       .then((result) => {
-        setState(prevState => ({
+        setState((prevState) => ({
           ...prevState,
           localUsername: result.data.localUsername,
           localHost: result.data.localHost,
@@ -94,126 +100,143 @@ function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreat
       });
   }, []);
 
-  const maybeResolveCurrentPath = useCallback((lastResolvedPath: string): void => {
-    const currentPath = state.path;
+  const maybeResolveCurrentPath = useCallback(
+    (lastResolvedPath: string): void => {
+      const currentPath = state.path;
 
-    if (lastResolvedPath !== currentPath) {
-      if (state.path) {
-        axios
-          .post<{ source: { path: string; host: string; userName: string } }>("/api/v1/paths/resolve", { path: currentPath })
-          .then((result) => {
-            setState(prevState => ({
-              ...prevState,
-              lastResolvedPath: currentPath,
-              resolvedSource: result.data.source,
-            }));
+      if (lastResolvedPath !== currentPath) {
+        if (state.path) {
+          axios
+            .post<{ source: { path: string; host: string; userName: string } }>("/api/v1/paths/resolve", {
+              path: currentPath,
+            })
+            .then((result) => {
+              setState((prevState) => ({
+                ...prevState,
+                lastResolvedPath: currentPath,
+                resolvedSource: result.data.source,
+              }));
 
-            // check again, it's possible that state.path has changed
-            // while we were resolving
-            maybeResolveCurrentPath(currentPath);
-          })
-          .catch((error: AxiosError) => {
-            redirect(error);
-          });
-      } else {
-        setState(prevState => ({
-          ...prevState,
-          lastResolvedPath: currentPath,
-          resolvedSource: null,
-        }));
+              // check again, it's possible that state.path has changed
+              // while we were resolving
+              maybeResolveCurrentPath(currentPath);
+            })
+            .catch((error: AxiosError) => {
+              redirect(error);
+            });
+        } else {
+          setState((prevState) => ({
+            ...prevState,
+            lastResolvedPath: currentPath,
+            resolvedSource: null,
+          }));
 
-        maybeResolveCurrentPath(currentPath);
+          maybeResolveCurrentPath(currentPath);
+        }
       }
-    }
-  }, [state.path]);
+    },
+    [state.path],
+  );
 
   // Effect for path resolution and estimate visibility
   useEffect(() => {
     maybeResolveCurrentPath(state.lastResolvedPath);
 
     if (state.estimateTaskVisible && state.lastEstimatedPath !== state.resolvedSource?.path) {
-      setState(prevState => ({
+      setState((prevState) => ({
         ...prevState,
         estimateTaskVisible: false,
       }));
     }
-  }, [maybeResolveCurrentPath, state.lastResolvedPath, state.estimateTaskVisible, state.lastEstimatedPath, state.resolvedSource?.path]);
+  }, [
+    maybeResolveCurrentPath,
+    state.lastResolvedPath,
+    state.estimateTaskVisible,
+    state.lastEstimatedPath,
+    state.resolvedSource?.path,
+  ]);
 
-  const estimate = useCallback((e: React.FormEvent): void => {
-    e.preventDefault();
+  const estimate = useCallback(
+    (e: React.FormEvent): void => {
+      e.preventDefault();
 
-    if (!state.resolvedSource?.path) {
-      return;
-    }
+      if (!state.resolvedSource?.path) {
+        return;
+      }
 
-    const pe = policyEditorRef.current;
-    if (!pe) {
-      return;
-    }
+      const pe = policyEditorRef.current;
+      if (!pe) {
+        return;
+      }
 
-    try {
-      const req = {
-        root: state.resolvedSource.path,
-        maxExamplesPerBucket: 10,
-        policyOverride: pe.getAndValidatePolicy(),
-      };
+      try {
+        const req = {
+          root: state.resolvedSource.path,
+          maxExamplesPerBucket: 10,
+          policyOverride: pe.getAndValidatePolicy(),
+        };
 
-      axios
-        .post<{ id: string; description: string }>("/api/v1/estimate", req)
-        .then((result) => {
-          setState(prevState => ({
-            ...prevState,
-            lastEstimatedPath: state.resolvedSource?.path || "",
-            estimateTaskID: result.data.id,
-            estimatingPath: result.data.description,
-            estimateTaskVisible: true,
-            didEstimate: false,
-          }));
-        })
-        .catch((error: AxiosError) => {
-          errorAlert(error);
-        });
-    } catch (e) {
-      errorAlert(e as Error);
-    }
-  }, [state.resolvedSource?.path]);
+        axios
+          .post<{ id: string; description: string }>("/api/v1/estimate", req)
+          .then((result) => {
+            setState((prevState) => ({
+              ...prevState,
+              lastEstimatedPath: state.resolvedSource?.path || "",
+              estimateTaskID: result.data.id,
+              estimatingPath: result.data.description,
+              estimateTaskVisible: true,
+              didEstimate: false,
+            }));
+          })
+          .catch((error: AxiosError) => {
+            errorAlert(error);
+          });
+      } catch (e) {
+        errorAlert(e as Error);
+      }
+    },
+    [state.resolvedSource?.path],
+  );
 
-  const snapshotNow = useCallback((e: React.FormEvent): void => {
-    e.preventDefault();
+  const snapshotNow = useCallback(
+    (e: React.FormEvent): void => {
+      e.preventDefault();
 
-    if (!state.resolvedSource?.path) {
-      alert("Must specify directory to snapshot.");
-      return;
-    }
+      if (!state.resolvedSource?.path) {
+        alert("Must specify directory to snapshot.");
+        return;
+      }
 
-    const pe = policyEditorRef.current;
-    if (!pe) {
-      return;
-    }
+      const pe = policyEditorRef.current;
+      if (!pe) {
+        return;
+      }
 
-    try {
-      axios
-        .post("/api/v1/sources", {
-          path: state.resolvedSource.path,
-          createSnapshot: true,
-          policy: pe.getAndValidatePolicy(),
-        })
-        .then((_result) => {
-          navigate(-1);
-        })
-        .catch((error: AxiosError) => {
-          errorAlert(error);
+      try {
+        axios
+          .post("/api/v1/sources", {
+            path: state.resolvedSource.path,
+            createSnapshot: true,
+            policy: pe.getAndValidatePolicy(),
+          })
+          .then((_result) => {
+            navigate(-1);
+          })
+          .catch((error: AxiosError) => {
+            errorAlert(error);
 
-          setState(prevState => ({
-            ...prevState,
-            error: error as Error,
-            isLoading: false,
-          }));
-        });
-    } catch (e) {
-      errorAlert(e as Error);
-    }
-  }, [state.resolvedSource?.path, navigate]);
+            setState((prevState) => ({
+              ...prevState,
+              error: error as Error,
+              isLoading: false,
+            }));
+          });
+      } catch (e) {
+        errorAlert(e as Error);
+      }
+    },
+    [state.resolvedSource?.path, navigate],
+  );
 
   return (
     <div className="container mx-auto p-6 max-w-6xl">
@@ -265,7 +288,9 @@ function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreat
           <div className="bg-card border rounded-lg p-6">
             <div className="mb-4">
               <h2 className="text-lg font-semibold mb-2">Snapshot Policy Settings</h2>
-              <p className="text-sm text-muted-foreground mb-4">{state.resolvedSource ? state.resolvedSource.path : state.path}</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                {state.resolvedSource ? state.resolvedSource.path : state.path}
+              </p>
             </div>
             <PolicyEditor
               ref={policyEditorRef}
@@ -277,9 +302,7 @@ function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreat
           </div>
         )}
         <div className="pt-4">
-          <CLIEquivalent
-            command={`snapshot create ${state.resolvedSource ? state.resolvedSource.path : state.path}`}
-          />
+          <CLIEquivalent command={`snapshot create ${state.resolvedSource ? state.resolvedSource.path : state.path}`} />
         </div>
       </div>
     </div>

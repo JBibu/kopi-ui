@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ColumnFiltersState, SortingState } from '@tanstack/react-table';
+import { useState } from "react";
+import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 
 interface UseTableFilteringOptions {
   initialSorting?: SortingState;
@@ -23,21 +23,16 @@ interface UseTableFilteringReturn {
  * Custom hook for table filtering and sorting state
  */
 export function useTableFiltering(options: UseTableFilteringOptions = {}): UseTableFilteringReturn {
-  const {
-    initialSorting = [],
-    initialColumnFilters = [],
-    onSortingChange,
-    onColumnFiltersChange,
-  } = options;
+  const { initialSorting = [], initialColumnFilters = [], onSortingChange, onColumnFiltersChange } = options;
 
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialColumnFilters);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const handleSortingChange = (updater: unknown) => {
     setSorting(updater);
     if (onSortingChange) {
-      const newSorting = typeof updater === 'function' ? updater(sorting) : updater;
+      const newSorting = typeof updater === "function" ? updater(sorting) : updater;
       onSortingChange(newSorting);
     }
   };
@@ -45,7 +40,7 @@ export function useTableFiltering(options: UseTableFilteringOptions = {}): UseTa
   const handleColumnFiltersChange = (updater: unknown) => {
     setColumnFilters(updater);
     if (onColumnFiltersChange) {
-      const newFilters = typeof updater === 'function' ? updater(columnFilters) : updater;
+      const newFilters = typeof updater === "function" ? updater(columnFilters) : updater;
       onColumnFiltersChange(newFilters);
     }
   };

@@ -1,14 +1,8 @@
-import React from 'react';
-import { NotificationProfile, getSeverityName } from '../../../hooks/useNotificationEditor';
-import { Button } from '../../ui/button';
-import { Badge } from '../../ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../../ui/dropdown-menu';
+import { NotificationProfile, getSeverityName } from "../../../hooks/useNotificationEditor";
+import { Button } from "../../ui/button";
+import { Badge } from "../../ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../ui/dropdown-menu";
 
 interface NotificationMethod {
   displayName: string;
@@ -24,7 +18,7 @@ interface ProfileListProps {
   onCreateNew: (type: string) => void;
 }
 
-export const ProfileList: React.FC<ProfileListProps> = ({
+export function ProfileList({
   profiles,
   notificationMethods,
   onEdit,
@@ -32,13 +26,15 @@ export const ProfileList: React.FC<ProfileListProps> = ({
   onDelete,
   onSendTest,
   onCreateNew,
-}) => {
+}: ProfileListProps) {
   if (!profiles || profiles.length === 0) {
     return (
       <div className="space-y-4">
         <div className="p-4 border border-border rounded-lg bg-muted/50">
           <div className="flex items-start gap-3">
-            <Badge variant="secondary" className="mt-0.5">Important</Badge>
+            <Badge variant="secondary" className="mt-0.5">
+              Important
+            </Badge>
             <div className="space-y-2">
               <p className="text-sm">You don&apos;t have any notification profiles defined.</p>
               <p className="text-sm text-muted-foreground">
@@ -126,4 +122,4 @@ export const ProfileList: React.FC<ProfileListProps> = ({
       </DropdownMenu>
     </div>
   );
-};
+}

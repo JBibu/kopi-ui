@@ -31,22 +31,16 @@ body {
   font-weight: 600;
 }
 
-/* Utility classes */
+/* Legacy utility classes - consider replacing with Tailwind classes */
 .elide {
-  text-overflow: ellipsis;
+  @apply truncate;
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
+/* Replaced by Tailwind's cursor-pointer utility */
 
-.normal {
-  display: block;
-}
+/* Replaced by Tailwind's block utility */
 
-.hidden {
-  display: none;
-}
+/* Replaced by Tailwind's hidden utility */
 
 /* Snapshot-specific styles */
 #kopia .snapshot-hash {

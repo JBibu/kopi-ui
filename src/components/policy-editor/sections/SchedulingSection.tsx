@@ -1,16 +1,15 @@
-import React from 'react';
-import { ResolvedPolicy, PolicyComponentWithState } from '../../../types/policy';
-import { Clock } from 'lucide-react';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion';
-import { OptionalNumberField } from '../../../forms/OptionalNumberField';
-import { TimesOfDayList } from '../../../forms/TimesOfDayList';
-import { LabelColumn } from '../LabelColumn';
-import { ValueColumn } from '../ValueColumn';
-import { WideValueColumn } from '../WideValueColumn';
-import { EffectiveValueColumn } from '../EffectiveValueColumn';
-import { EffectiveValue } from '../EffectiveValue';
-import { EffectiveTimesOfDayValue } from '../EffectiveTimesOfDayValue';
-import { UpcomingSnapshotTimes } from '../UpcomingSnapshotTimes';
+import { ResolvedPolicy, PolicyComponentWithState } from "../../../types/policy";
+import { Clock } from "lucide-react";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "../../ui/accordion";
+import { OptionalNumberField } from "../../../forms/OptionalNumberField";
+import { TimesOfDayList } from "../../../forms/TimesOfDayList";
+import { LabelColumn } from "../LabelColumn";
+import { ValueColumn } from "../ValueColumn";
+import { WideValueColumn } from "../WideValueColumn";
+import { EffectiveValueColumn } from "../EffectiveValueColumn";
+import { EffectiveValue } from "../EffectiveValue";
+import { EffectiveTimesOfDayValue } from "../EffectiveTimesOfDayValue";
+import { UpcomingSnapshotTimes } from "../UpcomingSnapshotTimes";
 
 interface SchedulingSectionProps {
   componentRef: React.RefObject<PolicyComponentWithState>;
@@ -18,11 +17,7 @@ interface SchedulingSectionProps {
   policyDefinitionPoint: (p: unknown) => React.ReactNode;
 }
 
-export const SchedulingSection: React.FC<SchedulingSectionProps> = ({
-  componentRef,
-  resolved,
-  policyDefinitionPoint,
-}) => {
+export function SchedulingSection({ componentRef, resolved, policyDefinitionPoint }: SchedulingSectionProps) {
   return (
     <AccordionItem value="scheduling">
       <AccordionTrigger>
@@ -35,7 +30,9 @@ export const SchedulingSection: React.FC<SchedulingSectionProps> = ({
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
             {LabelColumn("Snapshot frequency:")}
-            {ValueColumn(OptionalNumberField(componentRef, "", "scheduling.intervalSeconds", { placeholder: "number of seconds" }))}
+            {ValueColumn(
+              OptionalNumberField(componentRef, "", "scheduling.intervalSeconds", { placeholder: "number of seconds" }),
+            )}
             {EffectiveValueColumn(EffectiveValue("scheduling.intervalSeconds", resolved, policyDefinitionPoint))}
           </div>
           <div className="grid grid-cols-3 gap-4">
@@ -43,11 +40,9 @@ export const SchedulingSection: React.FC<SchedulingSectionProps> = ({
             {WideValueColumn(TimesOfDayList(componentRef, "", "scheduling.timeOfDay"))}
             {EffectiveValueColumn(EffectiveTimesOfDayValue("scheduling.timeOfDay", resolved, policyDefinitionPoint))}
           </div>
-          {resolved && (
-            <UpcomingSnapshotTimes times={resolved.upcomingSnapshotTimes} />
-          )}
+          {resolved && <UpcomingSnapshotTimes times={resolved.upcomingSnapshotTimes} />}
         </div>
       </AccordionContent>
     </AccordionItem>
   );
-};
+}

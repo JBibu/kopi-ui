@@ -90,14 +90,17 @@ export function Snapshots(): React.JSX.Element {
   }, [defaultSnapshotViewAll, fetchSourcesWithoutSpinner]);
 
   // Memoized owner selection handler
-  const selectOwner = useCallback((owner: string): void => {
-    setSelectedOwner(owner);
-    if (owner === localSnapshots) {
-      setDefaultSnapshotViewAll(false);
-    } else if (owner === allSnapshots) {
-      setDefaultSnapshotViewAll(true);
-    }
-  }, [setDefaultSnapshotViewAll]);
+  const selectOwner = useCallback(
+    (owner: string): void => {
+      setSelectedOwner(owner);
+      if (owner === localSnapshots) {
+        setDefaultSnapshotViewAll(false);
+      } else if (owner === allSnapshots) {
+        setDefaultSnapshotViewAll(true);
+      }
+    },
+    [setDefaultSnapshotViewAll],
+  );
 
   // Memoized sync handler
   const sync = useCallback(async (): Promise<void> => {
@@ -115,18 +118,21 @@ export function Snapshots(): React.JSX.Element {
   }, [fetchSourcesWithoutSpinner]);
 
   // Memoized snapshot actions
-  const startSnapshot = useCallback(async (source: Source['source']): Promise<void> => {
-    const result = await axios
-      .post("/api/v1/sources/upload?" + sourceQueryStringParams(source), {})
-      .catch((error: AxiosError) => {
-        errorAlert(error);
-        return null;
-      });
+  const startSnapshot = useCallback(
+    async (source: Source["source"]): Promise<void> => {
+      const result = await axios
+        .post("/api/v1/sources/upload?" + sourceQueryStringParams(source), {})
+        .catch((error: AxiosError) => {
+          errorAlert(error);
+          return null;
+        });
 
-    if (result) {
-      fetchSourcesWithoutSpinner();
-    }
-  }, [fetchSourcesWithoutSpinner]);
+      if (result) {
+        fetchSourcesWithoutSpinner();
+      }
+    },
+    [fetchSourcesWithoutSpinner],
+  );
 
   // Memoized helper functions
   const setHeader = useCallback((x: { cell: { getValue: () => string; column: { Header?: string } } }): string => {
@@ -142,118 +148,121 @@ export function Snapshots(): React.JSX.Element {
     }
   }, []);
 
-  const statusCell = useCallback(({ row, cell }: { row: { original: SourceWithUpload }; cell: { getValue: () => string } }): React.ReactElement => {
-    setHeader({ cell });
-    switch (cell.getValue()) {
-      case "IDLE":
-      case "PAUSED":
-        return (
-          <div className="flex gap-2">
-            <Button
-              data-testid="edit-policy"
-              asChild
-              variant="outline"
-              size="sm"
-              aria-label={`Edit policy for ${row.original.source.path}`}
-            >
-              <Link to={policyEditorURL(row.original.source)}>
-                Policy
-              </Link>
-            </Button>
-            <Button
-              data-testid="snapshot-now"
-              variant="default"
-              size="sm"
-              onClick={() => startSnapshot(row.original.source)}
-              aria-label={`Create snapshot now for ${row.original.source.path}`}
-            >
-              Snapshot Now
-            </Button>
-          </div>
-        );
+  const statusCell = useCallback(
+    ({ row, cell }: { row: { original: SourceWithUpload }; cell: { getValue: () => string } }): React.ReactElement => {
+      setHeader({ cell });
+      switch (cell.getValue()) {
+        case "IDLE":
+        case "PAUSED":
+          return (
+            <div className="flex gap-2">
+              <Button
+                data-testid="edit-policy"
+                asChild
+                variant="outline"
+                size="sm"
+                aria-label={`Edit policy for ${row.original.source.path}`}
+              >
+                <Link to={policyEditorURL(row.original.source)}>Policy</Link>
+              </Button>
+              <Button
+                data-testid="snapshot-now"
+                variant="default"
+                size="sm"
+                onClick={() => startSnapshot(row.original.source)}
+                aria-label={`Create snapshot now for ${row.original.source.path}`}
+              >
+                Snapshot Now
+              </Button>
+            </div>
+          );
 
-      case "PENDING":
-        return (
-          <div className="flex items-center" role="status" aria-live="polite">
-            <Spinner
-              data-testid="snapshot-pending"
-              size="sm"
-              className="mr-2"
-            />
-            Pending
-          </div>
-        );
+        case "PENDING":
+          return (
+            <div className="flex items-center" role="status" aria-live="polite">
+              <Spinner data-testid="snapshot-pending" size="sm" className="mr-2" />
+              Pending
+            </div>
+          );
 
-      case "UPLOADING": {
-        const u = row.original.upload;
-        let totals = "";
-        if (u) {
-          // title calculation removed as it's no longer used
+        case "UPLOADING": {
+          const u = row.original.upload;
+          let totals = "";
+          if (u) {
+            // title calculation removed as it's no longer used
 
-          const totalBytes = u.hashedBytes + u.cachedBytes;
-          totals = sizeDisplayName(totalBytes, bytesStringBase2);
+            const totalBytes = u.hashedBytes + u.cachedBytes;
+            totals = sizeDisplayName(totalBytes, bytesStringBase2);
 
-          if (u.estimatedBytes) {
-            totals += "/" + sizeDisplayName(u.estimatedBytes, bytesStringBase2);
-            const percent = Math.round((totalBytes * 1000.0) / u.estimatedBytes) / 10.0;
-            if (percent <= 100) {
-              totals += ` ${percent}%`;
+            if (u.estimatedBytes) {
+              totals += "/" + sizeDisplayName(u.estimatedBytes, bytesStringBase2);
+              const percent = Math.round((totalBytes * 1000.0) / u.estimatedBytes) / 10.0;
+              if (percent <= 100) {
+                totals += ` ${percent}%`;
+              }
             }
           }
+
+          return (
+            <div className="flex items-center gap-2" role="status" aria-live="polite">
+              <Spinner data-testid="snapshot-uploading" size="sm" />
+              <span>{totals}</span>
+              {row.original.currentTask && (
+                <Link
+                  to={"/tasks/" + row.original.currentTask}
+                  className="text-blue-600 hover:underline"
+                  aria-label="View task details"
+                >
+                  Details
+                </Link>
+              )}
+            </div>
+          );
         }
 
-        return (
-          <div className="flex items-center gap-2" role="status" aria-live="polite">
-            <Spinner
-              data-testid="snapshot-uploading"
-              size="sm"
-            />
-            <span>{totals}</span>
-            {row.original.currentTask && (
-              <Link
-                to={"/tasks/" + row.original.currentTask}
-                className="text-blue-600 hover:underline"
-                aria-label="View task details"
-              >
-                Details
-              </Link>
-            )}
-          </div>
-        );
+        default:
+          return <></>;
       }
+    },
+    [bytesStringBase2, setHeader, startSnapshot],
+  );
 
-      default:
+  const nextSnapshotTimeCell = useCallback(
+    ({
+      row,
+      cell,
+    }: {
+      row: { original: SourceWithUpload };
+      cell: { getValue: () => string | null };
+    }): React.ReactElement => {
+      if (!cell.getValue()) {
+        if (row.original.status === "PAUSED") {
+          return <span className="text-muted-foreground">paused</span>;
+        }
         return <></>;
-    }
-  }, [bytesStringBase2, setHeader, startSnapshot]);
-
-  const nextSnapshotTimeCell = useCallback(({ row, cell }: { row: { original: SourceWithUpload }; cell: { getValue: () => string | null } }): React.ReactElement => {
-    if (!cell.getValue()) {
-      if (row.original.status === "PAUSED") {
-        return <span className="text-muted-foreground">paused</span>;
       }
-      return <></>;
-    }
 
-    if (row.original.status === "UPLOADING") {
-      return <></>;
-    }
+      if (row.original.status === "UPLOADING") {
+        return <></>;
+      }
 
-    const time = dayjs(cell.getValue());
-    const isOverdue = time.isBefore(dayjs());
+      const time = dayjs(cell.getValue());
+      const isOverdue = time.isBefore(dayjs());
 
-    return (
-      <div title={time.toLocaleString()}>
-        <span>{time.fromNow()}</span>
-        {isOverdue && (
-          <>
-            {" "}
-            <Badge variant="secondary">overdue</Badge>
-          </>
-        )}
-      </div>
-    );
-  }, []);
+      return (
+        <div title={time.toLocaleString()}>
+          <span>{time.fromNow()}</span>
+          {isOverdue && (
+            <>
+              {" "}
+              <Badge variant="secondary">overdue</Badge>
+            </>
+          )}
+        </div>
+      );
+    },
+    [],
+  );
 
   // Memoized calculations
   const uniqueOwners = useMemo((): string[] => {
@@ -278,76 +287,73 @@ export function Snapshots(): React.JSX.Element {
     }
   }, [sources, selectedOwner, localSourceName]);
 
-  const columns: ColumnDef<SourceWithUpload>[] = useMemo(() => [
-    {
-      id: "path",
-      header: "Path",
-      accessorFn: (x: SourceWithUpload) => x.source,
-      sortType: (a: { original: SourceWithUpload }, b: { original: SourceWithUpload }) => {
-        const v = compare(a.original.source.path, b.original.source.path);
-        if (v !== 0) {
-          return v;
-        }
-        return compare(formatOwnerName(a.original.source), formatOwnerName(b.original.source));
+  const columns: ColumnDef<SourceWithUpload>[] = useMemo(
+    () => [
+      {
+        id: "path",
+        header: "Path",
+        accessorFn: (x: SourceWithUpload) => x.source,
+        sortType: (a: { original: SourceWithUpload }, b: { original: SourceWithUpload }) => {
+          const v = compare(a.original.source.path, b.original.source.path);
+          if (v !== 0) {
+            return v;
+          }
+          return compare(formatOwnerName(a.original.source), formatOwnerName(b.original.source));
+        },
+        width: "",
+        cell: ({ cell }) => (
+          <Link
+            to={"/snapshots/single-source?" + sourceQueryStringParams(cell.getValue())}
+            className="text-blue-600 hover:underline"
+            aria-label={`View snapshots for ${cell.getValue().path}`}
+          >
+            {cell.getValue().path}
+          </Link>
+        ),
       },
-      width: "",
-      cell: ({ cell }) => (
-        <Link
-          to={"/snapshots/single-source?" + sourceQueryStringParams(cell.getValue())}
-          className="text-blue-600 hover:underline"
-          aria-label={`View snapshots for ${cell.getValue().path}`}
-        >
-          {cell.getValue().path}
-        </Link>
-      ),
-    },
-    {
-      id: "owner",
-      header: "Owner",
-      accessorFn: (x: SourceWithUpload) => x.source.userName + "@" + x.source.host,
-      width: 250,
-    },
-    {
-      id: "lastSnapshotSize",
-      header: "Size",
-      width: 120,
-      accessorFn: (x: SourceWithUpload) => (x.lastSnapshot?.summary?.size ?? 0),
-      cell: ({ row, cell }) =>
-        sizeWithFailures(
-          cell.getValue() as number,
-          row.original.lastSnapshot?.summary,
-          bytesStringBase2,
-        ),
-    },
-    {
-      id: "lastSnapshotTime",
-      header: "Last Snapshot",
-      width: 160,
-      accessorFn: (x: SourceWithUpload) => x.lastSnapshot?.startTime ?? null,
-      cell: ({ cell }) =>
-        cell.getValue() ? (
-          <div title={dayjs(cell.getValue()).format()}>
-            {dayjs(cell.getValue()).fromNow()}
-          </div>
-        ) : (
-          <span className="text-muted-foreground">None</span>
-        ),
-    },
-    {
-      id: "nextSnapshotTime",
-      header: "Next Snapshot",
-      width: 160,
-      accessorFn: (x: SourceWithUpload) => x.nextSnapshotTime,
-      cell: nextSnapshotTimeCell,
-    },
-    {
-      id: "status",
-      header: "",
-      width: 300,
-      accessorFn: (x: SourceWithUpload) => x.status,
-      cell: statusCell,
-    },
-  ], [bytesStringBase2, nextSnapshotTimeCell, statusCell]);
+      {
+        id: "owner",
+        header: "Owner",
+        accessorFn: (x: SourceWithUpload) => x.source.userName + "@" + x.source.host,
+        width: 250,
+      },
+      {
+        id: "lastSnapshotSize",
+        header: "Size",
+        width: 120,
+        accessorFn: (x: SourceWithUpload) => x.lastSnapshot?.summary?.size ?? 0,
+        cell: ({ row, cell }) =>
+          sizeWithFailures(cell.getValue() as number, row.original.lastSnapshot?.summary, bytesStringBase2),
+      },
+      {
+        id: "lastSnapshotTime",
+        header: "Last Snapshot",
+        width: 160,
+        accessorFn: (x: SourceWithUpload) => x.lastSnapshot?.startTime ?? null,
+        cell: ({ cell }) =>
+          cell.getValue() ? (
+            <div title={dayjs(cell.getValue()).format()}>{dayjs(cell.getValue()).fromNow()}</div>
+          ) : (
+            <span className="text-muted-foreground">None</span>
+          ),
+      },
+      {
+        id: "nextSnapshotTime",
+        header: "Next Snapshot",
+        width: 160,
+        accessorFn: (x: SourceWithUpload) => x.nextSnapshotTime,
+        cell: nextSnapshotTimeCell,
+      },
+      {
+        id: "status",
+        header: "",
+        width: 300,
+        accessorFn: (x: SourceWithUpload) => x.status,
+        cell: statusCell,
+      },
+    ],
+    [bytesStringBase2, nextSnapshotTimeCell, statusCell],
+  );
 
   // Error state
   if (error) {
@@ -385,22 +391,14 @@ export function Snapshots(): React.JSX.Element {
             {multiUser && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    aria-label="Select snapshot owner"
-                  >
+                  <Button size="sm" variant="outline" aria-label="Select snapshot owner">
                     <Users className="mr-2 h-4 w-4" />
                     {selectedOwner}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => selectOwner(localSnapshots)}>
-                    {localSnapshots}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => selectOwner(allSnapshots)}>
-                    {allSnapshots}
-                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => selectOwner(localSnapshots)}>{localSnapshots}</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => selectOwner(allSnapshots)}>{allSnapshots}</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   {uniqueOwners.map((v) => (
                     <DropdownMenuItem key={v} onClick={() => selectOwner(v)}>
@@ -424,11 +422,7 @@ export function Snapshots(): React.JSX.Element {
             disabled={isRefreshing}
             aria-label="Synchronize repository"
           >
-            {isRefreshing ? (
-              <Spinner size="sm" />
-            ) : (
-              <RotateCw className="h-4 w-4" />
-            )}
+            {isRefreshing ? <Spinner size="sm" /> : <RotateCw className="h-4 w-4" />}
           </Button>
         </div>
 

@@ -5,7 +5,10 @@ import { stateProperty } from ".";
 // Component with state interface for form handling
 interface ComponentWithState {
   state: Record<string, unknown>;
-  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>, valueGetter?: (target: unknown) => string[] | undefined) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+    valueGetter?: (target: unknown) => string[] | undefined,
+  ) => void;
 }
 
 interface StringListProps {
@@ -36,7 +39,7 @@ export function multilineStringToList(target: ValueTarget): string[] | undefined
 export function StringList(
   component: ComponentWithState,
   name: string,
-  props: StringListProps = {}
+  props: StringListProps = {},
 ): React.JSX.Element {
   return (
     <Textarea

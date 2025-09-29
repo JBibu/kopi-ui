@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -7,9 +7,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '../components/ui/alert-dialog';
+} from "../components/ui/alert-dialog";
 
-type AlertType = 'error' | 'success' | 'warning' | 'info';
+type AlertType = "error" | "success" | "warning" | "info";
 
 interface AlertState {
   isOpen: boolean;
@@ -32,30 +32,30 @@ const AlertContext = createContext<AlertContextValue | undefined>(undefined);
 export const useAlert = (): AlertContextValue => {
   const context = useContext(AlertContext);
   if (!context) {
-    throw new Error('useAlert must be used within an AlertProvider');
+    throw new Error("useAlert must be used within an AlertProvider");
   }
   return context;
 };
 
-export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
+export function AlertProvider({ children }: AlertProviderProps) {
   const [alert, setAlert] = useState<AlertState>({
     isOpen: false,
-    title: '',
-    description: '',
-    type: 'error'
+    title: "",
+    description: "",
+    type: "error",
   });
 
-  const showAlert = (title: string, description: string, type: AlertType = 'error'): void => {
+  const showAlert = (title: string, description: string, type: AlertType = "error"): void => {
     setAlert({
       isOpen: true,
       title,
       description,
-      type
+      type,
     });
   };
 
   const hideAlert = (): void => {
-    setAlert(prev => ({ ...prev, isOpen: false }));
+    setAlert((prev) => ({ ...prev, isOpen: false }));
   };
 
   return (
@@ -65,9 +65,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{alert.title}</AlertDialogTitle>
-            <AlertDialogDescription className="whitespace-pre-wrap">
-              {alert.description}
-            </AlertDialogDescription>
+            <AlertDialogDescription className="whitespace-pre-wrap">{alert.description}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction onClick={hideAlert}>OK</AlertDialogAction>
@@ -76,4 +74,4 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
       </AlertDialog>
     </AlertContext.Provider>
   );
-};
+}

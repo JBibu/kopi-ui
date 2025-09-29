@@ -40,7 +40,7 @@ export function OptionalDirectory(
   component: ComponentWithState,
   label: string,
   name: string,
-  props: OptionalDirectoryProps = {}
+  props: OptionalDirectoryProps = {},
 ): React.JSX.Element {
   /**
    * Saves the selected path as a deepstate variable within the component

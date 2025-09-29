@@ -106,9 +106,9 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
   const [selectedSnapshotManifestIDs, setSelectedSnapshotManifestIDs] = useState<SelectedSnapshotManifestIDs>({});
 
   // Additional state for various dialogs and data
-  const [host, setHost] = useState<string>('');
-  const [userName, setUserName] = useState<string>('');
-  const [path, setPath] = useState<string>('');
+  const [host, setHost] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
+  const [path, setPath] = useState<string>("");
   const [_hiddenCount, setHiddenCount] = useState<number>(0);
   const [_selectedSnapshot, setSelectedSnapshot] = useState<Snapshot | null>(null);
   const [unfilteredCount, setUnfilteredCount] = useState<number>(0);
@@ -120,13 +120,13 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
 
   // Description editing state
   const [editingDescriptionFor, setEditingDescriptionFor] = useState<string[] | undefined>(undefined);
-  const [updatedSnapshotDescription, setUpdatedSnapshotDescription] = useState<string>('');
-  const [originalSnapshotDescription, setOriginalSnapshotDescription] = useState<string>('');
+  const [updatedSnapshotDescription, setUpdatedSnapshotDescription] = useState<string>("");
+  const [originalSnapshotDescription, setOriginalSnapshotDescription] = useState<string>("");
 
   // Pin editing state
   const [editPinFor, setEditPinFor] = useState<string[] | undefined>(undefined);
-  const [originalPinName, setOriginalPinName] = useState<string>('');
-  const [newPinName, setNewPinName] = useState<string>('');
+  const [originalPinName, setOriginalPinName] = useState<string>("");
+  const [newPinName, setNewPinName] = useState<string>("");
   const [savingSnapshot, setSavingSnapshot] = useState<boolean>(false);
 
   const { bytesStringBase2 } = useContext(UIPreferencesContext);
@@ -143,12 +143,15 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
     setSelectedSnapshotManifestIDs({});
   }, []);
 
-  const isSelected = useCallback((snap: Snapshot): boolean => {
-    return !!selectedSnapshotManifestIDs[snap.id];
-  }, [selectedSnapshotManifestIDs]);
+  const isSelected = useCallback(
+    (snap: Snapshot): boolean => {
+      return !!selectedSnapshotManifestIDs[snap.id];
+    },
+    [selectedSnapshotManifestIDs],
+  );
 
   const toggleSelected = useCallback((snap: Snapshot): void => {
-    setSelectedSnapshotManifestIDs(prev => {
+    setSelectedSnapshotManifestIDs((prev) => {
       const sel = { ...prev };
       if (sel[snap.id]) {
         delete sel[snap.id];
@@ -266,24 +269,27 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
     setEditingDescriptionFor(undefined);
   }, []);
 
-  const editSnapshots = useCallback((req: EditSnapshotsRequest): void => {
-    setSavingSnapshot(true);
-    axios
-      .post("/api/v1/snapshots/edit", req)
-      .then((_resp) => {
-        setEditPinFor(undefined);
-        setEditingDescriptionFor(undefined);
-        setSavingSnapshot(false);
-        fetchSnapshots();
-      })
-      .catch((e: AxiosError) => {
-        setEditPinFor(undefined);
-        setEditingDescriptionFor(undefined);
-        setSavingSnapshot(false);
-        redirect(e);
-        errorAlert(e);
-      });
-  }, [fetchSnapshots]);
+  const editSnapshots = useCallback(
+    (req: EditSnapshotsRequest): void => {
+      setSavingSnapshot(true);
+      axios
+        .post("/api/v1/snapshots/edit", req)
+        .then((_resp) => {
+          setEditPinFor(undefined);
+          setEditingDescriptionFor(undefined);
+          setSavingSnapshot(false);
+          fetchSnapshots();
+        })
+        .catch((e: AxiosError) => {
+          setEditPinFor(undefined);
+          setEditingDescriptionFor(undefined);
+          setSavingSnapshot(false);
+          redirect(e);
+          errorAlert(e);
+        });
+    },
+    [fetchSnapshots],
+  );
 
   const removeSnapshotDescription = useCallback((): void => {
     if (editingDescriptionFor) {
@@ -310,10 +316,10 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
         onClick={(event) => {
           event.preventDefault();
           setEditingDescriptionFor([x.id]);
-          setUpdatedSnapshotDescription(x.description || '');
-          setOriginalSnapshotDescription(x.description || '');
+          setUpdatedSnapshotDescription(x.description || "");
+          setOriginalSnapshotDescription(x.description || "");
         }}
-        title={(x.description || '') + " - Click to update snapshot description."}
+        title={(x.description || "") + " - Click to update snapshot description."}
         className={x.description ? "snapshot-description-set" : "snapshot-description"}
       >
         <b>
@@ -350,14 +356,17 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
     setEditPinFor(undefined);
   }, []);
 
-  const removePin = useCallback((p: string): void => {
-    if (editPinFor) {
-      editSnapshots({
-        snapshots: editPinFor,
-        removePins: [p],
-      });
-    }
-  }, [editSnapshots, editPinFor]);
+  const removePin = useCallback(
+    (p: string): void => {
+      if (editPinFor) {
+        editSnapshots({
+          snapshots: editPinFor,
+          removePins: [p],
+        });
+      }
+    },
+    [editSnapshots, editPinFor],
+  );
 
   const savePin = useCallback((): void => {
     if (editPinFor) {
@@ -404,287 +413,276 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
         </div>
       ),
     },
-      {
-        id: "startTime",
-        header: "Start time",
-        width: 200,
-        cell: (x) => {
-          const timestamp = rfc3339TimestampForDisplay(x.row.original.startTime);
-          return (
-            <Link to={objectLink(x.row.original.rootID)} state={{ label: searchPath }}>
-              {timestamp}
-            </Link>
-          );
-        },
+    {
+      id: "startTime",
+      header: "Start time",
+      width: 200,
+      cell: (x) => {
+        const timestamp = rfc3339TimestampForDisplay(x.row.original.startTime);
+        return (
+          <Link to={objectLink(x.row.original.rootID)} state={{ label: searchPath }}>
+            {timestamp}
+          </Link>
+        );
       },
-      {
-        id: "description",
-        header: "",
-        width: 20,
-        cell: (x) => descriptionFor(x.row.original),
-      },
-      {
-        id: "rootID",
-        header: "Root",
-        width: "",
-        accessorFn: (x) => x.rootID,
-        cell: (x) => (
-          <>
-            <span className="snapshot-hash">{x.cell.getValue()}</span>
-            {x.row.original.description && (
-              <div className="snapshot-description">
-                <small>{x.row.original.description}</small>
-              </div>
-            )}
-          </>
-        ),
-      },
-      {
-        header: "Retention",
-        accessorFn: (x) => x.retention,
-        width: "",
-        cell: (x) => (
-          <span>
-            {x.cell.getValue().map((l: string) => (
-              <React.Fragment key={l}>
-                <Badge bg={"retention-badge-" + pillVariant(l)}>{l}</Badge>{" "}
-              </React.Fragment>
-            ))}
-            {x.row.original.pins.map((l: string) => (
-              <React.Fragment key={l}>
-                <Badge bg="snapshot-pin" onClick={() => editPin(x.row.original, l)}>
-                  <Pin className="h-3 w-3 inline mr-1" /> {l}
-                </Badge>{" "}
-              </React.Fragment>
-            ))}
-            {newPinFor(x.row.original)}
-          </span>
-        ),
-      },
-      {
-        header: "Size",
-        accessorFn: (x) => x.summary.size,
-        width: 100,
-        cell: (x) => sizeWithFailures(x.cell.getValue(), x.row.original.summary, bytesStringBase2),
-      },
-      {
-        header: "Files",
-        accessorFn: (x) => x.summary.files,
-        width: 100,
-      },
-      {
-        header: "Dirs",
-        accessorFn: (x) => x.summary.dirs,
-        width: 100,
-      },
+    },
+    {
+      id: "description",
+      header: "",
+      width: 20,
+      cell: (x) => descriptionFor(x.row.original),
+    },
+    {
+      id: "rootID",
+      header: "Root",
+      width: "",
+      accessorFn: (x) => x.rootID,
+      cell: (x) => (
+        <>
+          <span className="snapshot-hash">{x.cell.getValue()}</span>
+          {x.row.original.description && (
+            <div className="snapshot-description">
+              <small>{x.row.original.description}</small>
+            </div>
+          )}
+        </>
+      ),
+    },
+    {
+      header: "Retention",
+      accessorFn: (x) => x.retention,
+      width: "",
+      cell: (x) => (
+        <span>
+          {x.cell.getValue().map((l: string) => (
+            <React.Fragment key={l}>
+              <Badge bg={"retention-badge-" + pillVariant(l)}>{l}</Badge>{" "}
+            </React.Fragment>
+          ))}
+          {x.row.original.pins.map((l: string) => (
+            <React.Fragment key={l}>
+              <Badge bg="snapshot-pin" onClick={() => editPin(x.row.original, l)}>
+                <Pin className="h-3 w-3 inline mr-1" /> {l}
+              </Badge>{" "}
+            </React.Fragment>
+          ))}
+          {newPinFor(x.row.original)}
+        </span>
+      ),
+    },
+    {
+      header: "Size",
+      accessorFn: (x) => x.summary.size,
+      width: 100,
+      cell: (x) => sizeWithFailures(x.cell.getValue(), x.row.original.summary, bytesStringBase2),
+    },
+    {
+      header: "Files",
+      accessorFn: (x) => x.summary.files,
+      width: 100,
+    },
+    {
+      header: "Dirs",
+      accessorFn: (x) => x.summary.dirs,
+      width: 100,
+    },
   ];
 
   const selectedElements = Object.keys(selectedSnapshotManifestIDs);
 
   return (
-      <div className="container mx-auto p-6 max-w-6xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Snapshot History</h1>
-          <p className="text-muted-foreground">
-            {userName}@{host}:{path}
-          </p>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Snapshots</CardTitle>
-                <CardDescription>
-                  Displaying{" "}
-                  {snapshots.length !== unfilteredCount
-                    ? snapshots.length + " out of " + unfilteredCount
-                    : snapshots.length}{" "}
-                  snapshots{uniqueCount !== unfilteredCount && ` (${uniqueCount} unique)`}
-                </CardDescription>
-              </div>
-              <Button size="sm" variant="outline" onClick={fetchSnapshots} disabled={isRefreshing}>
-                {isRefreshing ? (
-                  <Spinner size="sm" />
-                ) : (
-                  <RefreshCw className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <GoBackButton />
-            {snapshots.length > 0 &&
-              (selectedElements.length < snapshots.length ? (
-                <Button size="sm" variant="outline" onClick={selectAll}>
-                  Select All
-                </Button>
-              ) : (
-                <Button size="sm" variant="outline" onClick={deselectAll}>
-                  Deselect All
-                </Button>
-              ))}
-            {selectedElements.length > 0 && (
-              <Button size="sm" variant="destructive" onClick={showDeleteConfirm}>
-                Delete Selected ({selectedElements.length})
-              </Button>
-            )}
-            {snapshots.length === 0 && (
-              <Button size="sm" variant="destructive" onClick={deleteSnapshotSource}>
-                Delete Snapshot Source
-              </Button>
-            )}
-          </div>
-        </div>
-        {unfilteredCount !== uniqueCount && (
-          <div className="mb-4">
-            <div className="py-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="showHidden"
-                  checked={showHidden}
-                  onCheckedChange={(checked: boolean) => setShowHidden(checked)}
-                />
-                <Label htmlFor="showHidden">
-                  Show {unfilteredCount} individual snapshots
-                </Label>
-              </div>
-            </div>
-          </div>
-        )}
-        <div className="mb-4">
-          <KopiaTable data={snapshots} columns={columns} />
-        </div>
-
-        <CLIEquivalent
-          command={`snapshot list "${userName}@${host}:${path}"${showHidden ? " --show-identical" : ""}`}
-        />
-          </CardContent>
-        </Card>
-
-        <AlertDialog open={showDeleteConfirmationDialog} onOpenChange={cancelDelete}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
-              <AlertDialogDescription>
-                {selectedElements.length > 1 ? (
-                  <>
-                    Do you want to delete the selected <strong>{selectedElements.length} snapshots</strong>?
-                  </>
-                ) : (
-                  "Do you want to delete the selected snapshot?"
-                )}
-                {selectedElements.length === snapshots.length && (
-                  <div className="mt-4 flex items-center space-x-2">
-                    <Checkbox
-                      id="deleteSource"
-                      checked={alsoDeleteSource}
-                      onCheckedChange={(checked: boolean) => setAlsoDeleteSource(checked)}
-                    />
-                    <Label htmlFor="deleteSource" className="text-sm">
-                      Wipe all snapshots and the policy for this source.
-                    </Label>
-                  </div>
-                )}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={cancelDelete}>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="destructive" onClick={deleteSelectedSnapshots}>
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
-        <Dialog open={!!editingDescriptionFor} onOpenChange={cancelSnapshotDescription}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Snapshot Description</DialogTitle>
-              <DialogDescription>
-                Enter a new description for this snapshot.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="description">Enter new description</Label>
-                <Textarea
-                  id="description"
-                  value={updatedSnapshotDescription}
-                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setUpdatedSnapshotDescription(e.target.value)}
-                  className="min-h-[100px]"
-                />
-              </div>
-            </div>
-            <DialogFooter className="flex gap-2">
-              {savingSnapshot && (
-                <div className="mr-auto">
-                  <Spinner animation="border" size="sm" variant="primary" />
-                </div>
-              )}
-              <Button variant="outline" onClick={cancelSnapshotDescription}>
-                Cancel
-              </Button>
-              {originalSnapshotDescription && (
-                <Button variant="destructive" onClick={removeSnapshotDescription}>
-                  Remove Description
-                </Button>
-              )}
-              <Button
-                disabled={originalSnapshotDescription === updatedSnapshotDescription}
-                onClick={saveSnapshotDescription}
-              >
-                Update Description
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={!!editPinFor} onOpenChange={cancelPin}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Pin Snapshot</DialogTitle>
-              <DialogDescription>
-                {originalPinName ? "Update the pin name for this snapshot." : "Add a pin name for this snapshot."}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="pinName">Name of the pin</Label>
-                <Input
-                  id="pinName"
-                  value={newPinName}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPinName(e.target.value)}
-                  placeholder="Enter pin name"
-                />
-              </div>
-            </div>
-            <DialogFooter className="flex gap-2">
-              {savingSnapshot && (
-                <div className="mr-auto">
-                  <Spinner animation="border" size="sm" variant="primary" />
-                </div>
-              )}
-              <Button variant="outline" onClick={cancelPin}>
-                Cancel
-              </Button>
-              {originalPinName && (
-                <Button variant="destructive" onClick={() => removePin(originalPinName)}>
-                  Remove Pin
-                </Button>
-              )}
-              <Button
-                onClick={savePin}
-                disabled={newPinName === originalPinName || !newPinName}
-              >
-                {originalPinName ? "Update Pin" : "Add Pin"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+    <div className="container mx-auto p-6 max-w-6xl">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold mb-2">Snapshot History</h1>
+        <p className="text-muted-foreground">
+          {userName}@{host}:{path}
+        </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Snapshots</CardTitle>
+              <CardDescription>
+                Displaying{" "}
+                {snapshots.length !== unfilteredCount
+                  ? snapshots.length + " out of " + unfilteredCount
+                  : snapshots.length}{" "}
+                snapshots{uniqueCount !== unfilteredCount && ` (${uniqueCount} unique)`}
+              </CardDescription>
+            </div>
+            <Button size="sm" variant="outline" onClick={fetchSnapshots} disabled={isRefreshing}>
+              {isRefreshing ? <Spinner size="sm" /> : <RefreshCw className="h-4 w-4" />}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <GoBackButton />
+              {snapshots.length > 0 &&
+                (selectedElements.length < snapshots.length ? (
+                  <Button size="sm" variant="outline" onClick={selectAll}>
+                    Select All
+                  </Button>
+                ) : (
+                  <Button size="sm" variant="outline" onClick={deselectAll}>
+                    Deselect All
+                  </Button>
+                ))}
+              {selectedElements.length > 0 && (
+                <Button size="sm" variant="destructive" onClick={showDeleteConfirm}>
+                  Delete Selected ({selectedElements.length})
+                </Button>
+              )}
+              {snapshots.length === 0 && (
+                <Button size="sm" variant="destructive" onClick={deleteSnapshotSource}>
+                  Delete Snapshot Source
+                </Button>
+              )}
+            </div>
+          </div>
+          {unfilteredCount !== uniqueCount && (
+            <div className="mb-4">
+              <div className="py-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="showHidden"
+                    checked={showHidden}
+                    onCheckedChange={(checked: boolean) => setShowHidden(checked)}
+                  />
+                  <Label htmlFor="showHidden">Show {unfilteredCount} individual snapshots</Label>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="mb-4">
+            <KopiaTable data={snapshots} columns={columns} />
+          </div>
+
+          <CLIEquivalent
+            command={`snapshot list "${userName}@${host}:${path}"${showHidden ? " --show-identical" : ""}`}
+          />
+        </CardContent>
+      </Card>
+
+      <AlertDialog open={showDeleteConfirmationDialog} onOpenChange={cancelDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
+            <AlertDialogDescription>
+              {selectedElements.length > 1 ? (
+                <>
+                  Do you want to delete the selected <strong>{selectedElements.length} snapshots</strong>?
+                </>
+              ) : (
+                "Do you want to delete the selected snapshot?"
+              )}
+              {selectedElements.length === snapshots.length && (
+                <div className="mt-4 flex items-center space-x-2">
+                  <Checkbox
+                    id="deleteSource"
+                    checked={alsoDeleteSource}
+                    onCheckedChange={(checked: boolean) => setAlsoDeleteSource(checked)}
+                  />
+                  <Label htmlFor="deleteSource" className="text-sm">
+                    Wipe all snapshots and the policy for this source.
+                  </Label>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelDelete}>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={deleteSelectedSnapshots}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog open={!!editingDescriptionFor} onOpenChange={cancelSnapshotDescription}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Snapshot Description</DialogTitle>
+            <DialogDescription>Enter a new description for this snapshot.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="description">Enter new description</Label>
+              <Textarea
+                id="description"
+                value={updatedSnapshotDescription}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setUpdatedSnapshotDescription(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex gap-2">
+            {savingSnapshot && (
+              <div className="mr-auto">
+                <Spinner animation="border" size="sm" variant="primary" />
+              </div>
+            )}
+            <Button variant="outline" onClick={cancelSnapshotDescription}>
+              Cancel
+            </Button>
+            {originalSnapshotDescription && (
+              <Button variant="destructive" onClick={removeSnapshotDescription}>
+                Remove Description
+              </Button>
+            )}
+            <Button
+              disabled={originalSnapshotDescription === updatedSnapshotDescription}
+              onClick={saveSnapshotDescription}
+            >
+              Update Description
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!editPinFor} onOpenChange={cancelPin}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Pin Snapshot</DialogTitle>
+            <DialogDescription>
+              {originalPinName ? "Update the pin name for this snapshot." : "Add a pin name for this snapshot."}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="pinName">Name of the pin</Label>
+              <Input
+                id="pinName"
+                value={newPinName}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setNewPinName(e.target.value)}
+                placeholder="Enter pin name"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex gap-2">
+            {savingSnapshot && (
+              <div className="mr-auto">
+                <Spinner animation="border" size="sm" variant="primary" />
+              </div>
+            )}
+            <Button variant="outline" onClick={cancelPin}>
+              Cancel
+            </Button>
+            {originalPinName && (
+              <Button variant="destructive" onClick={() => removePin(originalPinName)}>
+                Remove Pin
+              </Button>
+            )}
+            <Button onClick={savePin} disabled={newPinName === originalPinName || !newPinName}>
+              {originalPinName ? "Update Pin" : "Add Pin"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
 

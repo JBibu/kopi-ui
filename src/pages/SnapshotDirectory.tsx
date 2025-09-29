@@ -48,7 +48,7 @@ function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryIntern
   const fetchDirectory = (): void => {
     const oid = params.oid;
 
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       isLoading: true,
       oid: oid,
@@ -57,14 +57,14 @@ function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryIntern
     axios
       .get<{ entries?: DirectoryEntry[] }>("/api/v1/objects/" + oid)
       .then((result) => {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           items: result.data.entries || [],
           isLoading: false,
         }));
       })
       .catch((error: AxiosError) =>
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           error: error as Error,
           isLoading: false,
@@ -74,13 +74,13 @@ function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryIntern
     axios
       .get<{ path?: string }>("/api/v1/mounts/" + oid)
       .then((result) => {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           mountInfo: result.data,
         }));
       })
       .catch((_error: AxiosError) =>
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           mountInfo: {},
         })),
@@ -95,13 +95,13 @@ function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryIntern
     axios
       .post<{ path?: string }>("/api/v1/mounts", { root: state.oid })
       .then((result) => {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           mountInfo: result.data,
         }));
       })
       .catch((_error: AxiosError) =>
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           mountInfo: {},
         })),
@@ -112,13 +112,13 @@ function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryIntern
     axios
       .delete("/api/v1/mounts/" + state.oid)
       .then((_result) => {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           mountInfo: {},
         }));
       })
       .catch((error: AxiosError) =>
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           error: error as Error,
           mountInfo: {},
@@ -166,55 +166,51 @@ function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryIntern
       <Card>
         <CardHeader>
           <CardTitle>Snapshot Contents</CardTitle>
-          <CardDescription>
-            Browse and restore files from this snapshot
-          </CardDescription>
+          <CardDescription>Browse and restore files from this snapshot</CardDescription>
         </CardHeader>
         <CardContent>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="flex flex-wrap items-center gap-2">
-          {state.mountInfo.path ? (
-            <>
-              <Button size="sm" variant="secondary" onClick={unmount}>
-                Unmount
-              </Button>
-              {window.kopiaUI && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="flex flex-wrap items-center gap-2">
+              {state.mountInfo.path ? (
                 <>
-                  <Button size="sm" variant="secondary" onClick={browseMounted}>
-                    Browse
+                  <Button size="sm" variant="secondary" onClick={unmount}>
+                    Unmount
+                  </Button>
+                  {window.kopiaUI && (
+                    <>
+                      <Button size="sm" variant="secondary" onClick={browseMounted}>
+                        Browse
+                      </Button>
+                    </>
+                  )}
+                  <input
+                    readOnly={true}
+                    className="border border-input bg-background px-3 py-1 text-sm rounded-md flex-1 min-w-0 mounted-path"
+                    value={state.mountInfo.path}
+                  />
+                  <Button size="sm" variant="outline" onClick={copyPath} data-testid="copy-path-button">
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button size="sm" variant="secondary" onClick={mount}>
+                    Mount as Local Filesystem
                   </Button>
                 </>
               )}
-              <input
-                readOnly={true}
-                className="border border-input bg-background px-3 py-1 text-sm rounded-md flex-1 min-w-0 mounted-path"
-                value={state.mountInfo.path}
-              />
-              <Button size="sm" variant="outline" onClick={copyPath} data-testid="copy-path-button">
-                <Copy className="h-4 w-4" />
+              <Button size="sm" variant="default" asChild>
+                <a href={"/snapshots/dir/" + params.oid + "/restore"}>Restore Files & Directories</a>
               </Button>
-            </>
-          ) : (
-            <>
-              <Button size="sm" variant="secondary" onClick={mount}>
-                Mount as Local Filesystem
-              </Button>
-            </>
-          )}
-          <Button size="sm" variant="default" asChild>
-            <a href={"/snapshots/dir/" + params.oid + "/restore"}>
-              Restore Files & Directories
-            </a>
-          </Button>
-        </div>
-        <div className="text-sm text-muted-foreground">
-          You can mount/restore all the files & directories that you see below or restore files individually.
-        </div>
-      </div>
-      <div className="mb-4">
-        <DirectoryItems items={items} historyState={location.state} />
-      </div>
-      <CLIEquivalent command={`snapshot list ${state.oid}`} />
+            </div>
+            <div className="text-sm text-muted-foreground">
+              You can mount/restore all the files & directories that you see below or restore files individually.
+            </div>
+          </div>
+          <div className="mb-4">
+            <DirectoryItems items={items} historyState={location.state} />
+          </div>
+          <CLIEquivalent command={`snapshot list ${state.oid}`} />
         </CardContent>
       </Card>
     </div>

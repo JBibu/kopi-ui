@@ -1,14 +1,14 @@
 import { vi } from "vitest";
 
-let intervalSpy;
-let clearIntervalSpy;
-let intervalCallbacks = [];
+let intervalSpy: any;
+let clearIntervalSpy: any;
+let intervalCallbacks: Array<{ id: number; callback: () => void; delay: number }> = [];
 let intervalId = 0;
 
 /**
  * Sets up interval mocking for tests
  */
-export function setupIntervalMocks() {
+export function setupIntervalMocks(): { intervalSpy: any; clearIntervalSpy: any } {
   // Mock setInterval and clearInterval to control timing
   intervalCallbacks = [];
   intervalId = 0;
@@ -29,7 +29,7 @@ export function setupIntervalMocks() {
 /**
  * Cleans up interval mocks
  */
-export function cleanupIntervalMocks() {
+export function cleanupIntervalMocks(): void {
   if (intervalSpy) {
     intervalSpy.mockRestore();
   }
@@ -42,14 +42,14 @@ export function cleanupIntervalMocks() {
 /**
  * Gets the current mock spies (useful for verification in tests)
  */
-export function getIntervalMockSpies() {
+export function getIntervalMockSpies(): { intervalSpy: any; clearIntervalSpy: any } {
   return { intervalSpy, clearIntervalSpy };
 }
 
 /**
  * Triggers all active interval callbacks manually
  */
-export async function triggerIntervals() {
+export async function triggerIntervals(): Promise<void> {
   const { act } = await import("@testing-library/react");
   await act(async () => {
     intervalCallbacks.forEach(({ callback }) => {
@@ -62,7 +62,7 @@ export async function triggerIntervals() {
  * Helper function to wait for component to load and then trigger intervals
  * @param {RegExp|string} expectedText - Text to wait for before triggering intervals
  */
-export async function waitForLoadAndTriggerIntervals(expectedText) {
+export async function waitForLoadAndTriggerIntervals(expectedText: string | RegExp): Promise<void> {
   const { waitFor, screen, act } = await import("@testing-library/react");
 
   // Wait for the component to load first
@@ -82,6 +82,6 @@ export async function waitForLoadAndTriggerIntervals(expectedText) {
 /**
  * Gets the current interval callbacks (useful for testing)
  */
-export function getIntervalCallbacks() {
+export function getIntervalCallbacks(): Array<{ id: number; callback: () => void; delay: number }> {
   return intervalCallbacks;
 }

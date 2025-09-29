@@ -1,4 +1,3 @@
-import React from "react";
 import { SetupRepositoryAzure } from "./SetupRepositoryAzure";
 import { SetupRepositoryB2 } from "./SetupRepositoryB2";
 import { SetupRepositoryFilesystem } from "./SetupRepositoryFilesystem";
@@ -69,7 +68,7 @@ const supportedProviders: ProviderInfo[] = [
   },
 ];
 
-export const SetupRepository: React.FC = () => {
+export function SetupRepository() {
   const {
     state,
     dispatch,
@@ -85,39 +84,22 @@ export const SetupRepository: React.FC = () => {
 
   const { isLoading } = useLoading();
 
-
-
-
-
-
-
   const overrideUsernameHostnameFields = (
     <div className="space-y-4">
       <div>
         <Label htmlFor="username">Username</Label>
-        <Input
-          id="username"
-          placeholder="Override this when restoring a snapshot taken by another user"
-        />
+        <Input id="username" placeholder="Override this when restoring a snapshot taken by another user" />
       </div>
       <div>
         <Label htmlFor="hostname">Hostname</Label>
-        <Input
-          id="hostname"
-          placeholder="Override this when restoring a snapshot taken on another machine"
-        />
+        <Input id="hostname" placeholder="Override this when restoring a snapshot taken on another machine" />
       </div>
     </div>
   );
 
   return (
     <ErrorBoundary>
-      {!state.provider && (
-        <ProviderSelection
-          providers={supportedProviders}
-          onProviderSelect={handleProviderSelect}
-        />
-      )}
+      {!state.provider && <ProviderSelection providers={supportedProviders} onProviderSelect={handleProviderSelect} />}
 
       {state.provider && !state.storageVerified && (
         <ProviderConfiguration
@@ -125,7 +107,7 @@ export const SetupRepository: React.FC = () => {
           providerSettings={state.providerSettings}
           providers={supportedProviders}
           optionsEditorRef={optionsEditor}
-          isLoading={isLoading('verifyStorage')}
+          isLoading={isLoading("verifyStorage")}
           connectError={state.connectError}
           onVerifyStorage={verifyStorage}
           onBack={handleProviderBack}
@@ -135,10 +117,10 @@ export const SetupRepository: React.FC = () => {
       {state.storageVerified && state.confirmCreate && (
         <RepositoryCreationForm
           state={state}
-          isLoading={isLoading('createRepository')}
+          isLoading={isLoading("createRepository")}
           connectError={state.connectError}
           onSubmit={createRepository}
-          onBack={() => dispatch({ type: 'RESET_STORAGE' })}
+          onBack={() => dispatch({ type: "RESET_STORAGE" })}
           onToggleAdvanced={toggleAdvanced}
           onFieldChange={handleFieldChange}
           overrideUsernameHostname={overrideUsernameHostnameFields}
@@ -148,14 +130,14 @@ export const SetupRepository: React.FC = () => {
       {state.storageVerified && !state.confirmCreate && (
         <RepositoryConnectionForm
           state={state}
-          isLoading={isLoading('connectRepository')}
+          isLoading={isLoading("connectRepository")}
           connectError={state.connectError}
           onSubmit={connectToRepository}
-          onBack={() => dispatch({ type: 'RESET_STORAGE' })}
+          onBack={() => dispatch({ type: "RESET_STORAGE" })}
           onToggleAdvanced={toggleAdvanced}
           onFieldChange={handleFieldChange}
         />
       )}
     </ErrorBoundary>
   );
-};
+}

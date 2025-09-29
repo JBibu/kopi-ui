@@ -57,7 +57,7 @@ export function CLIEquivalent({ command }: CLIEquivalentProps): React.JSX.Elemen
           ref={ref}
           className="cli-equivalent flex-1 h-9"
           readOnly={true}
-          value={`${cliInfo.executable || ''} ${Array.isArray(command) ? command.join(' ') : command}`}
+          value={`${cliInfo.executable || ""} ${Array.isArray(command) ? command.join(" ") : command}`}
         />
       )}
     </div>

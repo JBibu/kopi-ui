@@ -12,15 +12,7 @@ import { Logs } from "../components/Logs";
 import { useRepositoryStatus } from "../hooks/useRepositoryStatus";
 
 export function Repository(): React.JSX.Element {
-  const {
-    status,
-    isLoading,
-    error,
-    fetchStatus,
-    disconnect,
-    updateDescription,
-    setStatus,
-  } = useRepositoryStatus();
+  const { status, isLoading, error, fetchStatus, disconnect, updateDescription, setStatus } = useRepositoryStatus();
   const [showLog, setShowLog] = useState<boolean>(false);
 
   // Setup effect on mount
@@ -132,19 +124,19 @@ export function Repository(): React.JSX.Element {
               <div className="flex gap-2">
                 <Input
                   autoFocus={true}
-                  className={!status.description ? 'border-red-500 focus:border-red-500' : ''}
-                  value={status.description || ''}
+                  className={!status.description ? "border-red-500 focus:border-red-500" : ""}
+                  value={status.description || ""}
                   onChange={handleDescriptionChange}
                   size="sm"
                   placeholder="Enter repository description"
                   aria-label="Repository description"
                   aria-invalid={!status.description}
-                  aria-describedby={!status.description ? 'description-error' : undefined}
+                  aria-describedby={!status.description ? "description-error" : undefined}
                 />
                 <Button
                   data-testid="update-description"
                   size="sm"
-                  onClick={() => updateDescription(status.description || '')}
+                  onClick={() => updateDescription(status.description || "")}
                   type="button"
                   disabled={!status.description}
                   aria-label="Update repository description"
@@ -178,30 +170,30 @@ export function Repository(): React.JSX.Element {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label className="required">Config File</Label>
-                <Input readOnly value={status.configFile || ''} aria-label="Configuration file path" />
+                <Input readOnly value={status.configFile || ""} aria-label="Configuration file path" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <Label className="required">Provider</Label>
-                  <Input readOnly value={status.storage || ''} aria-label="Storage provider" />
+                  <Input readOnly value={status.storage || ""} aria-label="Storage provider" />
                 </div>
                 <div className="space-y-2">
                   <Label className="required">Encryption Algorithm</Label>
-                  <Input readOnly value={status.encryption || ''} aria-label="Encryption algorithm" />
+                  <Input readOnly value={status.encryption || ""} aria-label="Encryption algorithm" />
                 </div>
                 <div className="space-y-2">
                   <Label className="required">Hash Algorithm</Label>
-                  <Input readOnly value={status.hash || ''} aria-label="Hash algorithm" />
+                  <Input readOnly value={status.hash || ""} aria-label="Hash algorithm" />
                 </div>
                 <div className="space-y-2">
                   <Label className="required">Splitter Algorithm</Label>
-                  <Input readOnly value={status.splitter || ''} aria-label="Splitter algorithm" />
+                  <Input readOnly value={status.splitter || ""} aria-label="Splitter algorithm" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <Label className="required">Repository Format</Label>
-                  <Input readOnly value={status.formatVersion || ''} aria-label="Repository format version" />
+                  <Input readOnly value={status.formatVersion || ""} aria-label="Repository format version" />
                 </div>
                 <div className="space-y-2">
                   <Label className="required">Error Correction Overhead</Label>
@@ -234,7 +226,7 @@ export function Repository(): React.JSX.Element {
             <Label className="required">Connected as:</Label>
             <Input
               readOnly
-              value={`${status.username || ''}@${status.hostname || ''}`}
+              value={`${status.username || ""}@${status.hostname || ""}`}
               aria-label="Connected user and hostname"
             />
           </div>

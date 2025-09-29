@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 import { FolderOpen } from "lucide-react";
 
 import { Button } from "./ui/button";
@@ -36,15 +36,50 @@ const PROVIDERS: Record<string, ProviderConfig> = {
     },
     requiredFields: ["bucket", "endpoint", "accessKeyID", "secretAccessKey"],
     fields: [
-      { component: RequiredField, label: "Bucket", name: "bucket", props: { autoFocus: true, placeholder: "enter bucket name" }},
-      { component: RequiredField, label: "Server Endpoint", name: "endpoint", props: { placeholder: "enter server address (e.g., s3.amazonaws.com)" }},
-      { component: OptionalField, label: "Override Region", name: "region", props: { placeholder: "enter specific region (e.g., us-west-1) or leave empty" }},
+      {
+        component: RequiredField,
+        label: "Bucket",
+        name: "bucket",
+        props: { autoFocus: true, placeholder: "enter bucket name" },
+      },
+      {
+        component: RequiredField,
+        label: "Server Endpoint",
+        name: "endpoint",
+        props: { placeholder: "enter server address (e.g., s3.amazonaws.com)" },
+      },
+      {
+        component: OptionalField,
+        label: "Override Region",
+        name: "region",
+        props: { placeholder: "enter specific region (e.g., us-west-1) or leave empty" },
+      },
       { component: RequiredBoolean, label: "Use HTTP connection (insecure)", name: "doNotUseTLS" },
       { component: RequiredBoolean, label: "Do not verify TLS certificate", name: "doNotVerifyTLS" },
-      { component: RequiredField, label: "Access Key ID", name: "accessKeyID", props: { placeholder: "enter access key ID" }},
-      { component: RequiredField, label: "Secret Access Key", name: "secretAccessKey", props: { placeholder: "enter secret access key", type: "password" }},
-      { component: OptionalField, label: "Session Token", name: "sessionToken", props: { placeholder: "enter session token or leave empty", type: "password" }},
-      { component: OptionalField, label: "Object Name Prefix", name: "prefix", props: { placeholder: "enter object name prefix or leave empty" }},
+      {
+        component: RequiredField,
+        label: "Access Key ID",
+        name: "accessKeyID",
+        props: { placeholder: "enter access key ID" },
+      },
+      {
+        component: RequiredField,
+        label: "Secret Access Key",
+        name: "secretAccessKey",
+        props: { placeholder: "enter secret access key", type: "password" },
+      },
+      {
+        component: OptionalField,
+        label: "Session Token",
+        name: "sessionToken",
+        props: { placeholder: "enter session token or leave empty", type: "password" },
+      },
+      {
+        component: OptionalField,
+        label: "Object Name Prefix",
+        name: "prefix",
+        props: { placeholder: "enter object name prefix or leave empty" },
+      },
     ],
   },
   gcs: {
@@ -52,10 +87,30 @@ const PROVIDERS: Record<string, ProviderConfig> = {
     defaultState: {},
     requiredFields: ["bucket"],
     fields: [
-      { component: RequiredField, label: "Bucket", name: "bucket", props: { autoFocus: true, placeholder: "enter bucket name" }},
-      { component: OptionalField, label: "Object Name Prefix", name: "prefix", props: { placeholder: "enter object name prefix or leave empty" }},
-      { component: OptionalField, label: "Credentials File", name: "credentialsFile", props: { placeholder: "enter path to credentials JSON file or leave empty" }},
-      { component: OptionalField, label: "Service Account Key", name: "serviceAccountKey", props: { placeholder: "enter service account key JSON or leave empty", type: "password" }},
+      {
+        component: RequiredField,
+        label: "Bucket",
+        name: "bucket",
+        props: { autoFocus: true, placeholder: "enter bucket name" },
+      },
+      {
+        component: OptionalField,
+        label: "Object Name Prefix",
+        name: "prefix",
+        props: { placeholder: "enter object name prefix or leave empty" },
+      },
+      {
+        component: OptionalField,
+        label: "Credentials File",
+        name: "credentialsFile",
+        props: { placeholder: "enter path to credentials JSON file or leave empty" },
+      },
+      {
+        component: OptionalField,
+        label: "Service Account Key",
+        name: "serviceAccountKey",
+        props: { placeholder: "enter service account key JSON or leave empty", type: "password" },
+      },
     ],
   },
   azure: {
@@ -63,10 +118,30 @@ const PROVIDERS: Record<string, ProviderConfig> = {
     defaultState: {},
     requiredFields: ["container", "storageAccount"],
     fields: [
-      { component: RequiredField, label: "Container", name: "container", props: { autoFocus: true, placeholder: "enter container name" }},
-      { component: RequiredField, label: "Storage Account", name: "storageAccount", props: { placeholder: "enter storage account name" }},
-      { component: OptionalField, label: "Object Name Prefix", name: "prefix", props: { placeholder: "enter object name prefix or leave empty" }},
-      { component: RequiredField, label: "Storage Key", name: "storageKey", props: { placeholder: "enter storage key", type: "password" }},
+      {
+        component: RequiredField,
+        label: "Container",
+        name: "container",
+        props: { autoFocus: true, placeholder: "enter container name" },
+      },
+      {
+        component: RequiredField,
+        label: "Storage Account",
+        name: "storageAccount",
+        props: { placeholder: "enter storage account name" },
+      },
+      {
+        component: OptionalField,
+        label: "Object Name Prefix",
+        name: "prefix",
+        props: { placeholder: "enter object name prefix or leave empty" },
+      },
+      {
+        component: RequiredField,
+        label: "Storage Key",
+        name: "storageKey",
+        props: { placeholder: "enter storage key", type: "password" },
+      },
     ],
   },
   filesystem: {
@@ -84,12 +159,32 @@ const PROVIDERS: Record<string, ProviderConfig> = {
     },
     requiredFields: ["path", "host", "username"],
     fields: [
-      { component: RequiredField, label: "Path", name: "path", props: { autoFocus: true, placeholder: "enter path on remote server" }},
-      { component: RequiredField, label: "Host", name: "host", props: { placeholder: "enter hostname or IP address" }},
-      { component: RequiredField, label: "Username", name: "username", props: { placeholder: "enter username" }},
-      { component: OptionalField, label: "Port", name: "port", props: { placeholder: "enter port number (default: 22)", type: "number" }},
-      { component: OptionalField, label: "Password", name: "password", props: { placeholder: "enter password or leave empty for key-based auth", type: "password" }},
-      { component: OptionalField, label: "Private Key Path", name: "keyfile", props: { placeholder: "enter path to private key file or leave empty" }},
+      {
+        component: RequiredField,
+        label: "Path",
+        name: "path",
+        props: { autoFocus: true, placeholder: "enter path on remote server" },
+      },
+      { component: RequiredField, label: "Host", name: "host", props: { placeholder: "enter hostname or IP address" } },
+      { component: RequiredField, label: "Username", name: "username", props: { placeholder: "enter username" } },
+      {
+        component: OptionalField,
+        label: "Port",
+        name: "port",
+        props: { placeholder: "enter port number (default: 22)", type: "number" },
+      },
+      {
+        component: OptionalField,
+        label: "Password",
+        name: "password",
+        props: { placeholder: "enter password or leave empty for key-based auth", type: "password" },
+      },
+      {
+        component: OptionalField,
+        label: "Private Key Path",
+        name: "keyfile",
+        props: { placeholder: "enter path to private key file or leave empty" },
+      },
     ],
   },
   webdav: {
@@ -97,9 +192,19 @@ const PROVIDERS: Record<string, ProviderConfig> = {
     defaultState: {},
     requiredFields: ["url", "username"],
     fields: [
-      { component: RequiredField, label: "WebDAV URL", name: "url", props: { autoFocus: true, placeholder: "enter WebDAV server URL" }},
-      { component: RequiredField, label: "Username", name: "username", props: { placeholder: "enter username" }},
-      { component: OptionalField, label: "Password", name: "password", props: { placeholder: "enter password or leave empty", type: "password" }},
+      {
+        component: RequiredField,
+        label: "WebDAV URL",
+        name: "url",
+        props: { autoFocus: true, placeholder: "enter WebDAV server URL" },
+      },
+      { component: RequiredField, label: "Username", name: "username", props: { placeholder: "enter username" } },
+      {
+        component: OptionalField,
+        label: "Password",
+        name: "password",
+        props: { placeholder: "enter password or leave empty", type: "password" },
+      },
     ],
   },
   b2: {
@@ -107,10 +212,25 @@ const PROVIDERS: Record<string, ProviderConfig> = {
     defaultState: {},
     requiredFields: ["bucket", "keyID", "key"],
     fields: [
-      { component: RequiredField, label: "Bucket", name: "bucket", props: { autoFocus: true, placeholder: "enter bucket name" }},
-      { component: RequiredField, label: "Key ID", name: "keyID", props: { placeholder: "enter application key ID" }},
-      { component: RequiredField, label: "Key", name: "key", props: { placeholder: "enter application key", type: "password" }},
-      { component: OptionalField, label: "Object Name Prefix", name: "prefix", props: { placeholder: "enter object name prefix or leave empty" }},
+      {
+        component: RequiredField,
+        label: "Bucket",
+        name: "bucket",
+        props: { autoFocus: true, placeholder: "enter bucket name" },
+      },
+      { component: RequiredField, label: "Key ID", name: "keyID", props: { placeholder: "enter application key ID" } },
+      {
+        component: RequiredField,
+        label: "Key",
+        name: "key",
+        props: { placeholder: "enter application key", type: "password" },
+      },
+      {
+        component: OptionalField,
+        label: "Object Name Prefix",
+        name: "prefix",
+        props: { placeholder: "enter object name prefix or leave empty" },
+      },
     ],
   },
 };
@@ -120,39 +240,43 @@ interface FilesystemFieldsProps {
   onDirectorySelected: (path: string) => void;
 }
 
-const FilesystemFields: React.FC<FilesystemFieldsProps> = ({ formState, onDirectorySelected }) => (
-  <div className="space-y-2">
-    <Label htmlFor="path" className="text-sm font-medium required">
-      Directory Path
-      <span className="text-red-500 ml-1">*</span>
-    </Label>
-    <div className="flex gap-2">
-      <Input
-        id="path"
-        name="path"
-        value={typeof formState.state.path === 'string' ? formState.state.path : ""}
-        data-testid="control-path"
-        onChange={(e) => formState.handleChange("path", e.target.value)}
-        className={formState.errors.path && formState.touched.path ? "border-red-500 focus:border-red-500 flex-1" : "flex-1"}
-        autoFocus={true}
-        placeholder="enter directory path where you want to store repository files"
-      />
-      {window.kopiaUI && (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => window.kopiaUI?.selectDirectory(onDirectorySelected)}
-        >
-          <FolderOpen className="h-4 w-4" />
-        </Button>
+function FilesystemFields({ formState, onDirectorySelected }: FilesystemFieldsProps) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor="path" className="text-sm font-medium required">
+        Directory Path
+        <span className="text-red-500 ml-1">*</span>
+      </Label>
+      <div className="flex gap-2">
+        <Input
+          id="path"
+          name="path"
+          value={typeof formState.state.path === "string" ? formState.state.path : ""}
+          data-testid="control-path"
+          onChange={(e) => formState.handleChange("path", e.target.value)}
+          className={
+            formState.errors.path && formState.touched.path ? "border-red-500 focus:border-red-500 flex-1" : "flex-1"
+          }
+          autoFocus={true}
+          placeholder="enter directory path where you want to store repository files"
+        />
+        {window.kopiaUI && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => window.kopiaUI?.selectDirectory(onDirectorySelected)}
+          >
+            <FolderOpen className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+      {formState.errors.path && formState.touched.path && (
+        <p className="text-sm text-red-500">{formState.errors.path}</p>
       )}
     </div>
-    {formState.errors.path && formState.touched.path && (
-      <p className="text-sm text-red-500">{formState.errors.path}</p>
-    )}
-  </div>
-);
+  );
+}
 
 interface RepositorySetupFormProps {
   provider: keyof typeof PROVIDERS;
@@ -177,7 +301,7 @@ export const RepositorySetupForm = forwardRef<RepositorySetupFormHandle, Reposit
         ...config.defaultState,
         ...initial,
       },
-      config.requiredFields
+      config.requiredFields,
     );
 
     // Create legacy compatibility object for existing form components
@@ -186,7 +310,7 @@ export const RepositorySetupForm = forwardRef<RepositorySetupFormHandle, Reposit
     // Expose methods to parent via ref
     useImperativeHandle(ref, () => ({
       validate: formState.validate,
-      state: formState.state
+      state: formState.state,
     }));
 
     // Handle filesystem directory selection
@@ -238,7 +362,7 @@ export const RepositorySetupForm = forwardRef<RepositorySetupFormHandle, Reposit
         ))}
       </>
     );
-  }
+  },
 );
 
 // Export provider configurations for use in other components
@@ -248,41 +372,41 @@ export { PROVIDERS };
 export const SetupRepositoryS3 = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryS3(props, ref) {
     return <RepositorySetupForm provider="s3" {...props} ref={ref} />;
-  }
+  },
 );
 
 export const SetupRepositoryGCS = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryGCS(props, ref) {
     return <RepositorySetupForm provider="gcs" {...props} ref={ref} />;
-  }
+  },
 );
 
 export const SetupRepositoryAzure = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryAzure(props, ref) {
     return <RepositorySetupForm provider="azure" {...props} ref={ref} />;
-  }
+  },
 );
 
 export const SetupRepositoryFilesystem = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryFilesystem(props, ref) {
     return <RepositorySetupForm provider="filesystem" {...props} ref={ref} />;
-  }
+  },
 );
 
 export const SetupRepositorySFTP = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositorySFTP(props, ref) {
     return <RepositorySetupForm provider="sftp" {...props} ref={ref} />;
-  }
+  },
 );
 
 export const SetupRepositoryWebDAV = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryWebDAV(props, ref) {
     return <RepositorySetupForm provider="webdav" {...props} ref={ref} />;
-  }
+  },
 );
 
 export const SetupRepositoryB2 = forwardRef<RepositorySetupFormHandle, { initial?: Record<string, unknown> }>(
   function SetupRepositoryB2(props, ref) {
     return <RepositorySetupForm provider="b2" {...props} ref={ref} />;
-  }
+  },
 );

@@ -6,7 +6,10 @@ import { stateProperty, isInvalidNumber, valueToNumber } from ".";
 // Component with state interface for form handling
 interface ComponentWithState {
   state: Record<string, unknown>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>, valueGetter?: (target: unknown) => number | string | undefined) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    valueGetter?: (target: unknown) => number | string | undefined,
+  ) => void;
 }
 
 interface RequiredNumberFieldProps {
@@ -17,7 +20,7 @@ export function RequiredNumberField(
   component: ComponentWithState,
   label: string,
   name: string,
-  props: RequiredNumberFieldProps = {}
+  props: RequiredNumberFieldProps = {},
 ): React.JSX.Element {
   const isInvalid = stateProperty(component, name, null) === "" || isInvalidNumber(stateProperty(component, name));
 

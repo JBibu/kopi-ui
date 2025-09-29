@@ -10,14 +10,14 @@ import { TimeOfDay } from "../../forms/TimesOfDayList";
 // Component with state interface and policy definition point method
 interface ComponentWithState {
   state: Record<string, unknown>;
-  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>, valueGetter?: (target: unknown) => (TimeOfDay | string)[] | undefined) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+    valueGetter?: (target: unknown) => (TimeOfDay | string)[] | undefined,
+  ) => void;
   PolicyDefinitionPoint: (value: unknown) => string;
 }
 
-export function EffectiveTimesOfDayValue(
-  component: ComponentWithState,
-  policyField: string
-): React.JSX.Element {
+export function EffectiveTimesOfDayValue(component: ComponentWithState, policyField: string): React.JSX.Element {
   return (
     <EffectiveValueColumn>
       <div>

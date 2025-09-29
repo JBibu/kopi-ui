@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { Policy, Algorithms } from '../types';
+import axios from "axios";
+import { Policy, Algorithms } from "../types";
 
 export interface PolicyQueryParams {
   host?: string;
@@ -15,9 +15,9 @@ export interface ResolvePolicyRequest {
 class PolicyService {
   private buildQueryString(params: PolicyQueryParams): string {
     const queryParams = new URLSearchParams();
-    if (params.host) queryParams.append('host', params.host);
-    if (params.userName) queryParams.append('userName', params.userName);
-    if (params.path) queryParams.append('path', params.path);
+    if (params.host) queryParams.append("host", params.host);
+    if (params.userName) queryParams.append("userName", params.userName);
+    if (params.path) queryParams.append("path", params.path);
     return queryParams.toString();
   }
 
@@ -44,7 +44,7 @@ class PolicyService {
   }
 
   async getAlgorithms(): Promise<Algorithms> {
-    const response = await axios.get('/api/v1/repo/algorithms');
+    const response = await axios.get("/api/v1/repo/algorithms");
     return response.data;
   }
 
@@ -53,12 +53,12 @@ class PolicyService {
 
     const removeEmpty = (arr?: string[]): string[] | undefined => {
       if (!arr) return arr;
-      return arr.filter(s => s !== '');
+      return arr.filter((s) => s !== "");
     };
 
     const validateTimesOfDay = (arr: unknown[]): unknown[] => {
       for (const tod of arr) {
-        if (typeof tod !== 'object') {
+        if (typeof tod !== "object") {
           throw new Error(`Invalid time of day: '${tod}'`);
         }
       }
@@ -85,19 +85,19 @@ class PolicyService {
 
     if (validatedPolicy.scheduling?.timesOfDay) {
       validatedPolicy.scheduling.timesOfDay = validateTimesOfDay(
-        removeEmpty(validatedPolicy.scheduling.timesOfDay) || []
+        removeEmpty(validatedPolicy.scheduling.timesOfDay) || [],
       );
     }
 
     if (validatedPolicy.actions) {
       if (validatedPolicy.actions.beforeSnapshotRoot) {
         validatedPolicy.actions.beforeSnapshotRoot = removeEmpty(
-          validatedPolicy.actions.beforeSnapshotRoot as string[]
+          validatedPolicy.actions.beforeSnapshotRoot as string[],
         ) as string[] | undefined;
       }
       if (validatedPolicy.actions.afterSnapshotRoot) {
         validatedPolicy.actions.afterSnapshotRoot = removeEmpty(
-          validatedPolicy.actions.afterSnapshotRoot as string[]
+          validatedPolicy.actions.afterSnapshotRoot as string[],
         ) as string[] | undefined;
       }
     }

@@ -1,12 +1,11 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '../ui/button';
-import { Spinner } from '../ui/spinner';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { AdvancedOptions } from './AdvancedOptions';
-import { RepositoryState } from './types';
+import { useForm } from "react-hook-form";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { AdvancedOptions } from "./AdvancedOptions";
+import { RepositoryState } from "./types";
 
 interface RepositoryCreationFormData {
   password: string;
@@ -28,7 +27,7 @@ interface RepositoryCreationFormProps {
   overrideUsernameHostname: React.ReactNode;
 }
 
-export const RepositoryCreationForm: React.FC<RepositoryCreationFormProps> = ({
+export function RepositoryCreationForm({
   state,
   isLoading,
   connectError,
@@ -37,7 +36,7 @@ export const RepositoryCreationForm: React.FC<RepositoryCreationFormProps> = ({
   onToggleAdvanced,
   onFieldChange,
   overrideUsernameHostname,
-}) => {
+}: RepositoryCreationFormProps) {
   const {
     register,
     handleSubmit,
@@ -45,12 +44,12 @@ export const RepositoryCreationForm: React.FC<RepositoryCreationFormProps> = ({
     formState: { errors },
   } = useForm<RepositoryCreationFormData>({
     defaultValues: {
-      password: '',
-      confirmPassword: '',
-      description: 'My Repository',
+      password: "",
+      confirmPassword: "",
+      description: "My Repository",
       readonly: false,
-      username: state.username || '',
-      hostname: state.hostname || '',
+      username: state.username || "",
+      hostname: state.hostname || "",
     },
   });
 
@@ -72,18 +71,14 @@ export const RepositoryCreationForm: React.FC<RepositoryCreationFormProps> = ({
                   Repository Password
                 </Label>
                 <Input
-                  {...register('password', { required: 'Repository password is required' })}
+                  {...register("password", { required: "Repository password is required" })}
                   id="password"
                   type="password"
                   placeholder="enter repository password"
                   autoFocus
                 />
-                {errors.password && (
-                  <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
-                )}
-                <p className="text-sm text-muted-foreground mt-1">
-                  Used to encrypt the repository&apos;s contents
-                </p>
+                {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>}
+                <p className="text-sm text-muted-foreground mt-1">Used to encrypt the repository&apos;s contents</p>
               </div>
 
               <div>
@@ -91,9 +86,9 @@ export const RepositoryCreationForm: React.FC<RepositoryCreationFormProps> = ({
                   Confirm Repository Password
                 </Label>
                 <Input
-                  {...register('confirmPassword', {
-                    required: 'Please confirm the password',
-                    validate: (value) => value === watch('password') || "Passwords don&apos;t match",
+                  {...register("confirmPassword", {
+                    required: "Please confirm the password",
+                    validate: (value) => value === watch("password") || "Passwords don&apos;t match",
                   })}
                   id="confirmPassword"
                   type="password"
@@ -133,4 +128,4 @@ export const RepositoryCreationForm: React.FC<RepositoryCreationFormProps> = ({
       </Card>
     </div>
   );
-};
+}

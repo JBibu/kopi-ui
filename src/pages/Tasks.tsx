@@ -7,7 +7,13 @@ dayjs.extend(relativeTime);
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Alert } from "../components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
@@ -56,21 +62,24 @@ export function Tasks(): React.JSX.Element {
   }, [fetchTasks]);
 
   // Memoized task matching function
-  const taskMatches = useCallback((task: Task): boolean => {
-    if (showKind !== "All" && task.kind !== showKind) {
-      return false;
-    }
+  const taskMatches = useCallback(
+    (task: Task): boolean => {
+      if (showKind !== "All" && task.kind !== showKind) {
+        return false;
+      }
 
-    if (showStatus !== "All" && task.status.toLowerCase() !== showStatus.toLowerCase()) {
-      return false;
-    }
+      if (showStatus !== "All" && task.status.toLowerCase() !== showStatus.toLowerCase()) {
+        return false;
+      }
 
-    if (searchDescription && task.description.indexOf(searchDescription) < 0) {
-      return false;
-    }
+      if (searchDescription && task.description.indexOf(searchDescription) < 0) {
+        return false;
+      }
 
-    return true;
-  }, [showKind, showStatus, searchDescription]);
+      return true;
+    },
+    [showKind, showStatus, searchDescription],
+  );
 
   // Memoized filtered items
   const filteredItems = useMemo((): Task[] => {
@@ -78,41 +87,44 @@ export function Tasks(): React.JSX.Element {
   }, [items, taskMatches]);
 
   // Memoized columns configuration
-  const columns: ColumnDef<Task>[] = useMemo(() => [
-    {
-      header: "Start Time",
-      width: 160,
-      cell: ({ row }) => (
-        <Link
-          to={"/tasks/" + row.original.id}
-          title={dayjs(row.original.startTime).toLocaleString()}
-          className="text-blue-600 hover:underline"
-          aria-label={`View task details for ${row.original.kind} started ${dayjs(row.original.startTime).fromNow()}`}
-        >
-          {dayjs(row.original.startTime).fromNow()}
-        </Link>
-      ),
-    },
-    {
-      header: "Status",
-      width: 240,
-      cell: ({ row }) => (
-        <div role="status" aria-live="polite">
-          {taskStatusSymbol(row.original)}
-        </div>
-      ),
-    },
-    {
-      header: "Kind",
-      width: "",
-      cell: ({ row }) => <span>{row.original.kind}</span>,
-    },
-    {
-      header: "Description",
-      width: "",
-      cell: ({ row }) => <span>{row.original.description}</span>,
-    },
-  ], []);
+  const columns: ColumnDef<Task>[] = useMemo(
+    () => [
+      {
+        header: "Start Time",
+        width: 160,
+        cell: ({ row }) => (
+          <Link
+            to={"/tasks/" + row.original.id}
+            title={dayjs(row.original.startTime).toLocaleString()}
+            className="text-blue-600 hover:underline"
+            aria-label={`View task details for ${row.original.kind} started ${dayjs(row.original.startTime).fromNow()}`}
+          >
+            {dayjs(row.original.startTime).fromNow()}
+          </Link>
+        ),
+      },
+      {
+        header: "Status",
+        width: 240,
+        cell: ({ row }) => (
+          <div role="status" aria-live="polite">
+            {taskStatusSymbol(row.original)}
+          </div>
+        ),
+      },
+      {
+        header: "Kind",
+        width: "",
+        cell: ({ row }) => <span>{row.original.kind}</span>,
+      },
+      {
+        header: "Description",
+        width: "",
+        cell: ({ row }) => <span>{row.original.description}</span>,
+      },
+    ],
+    [],
+  );
 
   // Error state
   if (error) {
@@ -198,8 +210,8 @@ export function Tasks(): React.JSX.Element {
 
           {!items.length ? (
             <Alert>
-              <Info className="h-4 w-4 mr-2" />
-              A list of tasks will appear here when you create snapshots, restore, run maintenance, etc.
+              <Info className="h-4 w-4 mr-2" />A list of tasks will appear here when you create snapshots, restore, run
+              maintenance, etc.
             </Alert>
           ) : (
             <KopiaTable data={filteredItems} columns={columns} />

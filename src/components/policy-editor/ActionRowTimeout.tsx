@@ -9,10 +9,7 @@ import { PolicyComponentWithState } from "../../types/policy";
 // Component with state interface for form handling
 type ComponentWithState = PolicyComponentWithState;
 
-export function ActionRowTimeout(
-  component: ComponentWithState,
-  action: string
-): React.JSX.Element {
+export function ActionRowTimeout(component: ComponentWithState, action: string): React.JSX.Element {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <LabelColumn name="Timeout" help="Timeout in seconds before Kopia kills the process" />

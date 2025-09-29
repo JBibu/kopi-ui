@@ -1,23 +1,22 @@
-import React from 'react';
-import { useNotificationEditor, NotificationProfile } from '../../hooks/useNotificationEditor';
-import { ProfileList } from './sections/ProfileList';
-import { ProfileEditor } from './sections/ProfileEditor';
-import { EmailMethodForm } from './methods/EmailMethodForm';
-import { WebhookMethodForm } from './methods/WebhookMethodForm';
-import { PushoverMethodForm } from './methods/PushoverMethodForm';
-import { Alert, AlertDescription } from '../ui/alert';
-import { Spinner } from '../ui/spinner';
-import { AlertCircle } from 'lucide-react';
+import { useNotificationEditor, NotificationProfile } from "../../hooks/useNotificationEditor";
+import { ProfileList } from "./sections/ProfileList";
+import { ProfileEditor } from "./sections/ProfileEditor";
+import { EmailMethodForm } from "./methods/EmailMethodForm";
+import { WebhookMethodForm } from "./methods/WebhookMethodForm";
+import { PushoverMethodForm } from "./methods/PushoverMethodForm";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Spinner } from "../ui/spinner";
+import { AlertCircle } from "lucide-react";
 
 import { NotificationMethodComponent } from "../../types/notifications";
 
 const notificationMethods: Record<string, NotificationMethodComponent> = {
-  email: { displayName: 'E-mail', component: EmailMethodForm },
-  pushover: { displayName: 'Pushover', component: PushoverMethodForm },
-  webhook: { displayName: 'Webhook', component: WebhookMethodForm },
+  email: { displayName: "E-mail", component: EmailMethodForm },
+  pushover: { displayName: "Pushover", component: PushoverMethodForm },
+  webhook: { displayName: "Webhook", component: WebhookMethodForm },
 };
 
-export const NotificationEditor: React.FC = () => {
+export function NotificationEditor() {
   const {
     profiles,
     editedProfile,
@@ -53,8 +52,8 @@ export const NotificationEditor: React.FC = () => {
         await updateProfile(profile);
       }
     } catch (error) {
-      console.error('Failed to save profile:', error);
-      alert(`Error saving profile: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Failed to save profile:", error);
+      alert(`Error saving profile: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
@@ -62,8 +61,8 @@ export const NotificationEditor: React.FC = () => {
     try {
       await sendTestNotification(profile);
     } catch (error) {
-      console.error('Failed to send test notification:', error);
-      alert(`Error sending test notification: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Failed to send test notification:", error);
+      alert(`Error sending test notification: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
@@ -80,9 +79,7 @@ export const NotificationEditor: React.FC = () => {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          Failed to load notification profiles: {error.message}
-        </AlertDescription>
+        <AlertDescription>Failed to load notification profiles: {error.message}</AlertDescription>
       </Alert>
     );
   }
@@ -94,9 +91,7 @@ export const NotificationEditor: React.FC = () => {
       return (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Unknown notification method: {editedProfile.method.type}
-          </AlertDescription>
+          <AlertDescription>Unknown notification method: {editedProfile.method.type}</AlertDescription>
         </Alert>
       );
     }
@@ -125,4 +120,4 @@ export const NotificationEditor: React.FC = () => {
       onCreateNew={handleCreateNew}
     />
   );
-};
+}

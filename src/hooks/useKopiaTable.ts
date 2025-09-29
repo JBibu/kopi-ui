@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -15,10 +15,10 @@ import {
   PaginationState,
   RowSelectionState,
   Table,
-} from '@tanstack/react-table';
-import { useTablePagination } from './useTablePagination';
-import { useTableSelection } from './useTableSelection';
-import { useTableFiltering } from './useTableFiltering';
+} from "@tanstack/react-table";
+import { useTablePagination } from "./useTablePagination";
+import { useTableSelection } from "./useTableSelection";
+import { useTableFiltering } from "./useTableFiltering";
 
 interface UseKopiaTableOptions<T> {
   data: T[];

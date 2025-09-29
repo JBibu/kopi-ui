@@ -77,11 +77,11 @@ export function PolicyTypeName(s: SourceInfo): string {
 export function sourceQueryStringParams(src: SourceInfo): string {
   return (
     "userName=" +
-    encodeURIComponent(src.userName || '') +
+    encodeURIComponent(src.userName || "") +
     "&host=" +
-    encodeURIComponent(src.host || '') +
+    encodeURIComponent(src.host || "") +
     "&path=" +
-    encodeURIComponent(src.path || '')
+    encodeURIComponent(src.path || "")
   );
 }
 

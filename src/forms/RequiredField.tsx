@@ -9,7 +9,7 @@ export function RequiredField(
   label: string,
   name: string,
   props: RequiredFieldProps = {},
-  helpText: string | null = null
+  helpText: string | null = null,
 ): React.JSX.Element {
   const isInvalid = stateProperty(component, name, null) === "";
 

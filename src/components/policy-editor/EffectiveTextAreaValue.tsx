@@ -11,10 +11,7 @@ interface ComponentWithState {
   PolicyDefinitionPoint: (value: unknown) => string;
 }
 
-export function EffectiveTextAreaValue(
-  component: ComponentWithState,
-  policyField: string
-): React.JSX.Element {
+export function EffectiveTextAreaValue(component: ComponentWithState, policyField: string): React.JSX.Element {
   const dsp = getDeepStateProperty(component, "resolved.definition." + policyField, undefined);
 
   return (

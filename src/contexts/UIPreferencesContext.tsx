@@ -3,8 +3,8 @@ import axios from "axios";
 
 export const PAGE_SIZES = [5, 10, 20, 30, 40, 50, 100] as const;
 
-type PageSize = typeof PAGE_SIZES[number];
-type FontSize = 'text-sm' | 'text-base' | 'text-lg';
+type PageSize = (typeof PAGE_SIZES)[number];
+type FontSize = "text-sm" | "text-base" | "text-lg";
 
 interface Preferences {
   pageSize: PageSize;
@@ -62,7 +62,10 @@ function normalizePageSize(pageSize: number): PageSize {
   return 100;
 }
 
-export function UIPreferenceProvider({ children, initalValue: _initalValue }: UIPreferenceProviderProps): React.ReactElement {
+export function UIPreferenceProvider({
+  children,
+  initalValue: _initalValue,
+}: UIPreferenceProviderProps): React.ReactElement {
   const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES);
 
   const setPageSize = (pageSize: PageSize): void =>
@@ -132,7 +135,6 @@ export function UIPreferenceProvider({ children, initalValue: _initalValue }: UI
 
     // Remove old font size classes
     doc.classList.remove("text-sm", "text-base", "text-lg");
-
 
     // Add new font size class
     doc.classList.add(fontSize);

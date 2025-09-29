@@ -1,6 +1,6 @@
-import { useState, useContext } from 'react';
-import { PaginationState } from '@tanstack/react-table';
-import { UIPreferencesContext } from '../contexts/UIPreferencesContext';
+import { useState, useContext } from "react";
+import { PaginationState } from "@tanstack/react-table";
+import { UIPreferencesContext } from "../contexts/UIPreferencesContext";
 
 interface UseTablePaginationOptions {
   initialPageIndex?: number;
@@ -29,7 +29,7 @@ export function useTablePagination(options: UseTablePaginationOptions = {}): Use
   const handlePaginationChange = (updater: unknown) => {
     setPagination(updater);
     if (onPaginationChange) {
-      const newPagination = typeof updater === 'function' ? updater(pagination) : updater;
+      const newPagination = typeof updater === "function" ? updater(pagination) : updater;
       onPaginationChange(newPagination);
 
       if (newPagination.pageSize !== pagination.pageSize) {

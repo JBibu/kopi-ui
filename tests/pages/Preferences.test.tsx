@@ -4,12 +4,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "@testing-library/jest-dom";
 import React from "react";
 import { Preferences } from "../../src/pages/Preferences";
-import {
-  renderWithProviders,
-  setupDefaultMocks,
-  cleanupMocks,
-  axiosMock
-} from "../testutils/test-setup";
+import { renderWithProviders, setupDefaultMocks, cleanupMocks, axiosMock } from "../testutils/test-setup";
 
 describe("Preferences Page", () => {
   beforeEach(() => {
@@ -25,11 +20,11 @@ describe("Preferences Page", () => {
       removeItem: vi.fn(),
       clear: vi.fn(),
       length: 0,
-      key: vi.fn(() => null)
+      key: vi.fn(() => null),
     };
-    Object.defineProperty(window, 'localStorage', {
+    Object.defineProperty(window, "localStorage", {
       value: localStorageMock,
-      writable: true
+      writable: true,
     });
   });
 
@@ -78,7 +73,7 @@ describe("Preferences Page", () => {
 
     it("should persist theme selection", async () => {
       const user = userEvent.setup();
-      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+      const setItemSpy = vi.spyOn(Storage.prototype, "setItem");
 
       renderWithProviders(<Preferences />);
 
@@ -170,7 +165,7 @@ describe("Preferences Page", () => {
       await user.click(largeOption);
 
       // Check that the appropriate class is applied
-      expect(document.documentElement.classList.contains('text-lg')).toBe(true);
+      expect(document.documentElement.classList.contains("text-lg")).toBe(true);
     });
   });
 

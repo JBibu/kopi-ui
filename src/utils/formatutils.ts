@@ -100,7 +100,13 @@ export function formatMillisecondsUsingMultipleUnits(ms: number): string {
  *                   when combined together, represent the original duration
  *                   (minus any partial milliseconds).
  */
-export function separateMillisecondsIntoMagnitudes(ms: number): { days: number; hours: number; minutes: number; seconds: number; milliseconds: number } {
+export function separateMillisecondsIntoMagnitudes(ms: number): {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  milliseconds: number;
+} {
   const magnitudes = {
     days: Math.trunc(ms / (1000 * 60 * 60 * 24)),
     hours: Math.trunc(ms / (1000 * 60 * 60)) % 24,
@@ -133,7 +139,10 @@ export function separateMillisecondsIntoMagnitudes(ms: number): { days: number; 
  * @param {boolean} abbreviateUnits - Whether you want to use short unit names.
  * @returns {string} Formatted string representing the specified duration.
  */
-export function formatMagnitudesUsingMultipleUnits(magnitudes: { days: number; hours: number; minutes: number; seconds: number; milliseconds: number }, abbreviateUnits = false): string {
+export function formatMagnitudesUsingMultipleUnits(
+  magnitudes: { days: number; hours: number; minutes: number; seconds: number; milliseconds: number },
+  abbreviateUnits = false,
+): string {
   // Define the label we will use for each unit, depending upon whether that
   // unit's magnitude is `1` or not (e.g. "0 minutes" vs. "1 minute").
   // Note: This object is not used in the final "else" block below.

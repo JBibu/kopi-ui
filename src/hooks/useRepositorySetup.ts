@@ -1,8 +1,12 @@
-import { useReducer, useEffect, useContext, useCallback, useRef } from 'react';
-import { AppContext } from '../contexts/AppContext';
-import { useLoading } from '../contexts/LoadingContext';
-import { repositoryService, type CreateRepositoryRequest, type ConnectRepositoryRequest } from '../services/repository.service';
-import { repositoryReducer, initialState } from '../components/setup-repository/reducer';
+import { useReducer, useEffect, useContext, useCallback, useRef } from "react";
+import { AppContext } from "../contexts/AppContext";
+import { useLoading } from "../contexts/LoadingContext";
+import {
+  repositoryService,
+  type CreateRepositoryRequest,
+  type ConnectRepositoryRequest,
+} from "../services/repository.service";
+import { repositoryReducer, initialState } from "../components/setup-repository/reducer";
 
 export const useRepositorySetup = () => {
   const [state, dispatch] = useReducer(repositoryReducer, initialState);
@@ -18,10 +22,10 @@ export const useRepositorySetup = () => {
           repositoryService.getCurrentUser(),
         ]);
 
-        dispatch({ type: 'SET_ALGORITHMS', payload: algorithms });
-        dispatch({ type: 'SET_USER_INFO', payload: userInfo });
+        dispatch({ type: "SET_ALGORITHMS", payload: algorithms });
+        dispatch({ type: "SET_USER_INFO", payload: userInfo });
       } catch (error) {
-        console.error('Failed to initialize repository setup data:', error);
+        console.error("Failed to initialize repository setup data:", error);
       }
     };
 
@@ -29,19 +33,19 @@ export const useRepositorySetup = () => {
   }, []);
 
   const handleProviderSelect = useCallback((provider: string) => {
-    dispatch({ type: 'SET_PROVIDER', payload: provider });
+    dispatch({ type: "SET_PROVIDER", payload: provider });
   }, []);
 
   const handleProviderBack = useCallback(() => {
-    dispatch({ type: 'RESET_PROVIDER' });
+    dispatch({ type: "RESET_PROVIDER" });
   }, []);
 
   const toggleAdvanced = useCallback(() => {
-    dispatch({ type: 'SET_ADVANCED', payload: !state.showAdvanced });
+    dispatch({ type: "SET_ADVANCED", payload: !state.showAdvanced });
   }, [state.showAdvanced]);
 
   const handleFieldChange = useCallback((field: string, value: unknown) => {
-    dispatch({ type: 'UPDATE_FIELD', payload: { field, value } });
+    dispatch({ type: "UPDATE_FIELD", payload: { field, value } });
   }, []);
 
   const verifyStorage = useCallback(
@@ -53,11 +57,11 @@ export const useRepositorySetup = () => {
         return;
       }
 
-      if (state.provider === '_token' || state.provider === '_server') {
-        dispatch({ type: 'SET_STORAGE_VERIFIED', payload: true });
-        dispatch({ type: 'SET_CONFIRM_CREATE', payload: false });
+      if (state.provider === "_token" || state.provider === "_server") {
+        dispatch({ type: "SET_STORAGE_VERIFIED", payload: true });
+        dispatch({ type: "SET_CONFIRM_CREATE", payload: false });
         if (ed) {
-          dispatch({ type: 'SET_PROVIDER_SETTINGS', payload: ed.state });
+          dispatch({ type: "SET_PROVIDER_SETTINGS", payload: ed.state });
         }
         return;
       }
@@ -70,35 +74,36 @@ export const useRepositorySetup = () => {
       };
 
       try {
-        await withLoading('verifyStorage', () => repositoryService.verifyStorage(request));
+        await withLoading("verifyStorage", () => repositoryService.verifyStorage(request));
 
-        dispatch({ type: 'SET_STORAGE_VERIFIED', payload: true });
-        dispatch({ type: 'SET_CONFIRM_CREATE', payload: false });
+        dispatch({ type: "SET_STORAGE_VERIFIED", payload: true });
+        dispatch({ type: "SET_CONFIRM_CREATE", payload: false });
         if (ed) {
-          dispatch({ type: 'SET_PROVIDER_SETTINGS', payload: ed.state });
+          dispatch({ type: "SET_PROVIDER_SETTINGS", payload: ed.state });
         }
       } catch (error: unknown) {
         const axiosError = error as { response?: { data?: { code?: string; error?: string } }; message?: string };
         if (axiosError.response?.data) {
-          if (axiosError.response.data.code === 'NOT_INITIALIZED') {
-            dispatch({ type: 'SET_CONFIRM_CREATE', payload: true });
-            dispatch({ type: 'SET_STORAGE_VERIFIED', payload: true });
+          if (axiosError.response.data.code === "NOT_INITIALIZED") {
+            dispatch({ type: "SET_CONFIRM_CREATE", payload: true });
+            dispatch({ type: "SET_STORAGE_VERIFIED", payload: true });
             if (ed) {
-              dispatch({ type: 'SET_PROVIDER_SETTINGS', payload: ed.state });
+              dispatch({ type: "SET_PROVIDER_SETTINGS", payload: ed.state });
             }
-            dispatch({ type: 'SET_CONNECT_ERROR', payload: null });
+            dispatch({ type: "SET_CONNECT_ERROR", payload: null });
           } else {
             dispatch({
-              type: 'SET_CONNECT_ERROR',
-              payload: (axiosError.response.data.code || 'Error') + ': ' + (axiosError.response.data.error || 'Unknown error'),
+              type: "SET_CONNECT_ERROR",
+              payload:
+                (axiosError.response.data.code || "Error") + ": " + (axiosError.response.data.error || "Unknown error"),
             });
           }
         } else {
-          dispatch({ type: 'SET_CONNECT_ERROR', payload: axiosError.message || 'Unknown error occurred' });
+          dispatch({ type: "SET_CONNECT_ERROR", payload: axiosError.message || "Unknown error occurred" });
         }
       }
     },
-    [state.provider, withLoading]
+    [state.provider, withLoading],
   );
 
   const createRepository = useCallback(
@@ -130,7 +135,7 @@ export const useRepositorySetup = () => {
       };
 
       try {
-        await withLoading('createRepository', () => repositoryService.createRepository(request));
+        await withLoading("createRepository", () => repositoryService.createRepository(request));
 
         if (context.repositoryUpdated) {
           context.repositoryUpdated(true);
@@ -139,15 +144,16 @@ export const useRepositorySetup = () => {
         const axiosError = error as { response?: { data?: { code?: string; error?: string } }; message?: string };
         if (axiosError.response?.data) {
           dispatch({
-            type: 'SET_CONNECT_ERROR',
-            payload: (axiosError.response.data.code || 'Error') + ': ' + (axiosError.response.data.error || 'Unknown error'),
+            type: "SET_CONNECT_ERROR",
+            payload:
+              (axiosError.response.data.code || "Error") + ": " + (axiosError.response.data.error || "Unknown error"),
           });
         } else {
-          dispatch({ type: 'SET_CONNECT_ERROR', payload: axiosError.message || 'Unknown error occurred' });
+          dispatch({ type: "SET_CONNECT_ERROR", payload: axiosError.message || "Unknown error occurred" });
         }
       }
     },
-    [state, context, withLoading]
+    [state, context, withLoading],
   );
 
   const connectToRepository = useCallback(
@@ -155,7 +161,7 @@ export const useRepositorySetup = () => {
       let request: ConnectRepositoryRequest;
 
       switch (state.provider) {
-        case '_token':
+        case "_token":
           request = {
             token: state.providerSettings.token,
             clientOptions: {
@@ -167,7 +173,7 @@ export const useRepositorySetup = () => {
           };
           break;
 
-        case '_server':
+        case "_server":
           request = {
             apiServer: state.providerSettings,
             password: formData.password,
@@ -198,7 +204,7 @@ export const useRepositorySetup = () => {
       }
 
       try {
-        await withLoading('connectRepository', () => repositoryService.connectRepository(request));
+        await withLoading("connectRepository", () => repositoryService.connectRepository(request));
 
         if (context.repositoryUpdated) {
           context.repositoryUpdated(true);
@@ -206,17 +212,18 @@ export const useRepositorySetup = () => {
       } catch (error: unknown) {
         const axiosError = error as { response?: { data?: { code?: string; error?: string } }; message?: string };
         if (axiosError.response?.data) {
-          dispatch({ type: 'SET_CONFIRM_CREATE', payload: false });
+          dispatch({ type: "SET_CONFIRM_CREATE", payload: false });
           dispatch({
-            type: 'SET_CONNECT_ERROR',
-            payload: (axiosError.response.data.code || 'Error') + ': ' + (axiosError.response.data.error || 'Unknown error'),
+            type: "SET_CONNECT_ERROR",
+            payload:
+              (axiosError.response.data.code || "Error") + ": " + (axiosError.response.data.error || "Unknown error"),
           });
         } else {
-          dispatch({ type: 'SET_CONNECT_ERROR', payload: axiosError.message || 'Unknown error occurred' });
+          dispatch({ type: "SET_CONNECT_ERROR", payload: axiosError.message || "Unknown error occurred" });
         }
       }
     },
-    [state, context, withLoading]
+    [state, context, withLoading],
   );
 
   return {

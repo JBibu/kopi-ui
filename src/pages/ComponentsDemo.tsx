@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { SetupRepository } from '../components/SetupRepository';
-import { PolicyEditor } from '../components/policy-editor/PolicyEditor';
-import { NotificationEditor } from '../components/notifications/NotificationEditor';
-import { KopiaTable } from '../components/KopiaTable';
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { SetupRepository } from "../components/SetupRepository";
+import { PolicyEditor } from "../components/policy-editor/PolicyEditor";
+import { NotificationEditor } from "../components/notifications/NotificationEditor";
+import { KopiaTable } from "../components/KopiaTable";
 
-export const ComponentsDemo: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('setup-new');
+export function ComponentsDemo() {
+  const [activeTab, setActiveTab] = useState("setup-new");
 
   // Sample data for table demos
   const sampleTableData = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'inactive' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', status: 'active' },
-    { id: 4, name: 'Alice Williams', email: 'alice@example.com', status: 'active' },
-    { id: 5, name: 'Charlie Brown', email: 'charlie@example.com', status: 'inactive' },
+    { id: 1, name: "John Doe", email: "john@example.com", status: "active" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", status: "inactive" },
+    { id: 3, name: "Bob Johnson", email: "bob@example.com", status: "active" },
+    { id: 4, name: "Alice Williams", email: "alice@example.com", status: "active" },
+    { id: 5, name: "Charlie Brown", email: "charlie@example.com", status: "inactive" },
   ];
 
   const tableColumns = [
-    { accessorKey: 'id', header: 'ID', enableSorting: true },
-    { accessorKey: 'name', header: 'Name', enableSorting: true },
-    { accessorKey: 'email', header: 'Email', enableSorting: true },
-    { accessorKey: 'status', header: 'Status', enableSorting: true },
+    { accessorKey: "id", header: "ID", enableSorting: true },
+    { accessorKey: "name", header: "Name", enableSorting: true },
+    { accessorKey: "email", header: "Email", enableSorting: true },
+    { accessorKey: "status", header: "Status", enableSorting: true },
   ];
 
   return (
@@ -56,8 +56,8 @@ export const ComponentsDemo: React.FC = () => {
                 </div>
               </div>
               <CardDescription>
-                Modern architecture with useReducer for state management, separated into focused sub-components,
-                using React Hook Form for validation, and full TypeScript support.
+                Modern architecture with useReducer for state management, separated into focused sub-components, using
+                React Hook Form for validation, and full TypeScript support.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -128,8 +128,8 @@ export const ComponentsDemo: React.FC = () => {
                 </div>
               </div>
               <CardDescription>
-                Complete refactor with custom hook for state management, React Hook Form for validation,
-                and modular method-specific forms.
+                Complete refactor with custom hook for state management, React Hook Form for validation, and modular
+                method-specific forms.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -163,8 +163,8 @@ export const ComponentsDemo: React.FC = () => {
                 </div>
               </div>
               <CardDescription>
-                Enhanced table component with custom hook, global filtering, column visibility,
-                row selection, and improved pagination.
+                Enhanced table component with custom hook, global filtering, column visibility, row selection, and
+                improved pagination.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -194,10 +194,7 @@ export const ComponentsDemo: React.FC = () => {
                   />
 
                   <h4 className="font-semibold mt-6">Standard Version:</h4>
-                  <KopiaTable
-                    columns={tableColumns}
-                    data={sampleTableData}
-                  />
+                  <KopiaTable columns={tableColumns} data={sampleTableData} />
                 </div>
               </div>
             </CardContent>
@@ -206,4 +203,4 @@ export const ComponentsDemo: React.FC = () => {
       </Tabs>
     </div>
   );
-};
+}

@@ -1,5 +1,12 @@
 import React from "react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "./ui/breadcrumb";
 import { useNavigate, useLocation, Location } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { Info } from "lucide-react";
@@ -48,10 +55,7 @@ export function DirectoryBreadcrumbs(): React.JSX.Element {
                       )}
                     </BreadcrumbPage>
                   ) : (
-                    <BreadcrumbLink
-                      onClick={() => navigate(-index)}
-                      className="cursor-pointer hover:underline"
-                    >
+                    <BreadcrumbLink onClick={() => navigate(-index)} className="cursor-pointer hover:underline">
                       {state.label}
                     </BreadcrumbLink>
                   )}

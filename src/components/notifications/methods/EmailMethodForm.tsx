@@ -1,14 +1,8 @@
-import React, { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Input } from '../../ui/input';
-import { Label } from '../../ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../ui/select';
+import { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 
 interface EmailConfig {
   smtpServer: string;
@@ -19,7 +13,7 @@ interface EmailConfig {
   from: string;
   to: string;
   cc?: string;
-  format: 'txt' | 'html';
+  format: "txt" | "html";
 }
 
 interface EmailMethodFormProps {
@@ -27,25 +21,22 @@ interface EmailMethodFormProps {
   onConfigChange: (config: EmailConfig) => void;
 }
 
-export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
-  config,
-  onConfigChange,
-}) => {
+export function EmailMethodForm({ config, onConfigChange }: EmailMethodFormProps) {
   const {
     control,
     watch,
     formState: { errors },
   } = useForm<EmailConfig>({
     defaultValues: {
-      smtpServer: config.smtpServer || '',
+      smtpServer: config.smtpServer || "",
       smtpPort: config.smtpPort || 587,
-      smtpUsername: config.smtpUsername || '',
-      smtpPassword: config.smtpPassword || '',
-      smtpIdentity: config.smtpIdentity || '',
-      from: config.from || '',
-      to: config.to || '',
-      cc: config.cc || '',
-      format: config.format || 'txt',
+      smtpUsername: config.smtpUsername || "",
+      smtpPassword: config.smtpPassword || "",
+      smtpIdentity: config.smtpIdentity || "",
+      from: config.from || "",
+      to: config.to || "",
+      cc: config.cc || "",
+      format: config.format || "txt",
     },
   });
 
@@ -65,19 +56,17 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
           <Controller
             name="smtpServer"
             control={control}
-            rules={{ required: 'SMTP Server is required' }}
+            rules={{ required: "SMTP Server is required" }}
             render={({ field }) => (
               <Input
                 {...field}
                 id="smtpServer"
                 placeholder="smtp.gmail.com"
-                className={errors.smtpServer ? 'border-destructive' : ''}
+                className={errors.smtpServer ? "border-destructive" : ""}
               />
             )}
           />
-          {errors.smtpServer && (
-            <p className="text-sm text-destructive">{errors.smtpServer.message}</p>
-          )}
+          {errors.smtpServer && <p className="text-sm text-destructive">{errors.smtpServer.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -88,9 +77,9 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
             name="smtpPort"
             control={control}
             rules={{
-              required: 'SMTP Port is required',
-              min: { value: 1, message: 'Port must be between 1 and 65535' },
-              max: { value: 65535, message: 'Port must be between 1 and 65535' },
+              required: "SMTP Port is required",
+              min: { value: 1, message: "Port must be between 1 and 65535" },
+              max: { value: 65535, message: "Port must be between 1 and 65535" },
             }}
             render={({ field }) => (
               <Input
@@ -99,16 +88,12 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
                 type="number"
                 placeholder="587"
                 onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
-                className={errors.smtpPort ? 'border-destructive' : ''}
+                className={errors.smtpPort ? "border-destructive" : ""}
               />
             )}
           />
-          {errors.smtpPort && (
-            <p className="text-sm text-destructive">{errors.smtpPort.message}</p>
-          )}
-          <p className="text-sm text-muted-foreground">
-            Common ports: 25 (SMTP), 465 (SMTPS), 587 (STARTTLS)
-          </p>
+          {errors.smtpPort && <p className="text-sm text-destructive">{errors.smtpPort.message}</p>}
+          <p className="text-sm text-muted-foreground">Common ports: 25 (SMTP), 465 (SMTPS), 587 (STARTTLS)</p>
         </div>
       </div>
 
@@ -120,19 +105,17 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
           <Controller
             name="smtpUsername"
             control={control}
-            rules={{ required: 'SMTP Username is required' }}
+            rules={{ required: "SMTP Username is required" }}
             render={({ field }) => (
               <Input
                 {...field}
                 id="smtpUsername"
                 placeholder="username@example.com"
-                className={errors.smtpUsername ? 'border-destructive' : ''}
+                className={errors.smtpUsername ? "border-destructive" : ""}
               />
             )}
           />
-          {errors.smtpUsername && (
-            <p className="text-sm text-destructive">{errors.smtpUsername.message}</p>
-          )}
+          {errors.smtpUsername && <p className="text-sm text-destructive">{errors.smtpUsername.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -142,41 +125,29 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
           <Controller
             name="smtpPassword"
             control={control}
-            rules={{ required: 'SMTP Password is required' }}
+            rules={{ required: "SMTP Password is required" }}
             render={({ field }) => (
               <Input
                 {...field}
                 id="smtpPassword"
                 type="password"
                 placeholder="••••••••"
-                className={errors.smtpPassword ? 'border-destructive' : ''}
+                className={errors.smtpPassword ? "border-destructive" : ""}
               />
             )}
           />
-          {errors.smtpPassword && (
-            <p className="text-sm text-destructive">{errors.smtpPassword.message}</p>
-          )}
+          {errors.smtpPassword && <p className="text-sm text-destructive">{errors.smtpPassword.message}</p>}
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="smtpIdentity">
-          SMTP Identity (Optional)
-        </Label>
+        <Label htmlFor="smtpIdentity">SMTP Identity (Optional)</Label>
         <Controller
           name="smtpIdentity"
           control={control}
-          render={({ field }) => (
-            <Input
-              {...field}
-              id="smtpIdentity"
-              placeholder="Optional SMTP identity"
-            />
-          )}
+          render={({ field }) => <Input {...field} id="smtpIdentity" placeholder="Optional SMTP identity" />}
         />
-        <p className="text-sm text-muted-foreground">
-          Leave empty if not required by your SMTP server
-        </p>
+        <p className="text-sm text-muted-foreground">Leave empty if not required by your SMTP server</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -188,10 +159,10 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
             name="from"
             control={control}
             rules={{
-              required: 'From address is required',
+              required: "From address is required",
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Please enter a valid email address',
+                message: "Please enter a valid email address",
               },
             }}
             render={({ field }) => (
@@ -200,13 +171,11 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
                 id="from"
                 type="email"
                 placeholder="noreply@example.com"
-                className={errors.from ? 'border-destructive' : ''}
+                className={errors.from ? "border-destructive" : ""}
               />
             )}
           />
-          {errors.from && (
-            <p className="text-sm text-destructive">{errors.from.message}</p>
-          )}
+          {errors.from && <p className="text-sm text-destructive">{errors.from.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -217,10 +186,10 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
             name="to"
             control={control}
             rules={{
-              required: 'To address is required',
+              required: "To address is required",
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Please enter a valid email address',
+                message: "Please enter a valid email address",
               },
             }}
             render={({ field }) => (
@@ -229,27 +198,23 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
                 id="to"
                 type="email"
                 placeholder="admin@example.com"
-                className={errors.to ? 'border-destructive' : ''}
+                className={errors.to ? "border-destructive" : ""}
               />
             )}
           />
-          {errors.to && (
-            <p className="text-sm text-destructive">{errors.to.message}</p>
-          )}
+          {errors.to && <p className="text-sm text-destructive">{errors.to.message}</p>}
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="cc">
-          CC Address (Optional)
-        </Label>
+        <Label htmlFor="cc">CC Address (Optional)</Label>
         <Controller
           name="cc"
           control={control}
           rules={{
             pattern: {
               value: /^$|^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: 'Please enter a valid email address',
+              message: "Please enter a valid email address",
             },
           }}
           render={({ field }) => (
@@ -258,19 +223,15 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
               id="cc"
               type="email"
               placeholder="cc@example.com"
-              className={errors.cc ? 'border-destructive' : ''}
+              className={errors.cc ? "border-destructive" : ""}
             />
           )}
         />
-        {errors.cc && (
-          <p className="text-sm text-destructive">{errors.cc.message}</p>
-        )}
+        {errors.cc && <p className="text-sm text-destructive">{errors.cc.message}</p>}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="format">
-          Email Format
-        </Label>
+        <Label htmlFor="format">Email Format</Label>
         <Controller
           name="format"
           control={control}
@@ -286,10 +247,8 @@ export const EmailMethodForm: React.FC<EmailMethodFormProps> = ({
             </Select>
           )}
         />
-        <p className="text-sm text-muted-foreground">
-          Choose between plain text or HTML formatted emails
-        </p>
+        <p className="text-sm text-muted-foreground">Choose between plain text or HTML formatted emails</p>
       </div>
     </div>
   );
-};
+}

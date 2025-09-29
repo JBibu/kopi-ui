@@ -78,9 +78,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                   <div className="mt-2 text-xs font-mono bg-muted p-3 rounded border overflow-auto max-h-32">
                     <div className="text-red-600 font-semibold">{this.state.error.toString()}</div>
                     {this.state.errorInfo?.componentStack && (
-                      <div className="mt-2 text-muted-foreground">
-                        {this.state.errorInfo.componentStack}
-                      </div>
+                      <div className="mt-2 text-muted-foreground">{this.state.errorInfo.componentStack}</div>
                     )}
                   </div>
                 </details>

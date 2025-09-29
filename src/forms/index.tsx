@@ -33,7 +33,7 @@ type ValueGetter<T> = (target: T) => unknown;
 export function handleChange<T = HTMLInputElement>(
   this: ComponentWithState,
   event: React.ChangeEvent<T>,
-  valueGetter: ValueGetter<T> = (x: unknown) => x.value
+  valueGetter: ValueGetter<T> = (x: unknown) => x.value,
 ): void {
   setDeepStateProperty(this, (event.target as HTMLInputElement).name, valueGetter(event.target));
 }

@@ -23,7 +23,7 @@ export function OptionalBoolean(
   component: ComponentWithState,
   label: string,
   name: string,
-  defaultLabel: string
+  defaultLabel: string,
 ): React.JSX.Element {
   const value = stateProperty(component, name);
   const displayValue = value === true ? "true" : value === false ? "false" : "default";
@@ -41,8 +41,8 @@ export function OptionalBoolean(
           const event = {
             target: {
               name: name,
-              value: value === "default" ? "" : value
-            }
+              value: value === "default" ? "" : value,
+            },
           };
           component.handleChange(event, optionalBooleanValue);
         }}

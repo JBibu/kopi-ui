@@ -43,8 +43,10 @@ export interface NotificationComponentWithState<T = Record<string, unknown>> {
   state: T;
   setState: React.Dispatch<React.SetStateAction<T>>;
   handleChange: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | { target: { name: string; value: unknown } },
-    valueGetter?: (target: { value: unknown }) => unknown
+    event:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+      | { target: { name: string; value: unknown } },
+    valueGetter?: (target: { value: unknown }) => unknown,
   ) => void;
 }
 

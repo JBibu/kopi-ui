@@ -12,10 +12,7 @@ interface ComponentWithState {
   PolicyDefinitionPoint: (value: unknown) => string;
 }
 
-export function EffectiveBooleanValue(
-  component: ComponentWithState,
-  policyField: string
-): React.JSX.Element {
+export function EffectiveBooleanValue(component: ComponentWithState, policyField: string): React.JSX.Element {
   const dsp = getDeepStateProperty(component, "resolved.definition." + policyField, undefined);
 
   return (
@@ -26,7 +23,9 @@ export function EffectiveBooleanValue(
           checked={getDeepStateProperty(component, "resolved.effective." + policyField, undefined)}
           disabled={true}
         />
-        <p className="text-sm text-muted-foreground" data-testid={"definition-" + policyField}>{component.PolicyDefinitionPoint(dsp)}</p>
+        <p className="text-sm text-muted-foreground" data-testid={"definition-" + policyField}>
+          {component.PolicyDefinitionPoint(dsp)}
+        </p>
       </div>
     </EffectiveValueColumn>
   );

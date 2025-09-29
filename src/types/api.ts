@@ -138,14 +138,14 @@ export interface Policy {
 export interface TaskLog {
   timestamp: string;
   message: string;
-  level?: 'info' | 'error' | 'warning' | 'debug';
+  level?: "info" | "error" | "warning" | "debug";
 }
 
 export interface Task {
   id: string;
   kind: string;
   description: string;
-  status: 'running' | 'success' | 'failed' | 'cancelled';
+  status: "running" | "success" | "failed" | "cancelled";
   startTime: string;
   endTime?: string;
   logs?: TaskLog[];
@@ -165,7 +165,7 @@ export interface Source {
     userName: string;
     path: string;
   };
-  status: 'IDLE' | 'UPLOADING' | 'PENDING' | 'PAUSED';
+  status: "IDLE" | "UPLOADING" | "PENDING" | "PAUSED";
   lastSnapshot?: {
     id: string;
     startTime: string;
@@ -201,7 +201,7 @@ export interface StorageInfo {
 
 // Preferences Types
 export interface UIPreferences {
-  theme?: 'light' | 'dark' | 'auto';
+  theme?: "light" | "dark" | "auto";
   bytesStringBase2?: boolean;
   defaultSnapshotViewAction?: string;
   pageSize?: number;
@@ -210,7 +210,7 @@ export interface UIPreferences {
 // Directory Entry Types
 export interface DirectoryEntry {
   name: string;
-  type: 'f' | 'd' | 's'; // file, directory, symlink
+  type: "f" | "d" | "s"; // file, directory, symlink
   size: number;
   mode: string;
   mtime: string;
@@ -274,7 +274,7 @@ export interface EstimateResult {
 // Notification Types
 export interface NotificationProfile {
   profileName: string;
-  profileType: 'email' | 'webhook' | 'pushover';
+  profileType: "email" | "webhook" | "pushover";
   config: Record<string, unknown>;
 }
 

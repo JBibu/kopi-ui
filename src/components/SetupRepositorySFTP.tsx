@@ -12,7 +12,10 @@ interface SetupRepositorySFTPProps {
 interface ComponentRef {
   state: Record<string, unknown>;
   setState: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    valueGetter?: (target: EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) => unknown,
+  ) => void;
 }
 
 export interface SetupRepositorySFTPHandle {
@@ -41,11 +44,19 @@ export const SetupRepositorySFTP = forwardRef<SetupRepositorySFTPHandle, SetupRe
     });
 
     // Create handleChange function that works with the form system
-    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, valueGetter = (x: { value: unknown }) => x.value) => {
-      const fieldName = event.target.name;
-      const fieldValue = valueGetter ? valueGetter(event.target as EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement)) : (event.target as HTMLInputElement).value;
-      setState(prevState => ({ ...prevState, [fieldName]: fieldValue }));
-    }, []);
+    const handleChange = useCallback(
+      (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        valueGetter = (x: { value: unknown }) => x.value,
+      ) => {
+        const fieldName = event.target.name;
+        const fieldValue = valueGetter
+          ? valueGetter(event.target as EventTarget & (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement))
+          : (event.target as HTMLInputElement).value;
+        setState((prevState) => ({ ...prevState, [fieldName]: fieldValue }));
+      },
+      [],
+    );
 
     // Create a component-like object for forms compatibility
     const componentRef: MutableRefObject<ComponentRef> = useRef({
@@ -60,7 +71,7 @@ export const SetupRepositorySFTP = forwardRef<SetupRepositorySFTPHandle, SetupRe
     componentRef.current.handleChange = handleChange;
 
     const validate = (): boolean => {
-      setState(prevState => ({
+      setState((prevState) => ({
         ...prevState,
         validated: true,
       }));
@@ -90,7 +101,7 @@ export const SetupRepositorySFTP = forwardRef<SetupRepositorySFTPHandle, SetupRe
     // Expose methods to parent via ref
     useImperativeHandle(ref, () => ({
       validate,
-      state
+      state,
     }));
 
     return (
@@ -113,81 +124,81 @@ export const SetupRepositorySFTP = forwardRef<SetupRepositorySFTPHandle, SetupRe
           })}
         </div>
         {!state.externalSSH && (
-            <>
-              <div className="space-y-4">
-                {OptionalField(componentRef.current, "Password", "password", {
-                  type: "password",
-                  placeholder: "password",
-                })}
-              </div>
-              <div className="space-y-4">
-                {OptionalField(componentRef.current, "Path to key file", "keyfile", {
-                  placeholder: "enter path to the key file",
-                })}
-                {OptionalField(componentRef.current, "Path to known_hosts File", "knownHostsFile", {
-                  placeholder: "enter path to the known_hosts file",
-                })}
-              </div>
-              <div className="space-y-4">
-                {OptionalField(
-                  componentRef.current,
-                  "Key Data",
-                  "keyData",
-                  {
-                    placeholder: "paste contents of the key file",
-                    as: "textarea",
-                    rows: 5,
-                    isInvalid:
-                      state.validated &&
-                      !state.externalSSH &&
-                      !hasExactlyOneOf(componentRef.current, ["password", "keyfile", "keyData"]),
-                  },
-                  null,
-                  <>
-                    One of <b>Password</b>, <b>Key File</b> or <b>Key Data</b> is required.
-                  </>,
-                )}
-                {OptionalField(
-                  componentRef.current,
-                  "Known Hosts Data",
-                  "knownHostsData",
-                  {
-                    placeholder: "paste contents of the known_hosts file",
-                    as: "textarea",
-                    rows: 5,
-                    isInvalid:
-                      state.validated &&
-                      !state.externalSSH &&
-                      !hasExactlyOneOf(componentRef.current, ["knownHostsFile", "knownHostsData"]),
-                  },
-                  null,
-                  <>
-                    Either <b>Known Hosts File</b> or <b>Known Hosts Data</b> is required, but not both.
-                  </>,
-                )}
-              </div>
-              <hr />
-            </>
-          )}
-          {RequiredBoolean(
-            componentRef.current,
-            "Launch external password-less SSH command",
-            "externalSSH",
-            "By default Kopia connects to the server using internal SSH client which supports limited options. Alternatively it may launch external password-less SSH command, which supports additional options, but is generally less efficient than the built-in client.",
-          )}
-          {state.externalSSH && (
-            <>
-              <div className="space-y-4">
-                {OptionalField(componentRef.current, "SSH Command", "sshCommand", {
-                  placeholder: "provide enter passwordless SSH command to execute (typically 'ssh')",
-                })}
-                {OptionalField(componentRef.current, "SSH Arguments", "sshArguments", {
-                  placeholder: "enter SSH command arguments ('user@host -s sftp' will be appended automatically)",
-                })}
-              </div>
-            </>
-          )}
-        </>
-      );
-  }
+          <>
+            <div className="space-y-4">
+              {OptionalField(componentRef.current, "Password", "password", {
+                type: "password",
+                placeholder: "password",
+              })}
+            </div>
+            <div className="space-y-4">
+              {OptionalField(componentRef.current, "Path to key file", "keyfile", {
+                placeholder: "enter path to the key file",
+              })}
+              {OptionalField(componentRef.current, "Path to known_hosts File", "knownHostsFile", {
+                placeholder: "enter path to the known_hosts file",
+              })}
+            </div>
+            <div className="space-y-4">
+              {OptionalField(
+                componentRef.current,
+                "Key Data",
+                "keyData",
+                {
+                  placeholder: "paste contents of the key file",
+                  as: "textarea",
+                  rows: 5,
+                  isInvalid:
+                    state.validated &&
+                    !state.externalSSH &&
+                    !hasExactlyOneOf(componentRef.current, ["password", "keyfile", "keyData"]),
+                },
+                null,
+                <>
+                  One of <b>Password</b>, <b>Key File</b> or <b>Key Data</b> is required.
+                </>,
+              )}
+              {OptionalField(
+                componentRef.current,
+                "Known Hosts Data",
+                "knownHostsData",
+                {
+                  placeholder: "paste contents of the known_hosts file",
+                  as: "textarea",
+                  rows: 5,
+                  isInvalid:
+                    state.validated &&
+                    !state.externalSSH &&
+                    !hasExactlyOneOf(componentRef.current, ["knownHostsFile", "knownHostsData"]),
+                },
+                null,
+                <>
+                  Either <b>Known Hosts File</b> or <b>Known Hosts Data</b> is required, but not both.
+                </>,
+              )}
+            </div>
+            <hr />
+          </>
+        )}
+        {RequiredBoolean(
+          componentRef.current,
+          "Launch external password-less SSH command",
+          "externalSSH",
+          "By default Kopia connects to the server using internal SSH client which supports limited options. Alternatively it may launch external password-less SSH command, which supports additional options, but is generally less efficient than the built-in client.",
+        )}
+        {state.externalSSH && (
+          <>
+            <div className="space-y-4">
+              {OptionalField(componentRef.current, "SSH Command", "sshCommand", {
+                placeholder: "provide enter passwordless SSH command to execute (typically 'ssh')",
+              })}
+              {OptionalField(componentRef.current, "SSH Arguments", "sshArguments", {
+                placeholder: "enter SSH command arguments ('user@host -s sftp' will be appended automatically)",
+              })}
+            </div>
+          </>
+        )}
+      </>
+    );
+  },
 );

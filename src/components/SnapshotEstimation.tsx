@@ -135,20 +135,20 @@ export function SnapshotEstimation(props: SnapshotEstimationProps): React.ReactE
         <div className="text-sm text-muted-foreground" role="status" aria-live="polite">
           <span className="font-medium">{taskStatusDescription}</span>{" "}
           <span>
-            Bytes: <strong>{sizeDisplayName(task.counters["Bytes"]?.value, bytesStringBase2)}</strong>{" "}
-            (<strong>{sizeDisplayName(task.counters["Excluded Bytes"]?.value, bytesStringBase2)}</strong> excluded)
+            Bytes: <strong>{sizeDisplayName(task.counters["Bytes"]?.value, bytesStringBase2)}</strong> (
+            <strong>{sizeDisplayName(task.counters["Excluded Bytes"]?.value, bytesStringBase2)}</strong> excluded)
           </span>{" "}
           <span>
-            Files: <strong>{task.counters["Files"]?.value}</strong>{" "}
-            (<strong>{task.counters["Excluded Files"]?.value}</strong> excluded)
+            Files: <strong>{task.counters["Files"]?.value}</strong> (
+            <strong>{task.counters["Excluded Files"]?.value}</strong> excluded)
           </span>{" "}
           <span>
-            Directories: <strong>{task.counters["Directories"]?.value}</strong>{" "}
-            (<strong>{task.counters["Excluded Directories"]?.value}</strong> excluded)
+            Directories: <strong>{task.counters["Directories"]?.value}</strong> (
+            <strong>{task.counters["Excluded Directories"]?.value}</strong> excluded)
           </span>{" "}
           <span>
-            Errors: <strong>{task.counters["Errors"]?.value}</strong>{" "}
-            (<strong>{task.counters["Ignored Errors"]?.value}</strong> ignored)
+            Errors: <strong>{task.counters["Errors"]?.value}</strong> (
+            <strong>{task.counters["Ignored Errors"]?.value}</strong> ignored)
           </span>
         </div>
       )}
@@ -156,12 +156,7 @@ export function SnapshotEstimation(props: SnapshotEstimationProps): React.ReactE
       {/* Action Buttons */}
       <div className="flex items-center gap-2">
         {task.status === "running" && (
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={handleCancel}
-            aria-label="Cancel task"
-          >
+          <Button size="sm" variant="destructive" onClick={handleCancel} aria-label="Cancel task">
             <StopCircle className="h-4 w-4 mr-1" />
             Cancel
           </Button>

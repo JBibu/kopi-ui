@@ -25,7 +25,7 @@ export interface PolicyData {
 }
 
 export interface ActionConfig {
-  mode?: 'essential' | 'optional' | 'async';
+  mode?: "essential" | "optional" | "async";
   script?: string;
   timeout?: number;
 }
@@ -68,5 +68,8 @@ export interface PolicyComponentWithState {
   state: {
     policy: PolicyData;
   };
-  handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, valueGetter?: (target: unknown) => unknown) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    valueGetter?: (target: unknown) => unknown,
+  ) => void;
 }

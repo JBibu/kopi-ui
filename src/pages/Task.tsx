@@ -144,23 +144,26 @@ function TaskInternal(props: TaskInternalProps): React.JSX.Element {
   }, [props.showZeroCounters]);
 
   // Memoized counter badge creation
-  const createCounterBadge = useCallback((label: string, counter: TaskCounter): ReactElement | null => {
-    if (counter.value <= valueThreshold) {
-      return null;
-    }
+  const createCounterBadge = useCallback(
+    (label: string, counter: TaskCounter): ReactElement | null => {
+      if (counter.value <= valueThreshold) {
+        return null;
+      }
 
-    let formatted = counter.value.toLocaleString();
-    if (counter.units === "bytes") {
-      formatted = sizeDisplayName(counter.value, bytesStringBase2);
-    }
+      let formatted = counter.value.toLocaleString();
+      if (counter.units === "bytes") {
+        formatted = sizeDisplayName(counter.value, bytesStringBase2);
+      }
 
-    return (
-      <TableRow key={label}>
-        <TableCell className="font-medium">{label}</TableCell>
-        <TableCell>{formatted}</TableCell>
-      </TableRow>
-    );
-  }, [valueThreshold, bytesStringBase2]);
+      return (
+        <TableRow key={label}>
+          <TableCell className="font-medium">{label}</TableCell>
+          <TableCell>{formatted}</TableCell>
+        </TableRow>
+      );
+    },
+    [valueThreshold, bytesStringBase2],
+  );
 
   // Memoized counter level sorting
   const counterLevelToSortOrder = useCallback((level?: string): number => {
@@ -233,12 +236,7 @@ function TaskInternal(props: TaskInternalProps): React.JSX.Element {
             <h4 className="text-xl font-medium flex items-center gap-2">
               <GoBackButton />
               {task.status === "running" && (
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={handleCancel}
-                  aria-label="Stop running task"
-                >
+                <Button size="sm" variant="destructive" onClick={handleCancel} aria-label="Stop running task">
                   <StopCircle className="h-4 w-4 mr-1" />
                   Stop
                 </Button>
@@ -276,7 +274,7 @@ function TaskInternal(props: TaskInternalProps): React.JSX.Element {
             id="task-started"
             type="text"
             readOnly
-            value={task.startTime ? new Date(task.startTime).toLocaleString() : 'Not started'}
+            value={task.startTime ? new Date(task.startTime).toLocaleString() : "Not started"}
             aria-label="Task start time"
           />
         </div>
@@ -286,7 +284,7 @@ function TaskInternal(props: TaskInternalProps): React.JSX.Element {
             id="task-finished"
             type="text"
             readOnly
-            value={task.endTime ? new Date(task.endTime).toLocaleString() : 'Not finished'}
+            value={task.endTime ? new Date(task.endTime).toLocaleString() : "Not finished"}
             aria-label="Task end time"
           />
         </div>

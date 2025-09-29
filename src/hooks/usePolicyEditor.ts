@@ -1,9 +1,9 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useLoading } from '../contexts/LoadingContext';
-import { useError } from '../contexts/ErrorContext';
-import { policyService, type PolicyQueryParams } from '../services/policy.service';
-import { Policy, Algorithms } from '../types';
+import { useState, useCallback, useMemo, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useLoading } from "../contexts/LoadingContext";
+import { useError } from "../contexts/ErrorContext";
+import { policyService, type PolicyQueryParams } from "../services/policy.service";
+import { Policy, Algorithms } from "../types";
 
 interface PolicyEditorState {
   items: unknown[];
@@ -48,7 +48,7 @@ export const usePolicyEditor = (props: PolicyEditorProps) => {
       userName: props.userName,
       path: props.path,
     }),
-    [props.host, props.userName, props.path]
+    [props.host, props.userName, props.path],
   );
 
   const isGlobal = useCallback((): boolean => {
@@ -57,9 +57,9 @@ export const usePolicyEditor = (props: PolicyEditorProps) => {
 
   const fetchPolicy = useCallback(async (): Promise<void> => {
     try {
-      const policy = await withLoading('fetchPolicy', () => policyService.getPolicy(params));
+      const policy = await withLoading("fetchPolicy", () => policyService.getPolicy(params));
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         error: null,
         policy,
@@ -68,14 +68,14 @@ export const usePolicyEditor = (props: PolicyEditorProps) => {
 
       form.reset({ policy });
     } catch (error: unknown) {
-      if (error.response && error.response.data.code !== 'NOT_FOUND') {
-        setState(prev => ({
+      if (error.response && error.response.data.code !== "NOT_FOUND") {
+        setState((prev) => ({
           ...prev,
           error: error,
         }));
-        showError(error, 'Failed to fetch policy');
+        showError(error, "Failed to fetch policy");
       } else {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           policy: {},
           isNew: true,
@@ -89,30 +89,30 @@ export const usePolicyEditor = (props: PolicyEditorProps) => {
     try {
       const validatedPolicy = policyService.validatePolicy(state.policy);
 
-      const resolved = await withLoading('resolvePolicy', () =>
+      const resolved = await withLoading("resolvePolicy", () =>
         policyService.resolvePolicy(params, {
           updates: validatedPolicy,
           numUpcomingSnapshotTimes: 5,
-        })
+        }),
       );
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         resolved,
-        resolvedError: null
+        resolvedError: null,
       }));
     } catch (error) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
-        resolvedError: error as Error
+        resolvedError: error as Error,
       }));
     }
   }, [params, state.policy, withLoading]);
 
   const handlePolicyChange = useCallback((fieldPath: string, value: unknown): void => {
-    setState(prev => {
+    setState((prev) => {
       const newPolicy = { ...prev.policy };
-      const keys = fieldPath.split('.');
+      const keys = fieldPath.split(".");
       let current: Record<string, unknown> = newPolicy;
 
       // Navigate to the parent object
@@ -137,26 +137,26 @@ export const usePolicyEditor = (props: PolicyEditorProps) => {
     try {
       const validatedPolicy = policyService.validatePolicy(state.policy);
 
-      await withLoading('savePolicy', () => policyService.savePolicy(params, validatedPolicy));
+      await withLoading("savePolicy", () => policyService.savePolicy(params, validatedPolicy));
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isNew: false,
       }));
     } catch (error) {
-      showError(error as Error, 'Failed to save policy');
+      showError(error as Error, "Failed to save policy");
     }
   }, [state.policy, params, withLoading, showError]);
 
   const deletePolicy = useCallback(async (): Promise<void> => {
-    if (!window.confirm('Are you sure you want to delete this policy?')) {
+    if (!window.confirm("Are you sure you want to delete this policy?")) {
       return;
     }
 
     try {
-      await withLoading('deletePolicy', () => policyService.deletePolicy(params));
+      await withLoading("deletePolicy", () => policyService.deletePolicy(params));
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         policy: {},
         isNew: true,
@@ -164,7 +164,7 @@ export const usePolicyEditor = (props: PolicyEditorProps) => {
 
       form.reset({ policy: {} });
     } catch (error) {
-      showError(error as Error, 'Failed to delete policy');
+      showError(error as Error, "Failed to delete policy");
     }
   }, [params, withLoading, showError, form]);
 
@@ -173,10 +173,10 @@ export const usePolicyEditor = (props: PolicyEditorProps) => {
     const initializeData = async () => {
       try {
         const algorithms = await policyService.getAlgorithms();
-        setState(prev => ({ ...prev, algorithms }));
+        setState((prev) => ({ ...prev, algorithms }));
         await fetchPolicy();
       } catch (error) {
-        console.error('Failed to initialize policy editor:', error);
+        console.error("Failed to initialize policy editor:", error);
       }
     };
 
@@ -192,16 +192,19 @@ export const usePolicyEditor = (props: PolicyEditorProps) => {
     }
   }, [lastResolvedPolicy, resolvePolicy]);
 
-  const policyDefinitionPoint = useCallback((p: Record<string, unknown>) => {
-    if (!p) return '';
+  const policyDefinitionPoint = useCallback(
+    (p: Record<string, unknown>) => {
+      if (!p) return "";
 
-    if (p.userName === props.userName && p.host === props.host && p.path === props.path) {
-      return '(Defined by this policy)';
-    }
+      if (p.userName === props.userName && p.host === props.host && p.path === props.path) {
+        return "(Defined by this policy)";
+      }
 
-    // This would need to be implemented based on your PolicyEditorLink component
-    return `Defined by policy at ${p.host || 'global'}${p.path ? ':' + p.path : ''}`;
-  }, [props.userName, props.host, props.path]);
+      // This would need to be implemented based on your PolicyEditorLink component
+      return `Defined by policy at ${p.host || "global"}${p.path ? ":" + p.path : ""}`;
+    },
+    [props.userName, props.host, props.path],
+  );
 
   return {
     state,

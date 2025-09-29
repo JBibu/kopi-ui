@@ -68,7 +68,8 @@ function AppContent(): React.JSX.Element {
 
     setIsFetching(true);
     try {
-      const result: AxiosResponse<TasksSummaryResponse> = await axios.get<TasksSummaryResponse>("/api/v1/tasks-summary");
+      const result: AxiosResponse<TasksSummaryResponse> =
+        await axios.get<TasksSummaryResponse>("/api/v1/tasks-summary");
 
       if (result?.data) {
         setRunningTaskCount(result.data.RUNNING || 0);
@@ -100,43 +101,49 @@ function AppContent(): React.JSX.Element {
   }, [fetchInitialRepositoryDescription, fetchTaskSummary]);
 
   // Context methods - these are called via AppContext
-  const repositoryUpdated = useCallback((isConnected: boolean): void => {
-    setIsRepositoryConnected(isConnected);
+  const repositoryUpdated = useCallback(
+    (isConnected: boolean): void => {
+      setIsRepositoryConnected(isConnected);
 
-    // Use a small delay to prevent rapid navigation calls
-    setTimeout(() => {
-      if (isConnected) {
-        navigate("/snapshots");
-      } else {
-        navigate("/repo");
-      }
-    }, 100);
-  }, [navigate]);
+      // Use a small delay to prevent rapid navigation calls
+      setTimeout(() => {
+        if (isConnected) {
+          navigate("/snapshots");
+        } else {
+          navigate("/repo");
+        }
+      }, 100);
+    },
+    [navigate],
+  );
 
   const repositoryDescriptionUpdated = useCallback((desc: string): void => {
     setRepoDescription(desc);
   }, []);
 
   // Create context value with memoized object to prevent unnecessary re-renders
-  const contextValue: AppContextValue = useMemo(() => ({
-    runningTaskCount,
-    isFetching,
-    repoDescription,
-    isRepositoryConnected,
-    fetchTaskSummary,
-    repositoryUpdated,
-    repositoryDescriptionUpdated,
-    fetchInitialRepositoryDescription,
-  }), [
-    runningTaskCount,
-    isFetching,
-    repoDescription,
-    isRepositoryConnected,
-    fetchTaskSummary,
-    repositoryUpdated,
-    repositoryDescriptionUpdated,
-    fetchInitialRepositoryDescription,
-  ]);
+  const contextValue: AppContextValue = useMemo(
+    () => ({
+      runningTaskCount,
+      isFetching,
+      repoDescription,
+      isRepositoryConnected,
+      fetchTaskSummary,
+      repositoryUpdated,
+      repositoryDescriptionUpdated,
+      fetchInitialRepositoryDescription,
+    }),
+    [
+      runningTaskCount,
+      isFetching,
+      repoDescription,
+      isRepositoryConnected,
+      fetchTaskSummary,
+      repositoryUpdated,
+      repositoryDescriptionUpdated,
+      fetchInitialRepositoryDescription,
+    ],
+  );
 
   return (
     <ThemeProvider>
@@ -144,9 +151,9 @@ function AppContent(): React.JSX.Element {
         <LoadingProvider>
           <AppContext.Provider value={contextValue}>
             <UIPreferenceProvider>
-            <AppNavbar />
-            <AppRoutes />
-            <NotificationDisplay position="top-right" />
+              <AppNavbar />
+              <AppRoutes />
+              <NotificationDisplay position="top-right" />
             </UIPreferenceProvider>
           </AppContext.Provider>
         </LoadingProvider>

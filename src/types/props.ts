@@ -1,8 +1,8 @@
 // Common Component Prop Types for Kopia UI
 
-import { ReactNode } from 'react';
-import { Location, NavigateFunction } from 'react-router-dom';
-import { Policy, Source, Task } from './api';
+import { ReactNode } from "react";
+import { Location, NavigateFunction } from "react-router-dom";
+import { Policy, Source, Task } from "./api";
 
 // Navigation Props
 export interface RouteComponentProps {
@@ -39,11 +39,11 @@ export interface AppContextValue {
 }
 
 export interface UIPreferencesContextValue {
-  theme: 'light' | 'dark' | 'auto';
+  theme: "light" | "dark" | "auto";
   bytesStringBase2: boolean;
   defaultSnapshotViewAction: string;
   pageSize: number;
-  setTheme: (theme: 'light' | 'dark' | 'auto') => void;
+  setTheme: (theme: "light" | "dark" | "auto") => void;
   setBytesStringBase2: (value: boolean) => void;
   setDefaultSnapshotViewAction: (action: string) => void;
   setPageSize: (size: number) => void;
@@ -52,7 +52,7 @@ export interface UIPreferencesContextValue {
 export interface AlertContextValue {
   alert?: {
     message: string;
-    variant?: 'success' | 'info' | 'warning' | 'danger';
+    variant?: "success" | "info" | "warning" | "danger";
   };
   setAlert: (alert: { message: string; variant?: string }) => void;
   clearAlert: () => void;
@@ -72,7 +72,7 @@ export interface KopiaTableColumn<T = Record<string, unknown>> {
   accessorFn?: (row: T) => unknown;
   cell?: (props: { row: { original: T }; cell: { getValue: () => unknown } }) => ReactNode;
   width?: string | number;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
   sortable?: boolean;
 }
 
@@ -80,7 +80,7 @@ export interface KopiaTableProps<T = Record<string, unknown>> {
   data: T[];
   columns: KopiaTableColumn<T>[];
   defaultSort?: string;
-  defaultSortOrder?: 'asc' | 'desc';
+  defaultSortOrder?: "asc" | "desc";
   pageSize?: number;
   className?: string;
 }
@@ -101,7 +101,7 @@ export interface RequiredFieldProps {
   invalidFeedback?: string;
 }
 
-export interface OptionalFieldProps extends Omit<RequiredFieldProps, 'value'> {
+export interface OptionalFieldProps extends Omit<RequiredFieldProps, "value"> {
   value?: string;
 }
 
@@ -172,7 +172,7 @@ export interface RepositorySetupFormProps {
 export interface NotificationEditorProps {
   profile?: {
     profileName: string;
-    profileType: 'email' | 'webhook' | 'pushover';
+    profileType: "email" | "webhook" | "pushover";
     config: Record<string, unknown>;
   };
   onSave?: (profile: { profileName: string; profileType: string; config: Record<string, unknown> }) => void;
@@ -224,11 +224,11 @@ export interface DirectoryBreadcrumbsProps {
 export interface DirectoryItemsProps {
   items: Array<{
     name: string;
-    type: 'f' | 'd' | 's';
+    type: "f" | "d" | "s";
     size?: number;
     mtime?: string;
   }>;
-  onItemClick?: (item: { name: string; type: 'f' | 'd' | 's'; size?: number; mtime?: string }) => void;
+  onItemClick?: (item: { name: string; type: "f" | "d" | "s"; size?: number; mtime?: string }) => void;
   onSelectionChange?: (selected: string[]) => void;
   multiSelect?: boolean;
 }
@@ -249,7 +249,7 @@ export interface GoBackButtonProps {
 
 // Theme Props
 export interface ThemeSelectorProps {
-  value?: 'light' | 'dark' | 'auto';
-  onChange?: (theme: 'light' | 'dark' | 'auto') => void;
+  value?: "light" | "dark" | "auto";
+  onChange?: (theme: "light" | "dark" | "auto") => void;
   className?: string;
 }

@@ -15,7 +15,7 @@ interface LogsResponse {
 interface LogEntry extends TaskLog {
   msg: string;
   ts: number;
-  level: 'info' | 'error' | 'warning' | 'debug';
+  level: "info" | "error" | "warning" | "debug";
   mod?: string;
   [key: string]: unknown;
 }

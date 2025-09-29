@@ -1,8 +1,8 @@
-import { useState, useCallback, useContext } from 'react';
-import axios from 'axios';
-import { AppContext } from '../contexts/AppContext';
-import { usePolling } from './usePolling';
-import { RepositoryStatus } from '../types/api';
+import { useState, useCallback, useContext } from "react";
+import axios from "axios";
+import { AppContext } from "../contexts/AppContext";
+import { usePolling } from "./usePolling";
+import { RepositoryStatus } from "../types/api";
 
 /**
  * Custom hook for managing repository status with automatic polling
@@ -62,22 +62,25 @@ export function useRepositoryStatus() {
     }
   }, [appContext]);
 
-  const updateDescription = useCallback(async (description: string): Promise<void> => {
-    setIsLoading(true);
-    try {
-      const result = await axios.post<{ description: string }>("/api/v1/repo/description", {
-        description,
-      });
+  const updateDescription = useCallback(
+    async (description: string): Promise<void> => {
+      setIsLoading(true);
+      try {
+        const result = await axios.post<{ description: string }>("/api/v1/repo/description", {
+          description,
+        });
 
-      if (result && appContext.repositoryDescriptionUpdated) {
-        appContext.repositoryDescriptionUpdated(result.data.description);
+        if (result && appContext.repositoryDescriptionUpdated) {
+          appContext.repositoryDescriptionUpdated(result.data.description);
+        }
+      } catch (error) {
+        setError(error as Error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      setError(error as Error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [appContext]);
+    },
+    [appContext],
+  );
 
   return {
     status,

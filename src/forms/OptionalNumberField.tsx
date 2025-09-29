@@ -6,7 +6,10 @@ import { isInvalidNumber, stateProperty, valueToNumber } from ".";
 // Component with state interface for form handling
 interface ComponentWithState {
   state: Record<string, unknown>;
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>, valueGetter?: (target: unknown) => number | string | undefined) => void;
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    valueGetter?: (target: unknown) => number | string | undefined,
+  ) => void;
 }
 
 interface OptionalNumberFieldProps {
@@ -17,7 +20,7 @@ export function OptionalNumberField(
   component: ComponentWithState,
   label: string | null,
   name: string,
-  props: OptionalNumberFieldProps = {}
+  props: OptionalNumberFieldProps = {},
 ): React.JSX.Element {
   const isInvalid = isInvalidNumber(stateProperty(component, name));
 

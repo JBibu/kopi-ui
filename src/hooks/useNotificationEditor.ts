@@ -1,7 +1,7 @@
-import { useState, useCallback, useEffect } from 'react';
-import axios from 'axios';
-import { useError } from '../contexts/ErrorContext';
-import { useLoading } from '../contexts/LoadingContext';
+import { useState, useCallback, useEffect } from "react";
+import axios from "axios";
+import { useError } from "../contexts/ErrorContext";
+import { useLoading } from "../contexts/LoadingContext";
 
 export interface NotificationProfile {
   profile: string;
@@ -66,104 +66,126 @@ export function useNotificationEditor(): UseNotificationEditorReturn {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await axios.get<NotificationProfile[]>('/api/v1/notificationProfiles');
+      const response = await axios.get<NotificationProfile[]>("/api/v1/notificationProfiles");
       setProfiles(response.data || []);
     } catch (err) {
       const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
-      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
-      const error = new Error(`Failed to fetch notification profiles (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
+      const errorMessage = axiosError.response?.data?.error || axiosError.message || "Unknown error";
+      const error = new Error(
+        `Failed to fetch notification profiles (${axiosError.response?.status || "Unknown"}): ${errorMessage}`,
+      );
       setError(error);
-      setGlobalError('Failed to fetch notification profiles', errorMessage);
-      console.error('Notification profiles fetch error:', axiosError);
+      setGlobalError("Failed to fetch notification profiles", errorMessage);
+      console.error("Notification profiles fetch error:", axiosError);
     } finally {
       setIsLoading(false);
     }
   }, [setGlobalError]);
 
-  const generateNewProfileName = useCallback((type: string): string => {
-    let i = 1;
-    while (true) {
-      const name = `${type}-${i}`;
-      if (!profiles.find((p) => name === p.profile)) {
-        return name;
+  const generateNewProfileName = useCallback(
+    (type: string): string => {
+      let i = 1;
+      while (true) {
+        const name = `${type}-${i}`;
+        if (!profiles.find((p) => name === p.profile)) {
+          return name;
+        }
+        i++;
       }
-      i++;
-    }
-  }, [profiles]);
+    },
+    [profiles],
+  );
 
   const handleSetEditedProfile = useCallback((profile: NotificationProfile | null, isNew: boolean) => {
     setEditedProfile(profile);
     setIsNewProfile(isNew);
   }, []);
 
-  const duplicateProfile = useCallback((profile: NotificationProfile) => {
-    const newProfile = { ...profile };
-    newProfile.profile = generateNewProfileName(profile.method.type);
-    handleSetEditedProfile(newProfile, true);
-  }, [generateNewProfileName, handleSetEditedProfile]);
+  const duplicateProfile = useCallback(
+    (profile: NotificationProfile) => {
+      const newProfile = { ...profile };
+      newProfile.profile = generateNewProfileName(profile.method.type);
+      handleSetEditedProfile(newProfile, true);
+    },
+    [generateNewProfileName, handleSetEditedProfile],
+  );
 
-  const saveProfile = useCallback(async (profile: NotificationProfile) => {
-    try {
-      setLoading(true);
-      await axios.post('/api/v1/notificationProfiles', profile);
-      handleSetEditedProfile(null, false);
-      await fetchProfiles();
-    } catch (err) {
-      const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
-      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
-      console.error('Save notification profile error:', axiosError);
-      throw new Error(`Failed to save profile (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchProfiles, handleSetEditedProfile, setLoading]);
+  const saveProfile = useCallback(
+    async (profile: NotificationProfile) => {
+      try {
+        setLoading(true);
+        await axios.post("/api/v1/notificationProfiles", profile);
+        handleSetEditedProfile(null, false);
+        await fetchProfiles();
+      } catch (err) {
+        const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
+        const errorMessage = axiosError.response?.data?.error || axiosError.message || "Unknown error";
+        console.error("Save notification profile error:", axiosError);
+        throw new Error(`Failed to save profile (${axiosError.response?.status || "Unknown"}): ${errorMessage}`);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchProfiles, handleSetEditedProfile, setLoading],
+  );
 
-  const updateProfile = useCallback(async (profile: NotificationProfile) => {
-    try {
-      setLoading(true);
-      await axios.post('/api/v1/notificationProfiles', profile);
-      handleSetEditedProfile(null, false);
-      await fetchProfiles();
-    } catch (err) {
-      const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
-      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
-      throw new Error(`Failed to update profile (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchProfiles, handleSetEditedProfile, setLoading]);
+  const updateProfile = useCallback(
+    async (profile: NotificationProfile) => {
+      try {
+        setLoading(true);
+        await axios.post("/api/v1/notificationProfiles", profile);
+        handleSetEditedProfile(null, false);
+        await fetchProfiles();
+      } catch (err) {
+        const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
+        const errorMessage = axiosError.response?.data?.error || axiosError.message || "Unknown error";
+        throw new Error(`Failed to update profile (${axiosError.response?.status || "Unknown"}): ${errorMessage}`);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchProfiles, handleSetEditedProfile, setLoading],
+  );
 
-  const deleteProfile = useCallback(async (profileName: string) => {
-    if (!window.confirm(`Are you sure you want to delete the profile: ${profileName}?`)) {
-      return;
-    }
+  const deleteProfile = useCallback(
+    async (profileName: string) => {
+      if (!window.confirm(`Are you sure you want to delete the profile: ${profileName}?`)) {
+        return;
+      }
 
-    try {
-      setLoading(true);
-      await axios.delete(`/api/v1/notificationProfiles/${profileName}`);
-      await fetchProfiles();
-    } catch (err) {
-      const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
-      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
-      throw new Error(`Failed to delete profile (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchProfiles, setLoading]);
+      try {
+        setLoading(true);
+        await axios.delete(`/api/v1/notificationProfiles/${profileName}`);
+        await fetchProfiles();
+      } catch (err) {
+        const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
+        const errorMessage = axiosError.response?.data?.error || axiosError.message || "Unknown error";
+        throw new Error(`Failed to delete profile (${axiosError.response?.status || "Unknown"}): ${errorMessage}`);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchProfiles, setLoading],
+  );
 
-  const sendTestNotification = useCallback(async (profile: NotificationProfile) => {
-    try {
-      setLoading(true);
-      await axios.post('/api/v1/testNotificationProfile', profile);
-      alert('Notification sent, please make sure you have received it.');
-    } catch (err) {
-      const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
-      const errorMessage = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
-      throw new Error(`Failed to send test notification (${axiosError.response?.status || 'Unknown'}): ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
-  }, [setLoading]);
+  const sendTestNotification = useCallback(
+    async (profile: NotificationProfile) => {
+      try {
+        setLoading(true);
+        await axios.post("/api/v1/testNotificationProfile", profile);
+        alert("Notification sent, please make sure you have received it.");
+      } catch (err) {
+        const axiosError = err as { response?: { status?: number; data?: { error?: string } }; message?: string };
+        const errorMessage = axiosError.response?.data?.error || axiosError.message || "Unknown error";
+        throw new Error(
+          `Failed to send test notification (${axiosError.response?.status || "Unknown"}): ${errorMessage}`,
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setLoading],
+  );
 
   const cancelEdit = useCallback(() => {
     handleSetEditedProfile(null, false);

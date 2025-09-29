@@ -1,10 +1,9 @@
-import React from 'react';
-import { ResolvedPolicy, PolicyComponentWithState } from '../../../types/policy';
-import { Settings } from 'lucide-react';
-import { AccordionContent, AccordionItem, AccordionTrigger } from '../../ui/accordion';
-import { ActionRowScript } from '../ActionRowScript';
-import { ActionRowTimeout } from '../ActionRowTimeout';
-import { ActionRowMode } from '../ActionRowMode';
+import { ResolvedPolicy, PolicyComponentWithState } from "../../../types/policy";
+import { Settings } from "lucide-react";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "../../ui/accordion";
+import { ActionRowScript } from "../ActionRowScript";
+import { ActionRowTimeout } from "../ActionRowTimeout";
+import { ActionRowMode } from "../ActionRowMode";
 
 interface ActionsSectionProps {
   componentRef: React.RefObject<PolicyComponentWithState>;
@@ -12,11 +11,7 @@ interface ActionsSectionProps {
   policyDefinitionPoint: (p: unknown) => React.ReactNode;
 }
 
-export const ActionsSection: React.FC<ActionsSectionProps> = ({
-  componentRef,
-  resolved,
-  policyDefinitionPoint,
-}) => {
+export function ActionsSection({ componentRef, resolved, policyDefinitionPoint }: ActionsSectionProps) {
   return (
     <AccordionItem value="actions">
       <AccordionTrigger>
@@ -27,12 +22,24 @@ export const ActionsSection: React.FC<ActionsSectionProps> = ({
       </AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4">
-          {ActionRowScript(componentRef, "Before snapshot (snapshot root)", "actions.beforeSnapshotRoot", resolved, policyDefinitionPoint)}
-          {ActionRowScript(componentRef, "After snapshot (snapshot root)", "actions.afterSnapshotRoot", resolved, policyDefinitionPoint)}
+          {ActionRowScript(
+            componentRef,
+            "Before snapshot (snapshot root)",
+            "actions.beforeSnapshotRoot",
+            resolved,
+            policyDefinitionPoint,
+          )}
+          {ActionRowScript(
+            componentRef,
+            "After snapshot (snapshot root)",
+            "actions.afterSnapshotRoot",
+            resolved,
+            policyDefinitionPoint,
+          )}
           {ActionRowTimeout(componentRef, "Action timeout", "actions.timeout", resolved, policyDefinitionPoint)}
           {ActionRowMode(componentRef, "Action on error", "actions.mode", resolved, policyDefinitionPoint)}
         </div>
       </AccordionContent>
     </AccordionItem>
   );
-};
+}

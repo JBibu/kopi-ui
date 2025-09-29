@@ -1,18 +1,12 @@
-import React from 'react';
-import { flexRender, ColumnDef } from '@tanstack/react-table';
-import { useKopiaTable } from '../hooks/useKopiaTable';
-import { ChevronUp, ChevronDown, ChevronsUpDown, Search, X } from 'lucide-react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Checkbox } from './ui/checkbox';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select';
+import React from "react";
+import { flexRender, ColumnDef } from "@tanstack/react-table";
+import { useKopiaTable } from "../hooks/useKopiaTable";
+import { ChevronUp, ChevronDown, ChevronsUpDown, Search, X } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Checkbox } from "./ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -20,7 +14,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+} from "./ui/dropdown-menu";
 import {
   Pagination,
   PaginationContent,
@@ -29,9 +23,9 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from './ui/pagination';
-import { PAGE_SIZES } from '../contexts/UIPreferencesContext';
-import { Badge } from './ui/badge';
+} from "./ui/pagination";
+import { PAGE_SIZES } from "../contexts/UIPreferencesContext";
+import { Badge } from "./ui/badge";
 
 interface KopiaTableProps<T> {
   columns: ColumnDef<T>[];
@@ -49,16 +43,13 @@ interface KopiaTableProps<T> {
 function generatePaginationItems(
   count: number,
   active: number,
-  gotoPage: (pageIndex: number) => void
+  gotoPage: (pageIndex: number) => void,
 ): React.ReactElement[] {
   const items: React.ReactElement[] = [];
 
   const pageWithNumber = (number: number): React.ReactElement => (
     <PaginationItem key={number}>
-      <PaginationLink
-        onClick={() => gotoPage(number - 1)}
-        isActive={number === active}
-      >
+      <PaginationLink onClick={() => gotoPage(number - 1)} isActive={number === active}>
         {number}
       </PaginationLink>
     </PaginationItem>
@@ -74,7 +65,7 @@ function generatePaginationItems(
   const maxPageNumber = Math.min(count, active + 3);
 
   if (minPageNumber > 1) {
-    items.push(ellipsis('ellipsis-start'));
+    items.push(ellipsis("ellipsis-start"));
   }
 
   for (let number = minPageNumber; number <= maxPageNumber; number++) {
@@ -82,7 +73,7 @@ function generatePaginationItems(
   }
 
   if (maxPageNumber < count) {
-    items.push(ellipsis('ellipsis-end'));
+    items.push(ellipsis("ellipsis-end"));
   }
 
   return items;
@@ -91,7 +82,7 @@ function generatePaginationItems(
 export function KopiaTable<T = unknown>({
   columns,
   data,
-  className = '',
+  className = "",
   enableFiltering = false,
   enableRowSelection = false,
   enableColumnVisibility = false,
@@ -100,25 +91,15 @@ export function KopiaTable<T = unknown>({
   title,
   description,
 }: KopiaTableProps<T>): React.JSX.Element {
-  const {
-    table,
-    globalFilter,
-    setGlobalFilter,
-    selectedRows,
-    rowSelection,
-    pagination,
-  } = useKopiaTable({
+  const { table, globalFilter, setGlobalFilter, selectedRows, rowSelection, pagination } = useKopiaTable({
     data,
     columns: enableRowSelection
       ? [
           {
-            id: 'select',
+            id: "select",
             header: ({ table }) => (
               <Checkbox
-                checked={
-                  table.getIsAllPageRowsSelected() ||
-                  (table.getIsSomePageRowsSelected() && 'indeterminate')
-                }
+                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                 aria-label="Select all"
               />
@@ -150,7 +131,7 @@ export function KopiaTable<T = unknown>({
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search all columns..."
-              value={globalFilter ?? ''}
+              value={globalFilter ?? ""}
               onChange={(event) => setGlobalFilter(event.target.value)}
               className="pl-8"
             />
@@ -159,7 +140,7 @@ export function KopiaTable<T = unknown>({
                 variant="ghost"
                 size="sm"
                 className="absolute right-0 top-0 h-full px-3"
-                onClick={() => setGlobalFilter('')}
+                onClick={() => setGlobalFilter("")}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -184,10 +165,7 @@ export function KopiaTable<T = unknown>({
             <DropdownMenuSeparator />
             {table
               .getAllColumns()
-              .filter(
-                (column) =>
-                  typeof column.accessorFn !== 'undefined' && column.getCanHide()
-              )
+              .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
               .map((column) => {
                 return (
                   <DropdownMenuCheckboxItem
@@ -248,22 +226,14 @@ export function KopiaTable<T = unknown>({
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => table.previousPage()}
-                  className={
-                    !table.getCanPreviousPage() ? 'pointer-events-none opacity-50' : ''
-                  }
+                  className={!table.getCanPreviousPage() ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
-              {generatePaginationItems(
-                table.getPageCount(),
-                pagination.pageIndex + 1,
-                table.setPageIndex
-              )}
+              {generatePaginationItems(table.getPageCount(), pagination.pageIndex + 1, table.setPageIndex)}
               <PaginationItem>
                 <PaginationNext
                   onClick={() => table.nextPage()}
-                  className={
-                    !table.getCanNextPage() ? 'pointer-events-none opacity-50' : ''
-                  }
+                  className={!table.getCanNextPage() ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
               <PaginationItem>
@@ -288,15 +258,11 @@ export function KopiaTable<T = unknown>({
       {(title || description) && (
         <div className="space-y-1">
           {title && <h3 className="text-lg font-semibold">{title}</h3>}
-          {description && (
-            <p className="text-sm text-muted-foreground">{description}</p>
-          )}
+          {description && <p className="text-sm text-muted-foreground">{description}</p>}
         </div>
       )}
 
-      {(enableGlobalFilter || enableColumnVisibility || enableRowSelection) && (
-        <TableToolbar />
-      )}
+      {(enableGlobalFilter || enableColumnVisibility || enableRowSelection) && <TableToolbar />}
 
       <div className="rounded-md border">
         <Table>
@@ -308,37 +274,26 @@ export function KopiaTable<T = unknown>({
                     <div
                       className={
                         header.column.getCanSort()
-                          ? 'flex items-center cursor-pointer select-none hover:bg-accent rounded-sm p-1 -m-1'
-                          : ''
+                          ? "flex items-center cursor-pointer select-none hover:bg-accent rounded-sm p-1 -m-1"
+                          : ""
                       }
                       onClick={header.column.getToggleSortingHandler()}
                       title={
                         header.column.getCanSort()
-                          ? header.column.getNextSortingOrder() === 'asc'
-                            ? 'Sort ascending'
-                            : header.column.getNextSortingOrder() === 'desc'
-                            ? 'Sort descending'
-                            : 'Clear sort'
+                          ? header.column.getNextSortingOrder() === "asc"
+                            ? "Sort ascending"
+                            : header.column.getNextSortingOrder() === "desc"
+                              ? "Sort descending"
+                              : "Clear sort"
                           : undefined
                       }
                     >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getCanSort() && (
                         <span className="ml-2">
-                          {header.column.getIsSorted() === 'asc' && (
-                            <ChevronUp className="h-4 w-4" />
-                          )}
-                          {header.column.getIsSorted() === 'desc' && (
-                            <ChevronDown className="h-4 w-4" />
-                          )}
-                          {!header.column.getIsSorted() && (
-                            <ChevronsUpDown className="h-4 w-4 opacity-50" />
-                          )}
+                          {header.column.getIsSorted() === "asc" && <ChevronUp className="h-4 w-4" />}
+                          {header.column.getIsSorted() === "desc" && <ChevronDown className="h-4 w-4" />}
+                          {!header.column.getIsSorted() && <ChevronsUpDown className="h-4 w-4 opacity-50" />}
                         </span>
                       )}
                     </div>
@@ -346,7 +301,7 @@ export function KopiaTable<T = unknown>({
                       <div className="mt-2">
                         <Input
                           type="text"
-                          value={(header.column.getFilterValue() ?? '') as string}
+                          value={(header.column.getFilterValue() ?? "") as string}
                           onChange={(e) => header.column.setFilterValue(e.target.value)}
                           placeholder={`Filter...`}
                           className="h-8 w-full"
@@ -361,23 +316,15 @@ export function KopiaTable<T = unknown>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length + (enableRowSelection ? 1 : 0)}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length + (enableRowSelection ? 1 : 0)} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

@@ -18,7 +18,7 @@ export function OptionalFieldNoLabel(
   name: string,
   props: OptionalFieldNoLabelProps = {},
   helpText: string | null = null,
-  invalidFeedback: string | null = null
+  invalidFeedback: string | null = null,
 ): React.JSX.Element {
   const hasError = !!invalidFeedback;
 

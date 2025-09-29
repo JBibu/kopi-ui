@@ -34,9 +34,7 @@ export function Policy(): React.JSX.Element {
       <Card>
         <CardHeader>
           <CardTitle>Snapshot Policy Settings</CardTitle>
-          <CardDescription>
-            Configure retention, scheduling, and other policies for your snapshots
-          </CardDescription>
+          <CardDescription>Configure retention, scheduling, and other policies for your snapshots</CardDescription>
         </CardHeader>
         <CardContent>
           <PolicyEditor ref={editorRef} userName={userName} host={host} path={path} close={() => navigate(-1)} />
