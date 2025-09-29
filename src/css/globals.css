@@ -1,9 +1,6 @@
 @import "tailwindcss";
 
-/*
- * Optimized CSS for Tailwind v4 with shadcn/ui compatibility
- * This file provides all necessary utilities and theme support
- */
+/* Tailwind v4 with shadcn/ui theme support */
 
 /* CSS Variable Definitions */
 @layer base {
@@ -63,12 +60,8 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family:
-      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 1;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
     margin: 0;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -76,30 +69,16 @@
   }
 
   code {
-    font-family:
-      ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  }
-
-  /* Smooth transitions for better UX */
-  * {
-    transition-property:
-      color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform,
-      filter, backdrop-filter;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
   }
 }
 
 /* Component-specific enhancements */
 @layer components {
-  /* Enhanced button contrast for better accessibility */
   .bg-primary {
     color: hsl(var(--primary-foreground));
   }
-}
 
-/* Generate utilities that Tailwind might miss */
-@layer utilities {
   .bg-secondary {
     color: hsl(var(--secondary-foreground));
   }
@@ -115,54 +94,10 @@
   .bg-accent {
     color: hsl(var(--accent-foreground));
   }
+}
 
-  /* Button hover animations */
-  .hover\:bg-primary\/90:hover {
-    background-color: hsl(var(--primary) / 0.9);
-  }
-
-  .hover\:bg-secondary\/80:hover {
-    background-color: hsl(var(--secondary) / 0.8);
-  }
-
-  .hover\:bg-destructive\/90:hover {
-    background-color: hsl(var(--destructive) / 0.9);
-  }
-
-  .hover\:bg-accent:hover {
-    background-color: hsl(var(--accent));
-  }
-
-  .hover\:text-accent-foreground:hover {
-    color: hsl(var(--accent-foreground));
-  }
-
-  .hover\:underline:hover {
-    text-decoration-line: underline;
-  }
-
-  /* Enhanced hover states for better interactivity */
-  .bg-primary:hover {
-    background-color: hsl(var(--primary) / 0.9);
-  }
-
-  .bg-secondary:hover {
-    background-color: hsl(var(--secondary) / 0.8);
-  }
-
-  .bg-destructive:hover {
-    background-color: hsl(var(--destructive) / 0.9);
-  }
-
-  .bg-accent:hover {
-    background-color: hsl(var(--accent) / 0.8);
-  }
-
-  /* Focus states for better accessibility */
-  .focus\:ring-ring:focus {
-    --tw-ring-color: hsl(var(--ring));
-  }
-
+/* Utilities */
+@layer utilities {
   /* Scrollbar styling */
   .scrollbar-thin {
     scrollbar-width: thin;

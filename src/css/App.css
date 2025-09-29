@@ -4,10 +4,6 @@ html.loading {
   display: none;
 }
 
-body {
-  line-height: 1.5;
-}
-
 /* Links and navigation styling */
 #kopia a {
   color: hsl(var(--primary));
@@ -31,77 +27,28 @@ body {
   font-weight: 600;
 }
 
-/* Legacy utility classes - consider replacing with Tailwind classes */
+/* Utility classes */
 .elide {
   @apply truncate;
 }
 
-/* Replaced by Tailwind's cursor-pointer utility */
-
-/* Replaced by Tailwind's block utility */
-
-/* Replaced by Tailwind's hidden utility */
-
-/* Snapshot-specific styles */
-#kopia .snapshot-hash {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-/* Component-specific spacing */
-.list-actions {
-  min-height: 40px;
-}
-
+/* Monospace components */
+#kopia .snapshot-hash,
 .cli-equivalent {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
 }
 
-/* Debug styles */
-.debug-json {
+#kopia .snapshot-hash {
   font-size: 0.875rem;
+  font-weight: 600;
 }
 
-/* Log styles */
 .logs-table {
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 0.75rem;
   overflow: auto;
   max-height: 400px;
   border: 1px solid hsl(var(--border));
-}
-
-/* Task and status styles */
-.nested-task {
-  padding: 0.625rem;
-  padding-left: 2.5rem;
-}
-
-.estimateResults {
-  font-size: 0.9375rem;
-}
-
-.counter-badge {
-  font-size: 0.9rem;
-  margin: 0.125rem;
-}
-
-/* Form and provider styles */
-.providerIcon {
-  min-width: 120px;
-  max-width: 240px;
-  min-height: 110px;
-  margin: 0.625rem;
-  vertical-align: middle;
-}
-
-.providerParams {
-  padding: 0.625rem;
-}
-
-.new-policy-panel {
-  padding: 0.625rem;
 }
 
 /* Selection styles */
@@ -121,15 +68,4 @@ body {
 #kopia .mounted-path {
   width: 30em;
   display: inline;
-}
-
-/* Theme selector */
-#kopia .select-theme {
-  font-size: 0.9rem;
-}
-
-/* Version info */
-#kopia .version-info {
-  padding-left: 0.625rem;
-  font-size: 0.875rem;
 }

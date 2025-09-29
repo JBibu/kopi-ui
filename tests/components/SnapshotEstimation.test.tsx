@@ -10,9 +10,15 @@ import "@testing-library/jest-dom";
 import { resetRouterMocks, updateRouterMocks } from "../testutils/react-router-mock.jsx";
 import { setupIntervalMocks, cleanupIntervalMocks, waitForLoadAndTriggerIntervals } from "../testutils/interval-mocks";
 
+// Setup global test utilities
+const { serverMock, renderWithProviders, createMockUIContext } = setupAPIMock();
+
 // Mock Logs component to avoid complex dependencies
 vi.mock("../../src/components/Logs", () => ({
   Logs: function MockLogs({ taskID }) {
+    return <div data-testid="logs-mock">Logs for task: {taskID}</div>;
+  },
+}));
 
 describe("SnapshotEstimation", () => {
   describe("Loading state", () => {

@@ -20,44 +20,69 @@ interface LogEntry extends TaskLog {
   [key: string]: unknown;
 }
 
+// Utility functions moved outside component to prevent recreating
+const formatLogTime = (timestamp: number): string => {
+  const d = new Date(timestamp * 1000);
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  const seconds = String(d.getSeconds()).padStart(2, "0");
+  const milliseconds = String(d.getMilliseconds()).padStart(3, "0");
+  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+};
+
+const fullLogTime = (timestamp: number): string => {
+  return new Date(timestamp * 1000).toLocaleString();
+};
+
+const formatLogParams = (entry: LogEntry): ReactElement | null => {
+  const { msg: _msg, ts: _ts, level: _level, mod: _mod, ...parametersOnly } = entry;
+  const p = JSON.stringify(parametersOnly);
+  if (p !== "{}") {
+    return <code className="text-xs bg-muted px-1 rounded">{p}</code>;
+  }
+  return null;
+};
+
 export function Logs({ taskID }: LogsProps): React.JSX.Element | null {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const previousLogCountRef = useRef<number>(0);
 
-  // Memoized scroll to bottom function
   const scrollToBottom = useCallback((): void => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, []);
 
-  // Memoized fetch log function
+  // Fixed: Removed logs from dependency array to prevent infinite loop
   const fetchLog = useCallback(async (): Promise<void> => {
     if (!taskID) return;
 
-    const result = await axios.get<LogsResponse>(`/api/v1/tasks/${taskID}/logs`).catch((error: Error) => {
-      redirect(error);
-      setError(error);
-      setIsLoading(false);
-      return null;
-    });
+    try {
+      const result = await axios.get<LogsResponse>(`/api/v1/tasks/${taskID}/logs`);
 
-    if (result?.data?.logs) {
-      const oldLogs = logs;
-      setLogs(result.data.logs as LogEntry[]);
-      setIsLoading(false);
+      if (result?.data?.logs) {
+        const newLogs = result.data.logs as LogEntry[];
+        const shouldScroll = newLogs.length > previousLogCountRef.current;
 
-      // Scroll to bottom if new logs were added
-      if (!oldLogs || oldLogs.length !== result.data.logs.length) {
-        setTimeout(scrollToBottom, 100);
+        setLogs(newLogs);
+        setIsLoading(false);
+        previousLogCountRef.current = newLogs.length;
+
+        if (shouldScroll) {
+          setTimeout(scrollToBottom, 100);
+        }
       }
+    } catch (error) {
+      redirect(error as Error);
+      setError(error as Error);
+      setIsLoading(false);
     }
-  }, [taskID, logs, scrollToBottom]);
+  }, [taskID, scrollToBottom]);
 
-  // Setup effect on mount and cleanup
+  // Setup polling effect
   useEffect(() => {
     setIsLoading(true);
     fetchLog();
@@ -66,57 +91,44 @@ export function Logs({ taskID }: LogsProps): React.JSX.Element | null {
     return () => clearInterval(interval);
   }, [fetchLog]);
 
-  const fullLogTime = useCallback((timestamp: number): string => {
-    return new Date(timestamp * 1000).toLocaleString();
-  }, []);
-
-  const formatLogTime = useCallback((timestamp: number): string => {
-    const d = new Date(timestamp * 1000);
-    const hours = ("0" + d.getHours()).substr(-2);
-    const minutes = ("0" + d.getMinutes()).substr(-2);
-    const seconds = ("0" + d.getSeconds()).substr(-2);
-    const milliseconds = ("00" + d.getMilliseconds()).substr(-3);
-
-    return `${hours}:${minutes}:${seconds}.${milliseconds}`;
-  }, []);
-
-  const formatLogParams = useCallback((entry: LogEntry): ReactElement | null => {
-    // If there are any properties other than `msg, ts, level, mod` output them as JSON
-    const { msg: _msg, ts: _ts, level: _level, mod: _mod, ...parametersOnly } = entry;
-
-    const p = JSON.stringify(parametersOnly);
-    if (p !== "{}") {
-      return <code className="text-xs bg-muted px-1 rounded">{p}</code>;
-    }
-
-    return null;
-  }, []);
-
   if (error) {
-    return <p>{error.message}</p>;
-  }
-  if (isLoading) {
-    return <p>Loading ...</p>;
-  }
-
-  if (logs) {
     return (
-      <div className="logs-table">
-        <Table className="text-sm border">
-          <TableBody>
-            {logs.map((v, ndx) => (
-              <TableRow key={ndx + "-" + v.ts} className={"loglevel-" + v.level}>
-                <TableCell className="elide" title={fullLogTime(v.ts)}>
-                  {formatLogTime(v.ts)} {v.msg} {formatLogParams(v)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <div ref={messagesEndRef} />
+      <div className="p-4 text-red-600 bg-red-50 border border-red-200 rounded">
+        Error loading logs: {error.message}
       </div>
     );
   }
 
-  return null;
+  if (isLoading) {
+    return (
+      <div className="p-4 text-muted-foreground">
+        Loading logs...
+      </div>
+    );
+  }
+
+  if (!logs.length) {
+    return (
+      <div className="p-4 text-muted-foreground">
+        No logs available
+      </div>
+    );
+  }
+
+  return (
+    <div className="logs-table">
+      <Table className="text-sm border">
+        <TableBody>
+          {logs.map((entry, index) => (
+            <TableRow key={`${entry.ts}-${index}`} className={`loglevel-${entry.level}`}>
+              <TableCell className="elide" title={fullLogTime(entry.ts)}>
+                {formatLogTime(entry.ts)} {entry.msg} {formatLogParams(entry)}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <div ref={messagesEndRef} />
+    </div>
+  );
 }

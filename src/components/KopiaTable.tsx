@@ -1,31 +1,12 @@
 import React from "react";
 import { flexRender, ColumnDef } from "@tanstack/react-table";
 import { useKopiaTable } from "../hooks/useKopiaTable";
-import { ChevronUp, ChevronDown, ChevronsUpDown, Search, X } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "./ui/pagination";
-import { PAGE_SIZES } from "../contexts/UIPreferencesContext";
-import { Badge } from "./ui/badge";
+import { TableToolbar } from "./table/TableToolbar";
+import { TablePagination } from "./table/TablePagination";
 
 interface KopiaTableProps<T> {
   columns: ColumnDef<T>[];
@@ -40,44 +21,6 @@ interface KopiaTableProps<T> {
   description?: string;
 }
 
-function generatePaginationItems(
-  count: number,
-  active: number,
-  gotoPage: (pageIndex: number) => void,
-): React.ReactElement[] {
-  const items: React.ReactElement[] = [];
-
-  const pageWithNumber = (number: number): React.ReactElement => (
-    <PaginationItem key={number}>
-      <PaginationLink onClick={() => gotoPage(number - 1)} isActive={number === active}>
-        {number}
-      </PaginationLink>
-    </PaginationItem>
-  );
-
-  const ellipsis = (key: string): React.ReactElement => (
-    <PaginationItem key={key}>
-      <PaginationEllipsis />
-    </PaginationItem>
-  );
-
-  const minPageNumber = Math.max(1, active - 3);
-  const maxPageNumber = Math.min(count, active + 3);
-
-  if (minPageNumber > 1) {
-    items.push(ellipsis("ellipsis-start"));
-  }
-
-  for (let number = minPageNumber; number <= maxPageNumber; number++) {
-    items.push(pageWithNumber(number));
-  }
-
-  if (maxPageNumber < count) {
-    items.push(ellipsis("ellipsis-end"));
-  }
-
-  return items;
-}
 
 export function KopiaTable<T = unknown>({
   columns,
@@ -123,135 +66,7 @@ export function KopiaTable<T = unknown>({
     onRowSelectionChange: onSelectionChange ? () => onSelectionChange(selectedRows) : undefined,
   });
 
-  const TableToolbar = () => (
-    <div className="flex items-center justify-between py-4">
-      <div className="flex flex-1 items-center space-x-2">
-        {enableGlobalFilter && (
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search all columns..."
-              value={globalFilter ?? ""}
-              onChange={(event) => setGlobalFilter(event.target.value)}
-              className="pl-8"
-            />
-            {globalFilter && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3"
-                onClick={() => setGlobalFilter("")}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        )}
-        {enableRowSelection && Object.keys(rowSelection).length > 0 && (
-          <Badge variant="secondary" className="ml-2">
-            {Object.keys(rowSelection).length} row(s) selected
-          </Badge>
-        )}
-      </div>
-      {enableColumnVisibility && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-    </div>
-  );
 
-  const TablePagination = () => (
-    <div className="flex items-center justify-between space-x-2 py-4">
-      <div className="flex items-center space-x-2">
-        <p className="text-sm font-medium">Rows per page</p>
-        <Select
-          value={`${pagination.pageSize}`}
-          onValueChange={(value) => {
-            table.setPageSize(Number(value));
-          }}
-        >
-          <SelectTrigger className="h-8 w-[70px]">
-            <SelectValue placeholder={pagination.pageSize.toString()} />
-          </SelectTrigger>
-          <SelectContent side="top">
-            {PAGE_SIZES.map((size) => (
-              <SelectItem key={size} value={`${size}`}>
-                {size}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {pagination.pageIndex + 1} of {Math.max(table.getPageCount(), 1)}
-        </div>
-        {table.getPageCount() > 1 && (
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => table.setPageIndex(0)}
-                  disabled={!table.getCanPreviousPage()}
-                >
-                  First
-                </Button>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => table.previousPage()}
-                  className={!table.getCanPreviousPage() ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-              {generatePaginationItems(table.getPageCount(), pagination.pageIndex + 1, table.setPageIndex)}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => table.nextPage()}
-                  className={!table.getCanNextPage() ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-              <PaginationItem>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                  disabled={!table.getCanNextPage()}
-                >
-                  Last
-                </Button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <div className={`w-full space-y-4 ${className}`}>
@@ -262,7 +77,17 @@ export function KopiaTable<T = unknown>({
         </div>
       )}
 
-      {(enableGlobalFilter || enableColumnVisibility || enableRowSelection) && <TableToolbar />}
+      {(enableGlobalFilter || enableColumnVisibility || enableRowSelection) && (
+        <TableToolbar
+          table={table}
+          enableGlobalFilter={enableGlobalFilter}
+          enableColumnVisibility={enableColumnVisibility}
+          enableRowSelection={enableRowSelection}
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
+          rowSelection={rowSelection}
+        />
+      )}
 
       <div className="rounded-md border">
         <Table>
@@ -333,7 +158,7 @@ export function KopiaTable<T = unknown>({
         </Table>
       </div>
 
-      <TablePagination />
+      <TablePagination table={table} pagination={pagination} />
     </div>
   );
 }
