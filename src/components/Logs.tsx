@@ -20,7 +20,7 @@ interface LogEntry extends TaskLog {
   [key: string]: any;
 }
 
-export function Logs({ taskID }: LogsProps): JSX.Element | null {
+export function Logs({ taskID }: LogsProps): React.JSX.Element | null {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);

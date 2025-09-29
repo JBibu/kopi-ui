@@ -16,7 +16,7 @@ interface LogOption {
 export function LogDetailSelector(
   component: ComponentWithState,
   name: string
-): JSX.Element {
+): React.JSX.Element {
   const options: LogOption[] = [
     { value: "inherit", label: "(inherit from parent)" },
     { value: "0", label: "0 - no output" },

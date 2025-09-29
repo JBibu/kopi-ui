@@ -12,7 +12,7 @@ interface ComponentWithState {
 export function NotificationFormatSelector(
   component: ComponentWithState,
   name: string
-): JSX.Element {
+): React.JSX.Element {
   return (
     <div className="space-y-2">
       <Label className="required">Notification Format</Label>

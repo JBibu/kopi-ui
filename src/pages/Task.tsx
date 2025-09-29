@@ -36,7 +36,7 @@ interface TaskInternalProps {
   showZeroCounters?: boolean;
 }
 
-function TaskInternal(props: TaskInternalProps): JSX.Element {
+function TaskInternal(props: TaskInternalProps): React.JSX.Element {
   const { bytesStringBase2 } = useContext(UIPreferencesContext);
   const [task, setTask] = useState<TaskWithCounters | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -302,7 +302,7 @@ function TaskInternal(props: TaskInternalProps): JSX.Element {
   );
 }
 
-export function Task(): JSX.Element {
+export function Task(): React.JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams<{ tid?: string }>();

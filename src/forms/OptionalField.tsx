@@ -10,7 +10,7 @@ export function OptionalField(
   name: string,
   props: OptionalFieldProps = {},
   helpText: string | null = null
-): JSX.Element {
+): React.JSX.Element {
   return (
     <div className="space-y-2">
       <Label htmlFor={name} className="text-sm font-medium">

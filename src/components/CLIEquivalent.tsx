@@ -9,7 +9,7 @@ interface CLIInfo {
   executable?: string;
 }
 
-export function CLIEquivalent({ command }: CLIEquivalentProps): JSX.Element {
+export function CLIEquivalent({ command }: CLIEquivalentProps): React.JSX.Element {
   const [visible, setVisible] = useState<boolean>(false);
   const [cliInfo, setCLIInfo] = useState<CLIInfo>({});
 

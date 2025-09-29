@@ -13,7 +13,7 @@ interface NotificationIconProps {
   className?: string;
 }
 
-const NotificationIcon = ({ type, className }: NotificationIconProps): JSX.Element => {
+const NotificationIcon = ({ type, className }: NotificationIconProps): React.JSX.Element => {
   const iconProps = { className: `h-4 w-4 ${className || ''}` };
 
   switch (type) {
@@ -73,7 +73,7 @@ interface NotificationItemProps {
   onDismiss: (id: string | number) => void;
 }
 
-const NotificationItem = ({ notification, onDismiss }: NotificationItemProps): JSX.Element => (
+const NotificationItem = ({ notification, onDismiss }: NotificationItemProps): React.JSX.Element => (
   <Alert variant={getAlertVariant(notification.type)} className={`mb-3 ${getAlertClassName(notification.type)}`}>
     <NotificationIcon type={notification.type} />
     <div className="flex-1">
@@ -111,7 +111,7 @@ interface NotificationDisplayProps {
  * Global notification display component
  * Shows error messages, success notifications, etc.
  */
-export const NotificationDisplay = ({ position = 'top-right', maxNotifications = 5 }: NotificationDisplayProps): JSX.Element | null => {
+export const NotificationDisplay = ({ position = 'top-right', maxNotifications = 5 }: NotificationDisplayProps): React.JSX.Element | null => {
   const { notifications, clearError } = useError();
 
   if (notifications.length === 0) {
@@ -149,7 +149,7 @@ interface InlineErrorDisplayProps {
 /**
  * Inline error display component for form fields
  */
-export const InlineErrorDisplay = ({ error, className = '' }: InlineErrorDisplayProps): JSX.Element | null => {
+export const InlineErrorDisplay = ({ error, className = '' }: InlineErrorDisplayProps): React.JSX.Element | null => {
   if (!error) return null;
 
   return (

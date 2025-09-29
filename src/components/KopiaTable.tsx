@@ -74,7 +74,7 @@ function paginationItems(count: number, active: number, gotoPage: (pageIndex: nu
   return items;
 }
 
-export default function KopiaTable<T = any>({ columns, data, className }: KopiaTableProps<T>): JSX.Element {
+export default function KopiaTable<T = any>({ columns, data, className }: KopiaTableProps<T>): React.JSX.Element {
   const { pageSize, setPageSize } = useContext(UIPreferencesContext);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({

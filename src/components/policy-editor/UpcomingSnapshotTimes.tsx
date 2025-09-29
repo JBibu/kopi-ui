@@ -7,7 +7,7 @@ interface ResolvedPolicy {
   upcomingSnapshotTimes?: string[];
 }
 
-export function UpcomingSnapshotTimes(resolved: ResolvedPolicy | null): JSX.Element | null {
+export function UpcomingSnapshotTimes(resolved: ResolvedPolicy | null): React.JSX.Element | null {
   if (!resolved) {
     return null;
   }

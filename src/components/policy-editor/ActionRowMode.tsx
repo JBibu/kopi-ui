@@ -13,7 +13,7 @@ interface ComponentWithState {
 export function ActionRowMode(
   component: ComponentWithState,
   action: string
-): JSX.Element {
+): React.JSX.Element {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <LabelColumn

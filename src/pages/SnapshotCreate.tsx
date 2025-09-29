@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import React, { useState, useEffect, useRef, useCallback, MutableRefObject } from "react";
 import { Button } from "../components/ui/button";
 import { useNavigate, useLocation, NavigateFunction, Location } from "react-router-dom";
-import { PolicyEditor } from "../components/policy-editor/PolicyEditor";
+import { PolicyEditorNew } from "../components/policy-editor/PolicyEditorNew";
 import { SnapshotEstimation } from "../components/SnapshotEstimation";
 import { RequiredDirectory } from "../forms/RequiredDirectory";
 import { CLIEquivalent } from "../components/CLIEquivalent";
@@ -45,7 +45,7 @@ interface PolicyEditorRef {
   getAndValidatePolicy: () => Policy;
 }
 
-function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreateInternalProps): JSX.Element {
+function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreateInternalProps): React.JSX.Element {
   const [state, setState] = useState<SnapshotCreateState>({
     path: "",
     estimateTaskID: null,
@@ -267,7 +267,7 @@ function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreat
               <h2 className="text-lg font-semibold mb-2">Snapshot Policy Settings</h2>
               <p className="text-sm text-muted-foreground mb-4">{state.resolvedSource ? state.resolvedSource.path : state.path}</p>
             </div>
-            <PolicyEditor
+            <PolicyEditorNew
               ref={policyEditorRef}
               embedded
               host={state.resolvedSource.host}
@@ -286,7 +286,7 @@ function SnapshotCreateInternal({ navigate, location: _location }: SnapshotCreat
   );
 }
 
-export function SnapshotCreate(): JSX.Element {
+export function SnapshotCreate(): React.JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
 

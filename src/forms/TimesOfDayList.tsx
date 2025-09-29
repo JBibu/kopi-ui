@@ -25,7 +25,7 @@ export function TimesOfDayList(
   component: ComponentWithState,
   name: string,
   props: TimesOfDayListProps = {}
-): JSX.Element {
+): React.JSX.Element {
   function parseTimeOfDay(v: string): TimeOfDay | string {
     const re = /(\d+):(\d+)/;
 

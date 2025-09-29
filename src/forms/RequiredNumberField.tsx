@@ -18,7 +18,7 @@ export function RequiredNumberField(
   label: string,
   name: string,
   props: RequiredNumberFieldProps = {}
-): JSX.Element {
+): React.JSX.Element {
   const isInvalid = stateProperty(component, name, null) === "" || isInvalidNumber(stateProperty(component, name));
 
   return (

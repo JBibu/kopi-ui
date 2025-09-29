@@ -15,7 +15,7 @@ export function ActionRowScript(
   action: string,
   name: string,
   help: string
-): JSX.Element {
+): React.JSX.Element {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <LabelColumn name={name} help={help} />

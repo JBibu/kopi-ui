@@ -11,15 +11,15 @@ interface BreadcrumbState {
 }
 
 interface LocationWithState extends Location {
-  state?: BreadcrumbState;
+  state: BreadcrumbState | null;
 }
 
-export function DirectoryBreadcrumbs(): JSX.Element {
+export function DirectoryBreadcrumbs(): React.JSX.Element {
   const location = useLocation() as LocationWithState;
   const navigate = useNavigate();
 
   const breadcrumbs: BreadcrumbState[] = [];
-  for (let state = location.state; state; state = state.prevState) {
+  for (let state = location.state; state; state = state.prevState || null) {
     breadcrumbs.unshift(state);
   }
 

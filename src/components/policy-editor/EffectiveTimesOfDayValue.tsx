@@ -13,7 +13,7 @@ interface ComponentWithState {
 export function EffectiveTimesOfDayValue(
   component: ComponentWithState,
   policyField: string
-): JSX.Element {
+): React.JSX.Element {
   return (
     <EffectiveValueColumn>
       <div>

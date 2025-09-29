@@ -36,7 +36,7 @@ declare global {
   }
 }
 
-function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryInternalProps): JSX.Element {
+function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryInternalProps): React.JSX.Element {
   const [state, setState] = useState<SnapshotDirectoryState>({
     items: [],
     isLoading: false,
@@ -221,7 +221,7 @@ function SnapshotDirectoryInternal({ params, location }: SnapshotDirectoryIntern
   );
 }
 
-export function SnapshotDirectory(): JSX.Element {
+export function SnapshotDirectory(): React.JSX.Element {
   const location = useLocation();
   const params = useParams<{ oid: string }>();
 

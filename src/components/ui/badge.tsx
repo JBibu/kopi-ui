@@ -57,7 +57,7 @@ function Badge({
   bg, // Legacy Bootstrap prop support
   text: _text, // Legacy Bootstrap text color prop (ignored in favor of variant-specific colors)
   ...props
-}: BadgeProps): JSX.Element {
+}: BadgeProps): React.JSX.Element {
   // Convert legacy Bootstrap `bg` prop to variant
   const finalVariant = variant || (bg as any) || "default";
 

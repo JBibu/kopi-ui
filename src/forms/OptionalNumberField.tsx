@@ -18,7 +18,7 @@ export function OptionalNumberField(
   label: string | null,
   name: string,
   props: OptionalNumberFieldProps = {}
-): JSX.Element {
+): React.JSX.Element {
   const isInvalid = isInvalidNumber(stateProperty(component, name));
 
   return (

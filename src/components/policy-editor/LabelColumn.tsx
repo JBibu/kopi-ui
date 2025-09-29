@@ -5,7 +5,7 @@ interface LabelColumnProps {
   help?: string;
 }
 
-export function LabelColumn(props: LabelColumnProps): JSX.Element {
+export function LabelColumn(props: LabelColumnProps): React.JSX.Element {
   return (
     <div className="flex-1 sm:w-2/5 policyFieldColumn">
       <span className="policyField font-medium text-sm">{props.name}</span>

@@ -11,7 +11,7 @@ import { Palette, Type, Binary, Info } from "lucide-react";
 /**
  * Preferences page with appearance and notification settings
  */
-export function Preferences(): JSX.Element {
+export function Preferences(): React.JSX.Element {
   const { bytesStringBase2, fontSize, setByteStringBase, setFontSize } =
     useContext(UIPreferencesContext);
 

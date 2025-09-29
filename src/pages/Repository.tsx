@@ -5,7 +5,7 @@ import { Button } from "../components/ui/button";
 import { Spinner } from "../components/ui/spinner";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { SetupRepository } from "../components/SetupRepository";
+import { SetupRepositoryNew } from "../components/SetupRepositoryNew";
 import { CLIEquivalent } from "../components/CLIEquivalent";
 import { cancelTask } from "../utils/taskutil";
 import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
@@ -31,7 +31,7 @@ interface RepositoryStatus {
   hostname?: string;
 }
 
-export function Repository(): JSX.Element {
+export function Repository(): React.JSX.Element {
   const appContext = useContext(AppContext);
   const isMounted: MutableRefObject<boolean> = useRef(true);
 
@@ -348,5 +348,5 @@ export function Repository(): JSX.Element {
   }
 
   // Default case: show repository setup
-  return <SetupRepository />;
+  return <SetupRepositoryNew />;
 }

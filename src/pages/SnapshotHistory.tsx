@@ -96,7 +96,7 @@ interface QueryParams {
   path: string;
 }
 
-function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternalProps): JSX.Element {
+function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternalProps): React.JSX.Element {
   // State hooks
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
   const [showHidden, setShowHidden] = useState<boolean>(false);
@@ -303,7 +303,7 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
     }
   }, [editSnapshots, editingDescriptionFor, updatedSnapshotDescription]);
 
-  const descriptionFor = useCallback((x: Snapshot): JSX.Element => {
+  const descriptionFor = useCallback((x: Snapshot): React.JSX.Element => {
     return (
       <a
         href="#top"
@@ -323,7 +323,7 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
     );
   }, []);
 
-  const newPinFor = useCallback((x: Snapshot): JSX.Element => {
+  const newPinFor = useCallback((x: Snapshot): React.JSX.Element => {
     return (
       <a
         href="#top"
@@ -688,7 +688,7 @@ function SnapshotHistoryInternal({ location, navigate }: SnapshotHistoryInternal
   );
 }
 
-export function SnapshotHistory(): JSX.Element {
+export function SnapshotHistory(): React.JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
   useContext(UIPreferencesContext);

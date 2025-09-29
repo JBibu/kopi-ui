@@ -37,7 +37,7 @@ export function StringList(
   component: ComponentWithState,
   name: string,
   props: StringListProps = {}
-): JSX.Element {
+): React.JSX.Element {
   return (
     <Textarea
       name={name}

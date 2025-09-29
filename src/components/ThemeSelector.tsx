@@ -23,7 +23,7 @@ interface ThemeIconProps {
   size?: number;
 }
 
-const ThemeIcon = ({ theme, size = 16 }: ThemeIconProps): JSX.Element => {
+const ThemeIcon = ({ theme, size = 16 }: ThemeIconProps): React.JSX.Element => {
   const iconProps = { size };
 
   switch (theme) {
@@ -44,7 +44,7 @@ interface ThemeSelectorProps {
   variant?: ThemeSelectorVariant;
 }
 
-export const ThemeSelector = ({ variant = 'dropdown' }: ThemeSelectorProps): JSX.Element => {
+export const ThemeSelector = ({ variant = 'dropdown' }: ThemeSelectorProps): React.JSX.Element => {
   const { theme, setTheme } = useTheme();
 
   const themes: Array<{ value: Theme; label: string }> = [

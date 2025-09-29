@@ -17,11 +17,13 @@ import { SnapshotCreate } from "./pages/SnapshotCreate";
 import { SnapshotDirectory } from "./pages/SnapshotDirectory";
 import { SnapshotHistory } from "./pages/SnapshotHistory";
 import { SnapshotRestore } from "./pages/SnapshotRestore";
+import { ComponentsDemo } from "./pages/ComponentsDemo";
 
 import { AppContext } from "./contexts/AppContext";
 import { UIPreferenceProvider } from "./contexts/UIPreferencesContext";
 import { ThemeProvider } from "./components/theme-provider";
 import { ErrorProvider } from "./contexts/ErrorContext";
+import { LoadingProvider } from "./contexts/LoadingContext";
 
 import { RepositoryStatus } from "./types";
 
@@ -48,7 +50,7 @@ interface AppContextValue {
   fetchInitialRepositoryDescription: () => Promise<void>;
 }
 
-export default function App(): JSX.Element {
+export default function App(): React.JSX.Element {
   const [runningTaskCount, setRunningTaskCount] = useState<number>(0);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [repoDescription, setRepoDescription] = useState<string>("");
@@ -144,8 +146,9 @@ export default function App(): JSX.Element {
     <Router>
       <ThemeProvider>
         <ErrorProvider>
-          <AppContext.Provider value={contextValue}>
-            <UIPreferenceProvider>
+          <LoadingProvider>
+            <AppContext.Provider value={contextValue}>
+              <UIPreferenceProvider>
             <Navbar>
               <NavbarBrand to="/">
                 <img src="/kopia-flat.svg" className="h-8 w-8" alt="Kopia logo" />
@@ -234,12 +237,14 @@ export default function App(): JSX.Element {
                 <Route path="tasks" element={<Tasks />} />
                 <Route path="repo" element={<Repository />} />
                 <Route path="preferences" element={<Preferences />} />
+                <Route path="components-demo" element={<ComponentsDemo />} />
                 <Route path="/" element={<Navigate to="/snapshots" />} />
               </Routes>
             </main>
             <NotificationDisplay position="top-right" />
             </UIPreferenceProvider>
           </AppContext.Provider>
+          </LoadingProvider>
         </ErrorProvider>
       </ThemeProvider>
     </Router>

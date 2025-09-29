@@ -16,7 +16,7 @@ import { redirect } from "../utils/uiutil";
 import { taskStatusSymbol } from "../utils/taskutil";
 import { Task, TasksResponse, KopiaTableColumn } from "../types";
 
-export function Tasks(): JSX.Element {
+export function Tasks(): React.JSX.Element {
   const [items, setItems] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -85,7 +85,7 @@ export function Tasks(): JSX.Element {
         <Link
           to={"/tasks/" + row.original.id}
           title={dayjs(row.original.startTime).toLocaleString()}
-          className="text-primary hover:underline"
+          className="text-blue-600 hover:underline"
           aria-label={`View task details for ${row.original.kind} started ${dayjs(row.original.startTime).fromNow()}`}
         >
           {dayjs(row.original.startTime).fromNow()}

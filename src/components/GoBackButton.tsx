@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { GoBackButtonProps } from "../types";
 
-export function GoBackButton({ onClick, label = "Return", className }: GoBackButtonProps = {}): JSX.Element {
+export function GoBackButton({ onClick, label = "Return", className }: GoBackButtonProps = {}): React.JSX.Element {
   const navigate = useNavigate();
 
   const handleClick = (): void => {

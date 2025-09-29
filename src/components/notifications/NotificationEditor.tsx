@@ -68,7 +68,7 @@ function severityName(severity: number): string {
   return opt ? opt.label : "Unknown";
 }
 
-export function NotificationEditor(): JSX.Element {
+export function NotificationEditor(): React.JSX.Element {
   const [state, setState] = useState<NotificationEditorState>({
     notificationProfiles: [],
   });
@@ -233,7 +233,7 @@ export function NotificationEditor(): JSX.Element {
     }
   };
 
-  const renderEditor = (SelectedEditor: React.ForwardRefExoticComponent<any>): JSX.Element => {
+  const renderEditor = (SelectedEditor: React.ForwardRefExoticComponent<any>): React.JSX.Element => {
     const contextObj: ComponentWithState = { state, handleChange };
 
     return (
@@ -301,7 +301,7 @@ export function NotificationEditor(): JSX.Element {
     );
   };
 
-  const renderList = (): JSX.Element => {
+  const renderList = (): React.JSX.Element => {
     return (
       <>
         {state.notificationProfiles && state.notificationProfiles.length > 0 ? (

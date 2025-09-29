@@ -15,7 +15,7 @@ export function EffectiveValue(
   policyField: string,
   resolved?: ResolvedPolicy | null,
   policyDefinitionPoint?: (value: any) => string
-): JSX.Element {
+): React.JSX.Element {
   const effectiveValue = getNestedProperty(resolved?.effective, policyField);
   const definitionValue = getNestedProperty(resolved?.definition, policyField);
 

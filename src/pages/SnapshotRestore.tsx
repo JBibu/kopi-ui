@@ -65,7 +65,7 @@ interface ContextObject {
   handleChange: (field: keyof SnapshotRestoreState, value: unknown) => void;
 }
 
-export function SnapshotRestoreInternal({ params }: SnapshotRestoreInternalProps): JSX.Element {
+export function SnapshotRestoreInternal({ params }: SnapshotRestoreInternalProps): React.JSX.Element {
   const [state, setState] = useState<SnapshotRestoreState>({
     incremental: true,
     continueOnErrors: false,
@@ -216,7 +216,7 @@ export function SnapshotRestoreInternal({ params }: SnapshotRestoreInternalProps
   );
 }
 
-export function SnapshotRestore(): JSX.Element {
+export function SnapshotRestore(): React.JSX.Element {
   const params = useParams<{ oid: string }>();
 
   if (!params.oid) {

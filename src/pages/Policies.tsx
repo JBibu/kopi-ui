@@ -38,7 +38,7 @@ interface PoliciesInternalProps {
   navigate: NavigateFunction;
 }
 
-export function PoliciesInternal({ navigate }: PoliciesInternalProps): JSX.Element {
+export function PoliciesInternal({ navigate }: PoliciesInternalProps): React.JSX.Element {
   const [state, setState] = useState<PoliciesState>({
     policies: [],
     isLoading: false,
@@ -154,8 +154,8 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): JSX.Eleme
     }));
   };
 
-  const policySummary = (policies: Policy): JSX.Element[] => {
-    const bits: JSX.Element[] = [];
+  const policySummary = (policies: Policy): React.JSX.Element[] => {
+    const bits: React.JSX.Element[] = [];
 
     function isEmptyObject(obj: any): boolean {
       return (
@@ -393,7 +393,7 @@ export function PoliciesInternal({ navigate }: PoliciesInternalProps): JSX.Eleme
   );
 }
 
-export function Policies(props: any): JSX.Element {
+export function Policies(props: any): React.JSX.Element {
   const navigate = useNavigate();
 
   return <PoliciesInternal navigate={navigate} {...props} />;

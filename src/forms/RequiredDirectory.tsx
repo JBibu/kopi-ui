@@ -41,7 +41,7 @@ export function RequiredDirectory(
   label: string,
   name: string,
   props: RequiredDirectoryProps = {}
-): JSX.Element {
+): React.JSX.Element {
   /**
    * Saves the selected path as a deepstate variable within the component
    * @param path The path that has been selected

@@ -31,7 +31,7 @@ export function ThemeProvider({
   defaultTheme = "system",
   storageKey = "kopia-ui-theme",
   ...props
-}: ThemeProviderProps): JSX.Element {
+}: ThemeProviderProps): React.JSX.Element {
   const [theme, setTheme] = useState<Theme>(() => {
     // Try localStorage first for immediate theme application
     const stored = localStorage.getItem(storageKey) as Theme;

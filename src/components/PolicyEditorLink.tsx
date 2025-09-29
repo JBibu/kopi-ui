@@ -7,6 +7,6 @@ interface _PolicyEditorLinkProps {
   source: Source;
 }
 
-export function PolicyEditorLink(s: Source): JSX.Element {
+export function PolicyEditorLink(s: Source): React.JSX.Element {
   return <Link to={policyEditorURL(s)}>{PolicyTypeName(s)}</Link>;
 }

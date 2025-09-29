@@ -44,7 +44,7 @@ function sizeInfo(item: DirectoryItemWithObj): number {
   return 0;
 }
 
-function directoryLinkOrDownload(x: DirectoryItemWithObj, state?: BreadcrumbState): JSX.Element {
+function directoryLinkOrDownload(x: DirectoryItemWithObj, state?: BreadcrumbState): React.JSX.Element {
   if (x.obj.startsWith("k")) {
     return (
       <Link to={objectLink(x.obj)} state={{ label: x.name, oid: x.obj, prevState: state }}>
@@ -56,7 +56,7 @@ function directoryLinkOrDownload(x: DirectoryItemWithObj, state?: BreadcrumbStat
   return <a href={"/api/v1/objects/" + x.obj + "?fname=" + encodeURIComponent(x.name)}>{x.name}</a>;
 }
 
-export function DirectoryItems({ historyState, items }: DirectoryItemsProps): JSX.Element {
+export function DirectoryItems({ historyState, items }: DirectoryItemsProps): React.JSX.Element {
   // Context hooks
   const { bytesStringBase2 } = useContext(UIPreferencesContext);
 
@@ -73,14 +73,14 @@ export function DirectoryItems({ historyState, items }: DirectoryItemsProps): JS
       accessorFn: (x) => x.mtime,
       header: "Last Modification",
       width: 200,
-      cell: (x) => rfc3339TimestampForDisplay(x.cell.getValue()),
+      cell: (x) => rfc3339TimestampForDisplay(x.cell.getValue() as string),
     },
     {
       id: "size",
       accessorFn: (x) => sizeInfo(x),
       header: "Size",
       width: 100,
-      cell: (x) => sizeWithFailures(x.cell.getValue(), x.row.original.summ, bytesStringBase2),
+      cell: (x) => sizeWithFailures(x.cell.getValue() as number, x.row.original.summ, bytesStringBase2),
     },
     {
       id: "files",

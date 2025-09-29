@@ -211,7 +211,7 @@ export function Snapshots(): React.JSX.Element {
             {row.original.currentTask && (
               <Link
                 to={"/tasks/" + row.original.currentTask}
-                className="text-primary hover:underline"
+                className="text-blue-600 hover:underline"
                 aria-label="View task details"
               >
                 Details
@@ -293,7 +293,7 @@ export function Snapshots(): React.JSX.Element {
       cell: ({ cell }) => (
         <Link
           to={"/snapshots/single-source?" + sourceQueryStringParams(cell.getValue())}
-          className="text-primary hover:underline"
+          className="text-blue-600 hover:underline"
           aria-label={`View snapshots for ${cell.getValue().path}`}
         >
           {cell.getValue().path}

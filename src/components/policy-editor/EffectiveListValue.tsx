@@ -11,7 +11,7 @@ interface ComponentWithState {
 export function EffectiveListValue(
   component: ComponentWithState,
   policyField: string
-): JSX.Element {
+): React.JSX.Element {
   const dsp = getDeepStateProperty(component, "resolved.definition." + policyField, undefined);
 
   return (

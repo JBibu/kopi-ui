@@ -29,7 +29,7 @@ export function OptionalBoolean(
   label: string,
   name: string,
   defaultLabel: string
-): JSX.Element {
+): React.JSX.Element {
   const value = stateProperty(component, name);
   const displayValue = value === true ? "true" : value === false ? "false" : "default";
 

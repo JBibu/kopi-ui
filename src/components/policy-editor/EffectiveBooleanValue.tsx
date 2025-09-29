@@ -12,7 +12,7 @@ interface ComponentWithState {
 export function EffectiveBooleanValue(
   component: ComponentWithState,
   policyField: string
-): JSX.Element {
+): React.JSX.Element {
   const dsp = getDeepStateProperty(component, "resolved.definition." + policyField, undefined);
 
   return (
